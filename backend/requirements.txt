@@ -1,0 +1,17 @@
+fastapi>=0.115
+uvicorn[standard]>=0.32
+sqlalchemy[asyncio]>=2.0.36
+asyncpg>=0.30
+alembic>=1.14
+pydantic>=2.9
+pydantic-settings>=2.6
+redis>=5.2
+networkx>=3.4
+pyjwt>=2.10
+bcrypt>=5.0
+python-multipart>=0.0.18
+python-ulid>=3.0
+httpx2>=2.13
+pytest>=8.3
+pytest-asyncio>=0.24
+tzdata>=2025.2

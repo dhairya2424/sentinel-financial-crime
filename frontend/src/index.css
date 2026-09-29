@@ -1,0 +1,221 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+/* docs/03 §2 palette, verbatim */
+@theme {
+  --color-surface-950: #0b0f14;
+  --color-surface-900: #111823;
+  --color-surface-800: #1a2332;
+  --color-surface-700: #243044;
+  --color-ink-100: #f1f5f9;
+  --color-ink-300: #94a3b8;
+  --color-ink-500: #64748b;
+  --color-brand-400: #38bdf8;
+  --color-brand-500: #0ea5e9;
+  --color-brand-600: #0284c7;
+  --color-risk-low: #22c55e;
+  --color-risk-medium: #eab308;
+  --color-risk-high: #f97316;
+  --color-risk-critical: #ef4444;
+  --color-evidence: #a78bfa;
+  --radius-card: 8px;
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.4);
+  --default-transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-sans: 'Inter Variable', Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+}
+
+/* Theme-aware roles. Components use these, never the raw palette above. */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-panel: var(--panel);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-accent: var(--accent);
+  --color-accent-fill: var(--accent-fill);
+  --color-accent-fill-hover: var(--accent-fill-hover);
+  --color-on-accent: var(--on-accent);
+  --color-selected: var(--selected);
+  --color-band-low: var(--band-low);
+  --color-band-medium: var(--band-medium);
+  --color-band-high: var(--band-high);
+  --color-band-critical: var(--band-critical);
+  --color-ev: var(--ev);
+  --color-change: var(--change);
+  --color-cycle: var(--cycle);
+  --color-warn-bg: var(--warn-bg);
+  --color-warn-line: var(--warn-line);
+  --color-warn-fg: var(--warn-fg);
+  --color-ok: var(--ok);
+  --color-danger: var(--danger);
+  --shadow-float: var(--float-shadow);
+}
+
+/* Light: docs/03 hues, darkened where needed to pass WCAG AA on light grounds */
+:root {
+  color-scheme: light;
+  --canvas: #f6f8fa;
+  --panel: #ffffff;
+  --raised: #eef2f6;
+  --line: #e1e7ed;
+  --line-strong: #c9d3dd;
+  --fg: #0f172a;
+  --fg-muted: #475569;
+  --fg-subtle: #5b6878;
+  --accent: #0369a1;
+  --accent-fill: #0369a1;
+  --accent-fill-hover: #075985;
+  --on-accent: #ffffff;
+  --selected: #e4eff7;
+  --band-low: #15803d;
+  --band-medium: #a16207;
+  --band-high: #c2410c;
+  --band-critical: #b91c1c;
+  --ev: #6d28d9;
+  --change: #b7791f;
+  --cycle: #b45309;
+  --warn-bg: #fef6dc;
+  --warn-line: #ebcb6b;
+  --warn-fg: #713f12;
+  --ok: #0f766e;
+  --danger: #be123c;
+  --float-shadow: 0 10px 28px -6px rgb(15 23 42 / 0.18);
+}
+
+/* Dark: docs/03 tokens, with muted text lifted to keep 4.5:1 on surface-900 */
+[data-theme='dark'] {
+  color-scheme: dark;
+  --canvas: var(--color-surface-950);
+  --panel: var(--color-surface-900);
+  --raised: var(--color-surface-800);
+  --line: #1f2a3b;
+  --line-strong: var(--color-surface-700);
+  --fg: var(--color-ink-100);
+  --fg-muted: var(--color-ink-300);
+  --fg-subtle: #7d8ca1;
+  --accent: var(--color-brand-400);
+  --accent-fill: var(--color-brand-500);
+  --accent-fill-hover: var(--color-brand-400);
+  --on-accent: var(--color-surface-950);
+  --selected: var(--color-surface-800);
+  --band-low: var(--color-risk-low);
+  --band-medium: var(--color-risk-medium);
+  --band-high: var(--color-risk-high);
+  --band-critical: var(--color-risk-critical);
+  --ev: var(--color-evidence);
+  --change: #a9873a;
+  --cycle: #f59e0b;
+  --warn-bg: #2a2410;
+  --warn-line: #4a3d12;
+  --warn-fg: #fde68a;
+  --ok: #2dd4bf;
+  --danger: #fb7185;
+  --float-shadow: 0 10px 28px -6px rgb(0 0 0 / 0.6);
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    background: var(--canvas);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  ::selection {
+    background: color-mix(in oklab, var(--accent) 28%, transparent);
+    color: var(--fg);
+  }
+  input,
+  textarea {
+    caret-color: var(--accent);
+  }
+  * {
+    scrollbar-color: var(--line-strong) transparent;
+    scrollbar-width: thin;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  a {
+    text-underline-offset: 3px;
+  }
+  .font-mono,
+  code,
+  kbd {
+    font-variant-numeric: tabular-nums;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+}
+
+/* ReactFlow chrome on Sentinel tokens (Graph Explorer) */
+.react-flow {
+  --xy-background-color: transparent;
+  --xy-controls-button-background-color: var(--panel);
+  --xy-controls-button-background-color-hover: var(--raised);
+  --xy-controls-button-color: var(--fg-muted);
+  --xy-controls-button-color-hover: var(--fg);
+  --xy-controls-button-border-color: var(--line);
+  --xy-controls-box-shadow: 0 0 0 1px var(--line-strong);
+  --xy-attribution-background-color: transparent;
+  --xy-node-boxshadow-selected: none;
+  --xy-selection-background-color: color-mix(in oklab, var(--accent) 10%, transparent);
+  --xy-selection-border: 1px dashed var(--accent);
+}
+.react-flow__controls {
+  border-radius: 6px;
+  overflow: hidden;
+}
+.react-flow__attribution a {
+  color: var(--fg-subtle);
+}
+.react-flow__node:focus-visible {
+  outline: none;
+}
+.react-flow__node:focus-visible > div {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@keyframes live-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  80%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+@utility live-ping {
+  animation: live-ping 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1 forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

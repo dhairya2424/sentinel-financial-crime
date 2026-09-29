@@ -1,0 +1,1281 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-28T16:45:06.712Z",
+  "title": "Design System: Sentinel",
+  "extensions": {
+    "colorMeta": {
+      "canvas": {
+        "role": "neutral",
+        "displayName": "Cool Paper",
+        "canonical": "#f6f8fa",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.003 250.0)",
+          "oklch(26% 0.003 250.0)",
+          "oklch(38% 0.003 250.0)",
+          "oklch(50% 0.003 250.0)",
+          "oklch(62% 0.003 250.0)",
+          "oklch(74% 0.003 250.0)",
+          "oklch(85% 0.003 250.0)",
+          "oklch(95% 0.003 250.0)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "White Panel",
+        "canonical": "#ffffff",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.000 250.0)",
+          "oklch(26% 0.000 250.0)",
+          "oklch(38% 0.000 250.0)",
+          "oklch(50% 0.000 250.0)",
+          "oklch(62% 0.000 250.0)",
+          "oklch(74% 0.000 250.0)",
+          "oklch(85% 0.000 250.0)",
+          "oklch(95% 0.000 250.0)"
+        ]
+      },
+      "raised": {
+        "role": "neutral",
+        "displayName": "Raised Slate",
+        "canonical": "#eef2f6",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.007 247.9)",
+          "oklch(26% 0.007 247.9)",
+          "oklch(38% 0.007 247.9)",
+          "oklch(50% 0.007 247.9)",
+          "oklch(62% 0.007 247.9)",
+          "oklch(74% 0.007 247.9)",
+          "oklch(85% 0.007 247.9)",
+          "oklch(95% 0.007 247.9)"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#e1e7ed",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.010 247.9)",
+          "oklch(26% 0.010 247.9)",
+          "oklch(38% 0.010 247.9)",
+          "oklch(50% 0.010 247.9)",
+          "oklch(62% 0.010 247.9)",
+          "oklch(74% 0.010 247.9)",
+          "oklch(85% 0.010 247.9)",
+          "oklch(95% 0.010 247.9)"
+        ]
+      },
+      "line-strong": {
+        "role": "neutral",
+        "displayName": "Strong Hairline",
+        "canonical": "#c9d3dd",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.018 248.0)",
+          "oklch(26% 0.018 248.0)",
+          "oklch(38% 0.018 248.0)",
+          "oklch(50% 0.018 248.0)",
+          "oklch(62% 0.018 248.0)",
+          "oklch(74% 0.018 248.0)",
+          "oklch(85% 0.018 248.0)",
+          "oklch(95% 0.018 248.0)"
+        ]
+      },
+      "fg": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#0f172a",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.040 265.8)",
+          "oklch(26% 0.040 265.8)",
+          "oklch(38% 0.040 265.8)",
+          "oklch(50% 0.040 265.8)",
+          "oklch(62% 0.040 265.8)",
+          "oklch(74% 0.040 265.8)",
+          "oklch(85% 0.040 265.8)",
+          "oklch(95% 0.040 265.8)"
+        ]
+      },
+      "fg-muted": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#475569",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.037 257.3)",
+          "oklch(26% 0.037 257.3)",
+          "oklch(38% 0.037 257.3)",
+          "oklch(50% 0.037 257.3)",
+          "oklch(62% 0.037 257.3)",
+          "oklch(74% 0.037 257.3)",
+          "oklch(85% 0.037 257.3)",
+          "oklch(95% 0.037 257.3)"
+        ]
+      },
+      "fg-subtle": {
+        "role": "neutral",
+        "displayName": "Subtle Ink",
+        "canonical": "#5b6878",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.030 253.7)",
+          "oklch(26% 0.030 253.7)",
+          "oklch(38% 0.030 253.7)",
+          "oklch(50% 0.030 253.7)",
+          "oklch(62% 0.030 253.7)",
+          "oklch(74% 0.030 253.7)",
+          "oklch(85% 0.030 253.7)",
+          "oklch(95% 0.030 253.7)"
+        ]
+      },
+      "accent": {
+        "role": "primary",
+        "displayName": "Harbour Sky",
+        "canonical": "#0369a1",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.119 242.7)",
+          "oklch(26% 0.119 242.7)",
+          "oklch(38% 0.119 242.7)",
+          "oklch(50% 0.119 242.7)",
+          "oklch(62% 0.119 242.7)",
+          "oklch(74% 0.119 242.7)",
+          "oklch(85% 0.119 242.7)",
+          "oklch(95% 0.119 242.7)"
+        ]
+      },
+      "accent-fill": {
+        "role": "primary",
+        "displayName": "Harbour Sky Fill",
+        "canonical": "#0369a1",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.119 242.7)",
+          "oklch(26% 0.119 242.7)",
+          "oklch(38% 0.119 242.7)",
+          "oklch(50% 0.119 242.7)",
+          "oklch(62% 0.119 242.7)",
+          "oklch(74% 0.119 242.7)",
+          "oklch(85% 0.119 242.7)",
+          "oklch(95% 0.119 242.7)"
+        ]
+      },
+      "accent-fill-hover": {
+        "role": "primary",
+        "displayName": "Deep Harbour",
+        "canonical": "#075985",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.100 240.8)",
+          "oklch(26% 0.100 240.8)",
+          "oklch(38% 0.100 240.8)",
+          "oklch(50% 0.100 240.8)",
+          "oklch(62% 0.100 240.8)",
+          "oklch(74% 0.100 240.8)",
+          "oklch(85% 0.100 240.8)",
+          "oklch(95% 0.100 240.8)"
+        ]
+      },
+      "on-accent": {
+        "role": "primary",
+        "displayName": "On Accent",
+        "canonical": "#ffffff",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.000 250.0)",
+          "oklch(26% 0.000 250.0)",
+          "oklch(38% 0.000 250.0)",
+          "oklch(50% 0.000 250.0)",
+          "oklch(62% 0.000 250.0)",
+          "oklch(74% 0.000 250.0)",
+          "oklch(85% 0.000 250.0)",
+          "oklch(95% 0.000 250.0)"
+        ]
+      },
+      "selected": {
+        "role": "primary",
+        "displayName": "Selected Mist",
+        "canonical": "#e4eff7",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.016 239.1)",
+          "oklch(26% 0.016 239.1)",
+          "oklch(38% 0.016 239.1)",
+          "oklch(50% 0.016 239.1)",
+          "oklch(62% 0.016 239.1)",
+          "oklch(74% 0.016 239.1)",
+          "oklch(85% 0.016 239.1)",
+          "oklch(95% 0.016 239.1)"
+        ]
+      },
+      "band-low": {
+        "role": "semantic",
+        "displayName": "Risk Low",
+        "canonical": "#15803d",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.137 150.1)",
+          "oklch(26% 0.137 150.1)",
+          "oklch(38% 0.137 150.1)",
+          "oklch(50% 0.137 150.1)",
+          "oklch(62% 0.137 150.1)",
+          "oklch(74% 0.137 150.1)",
+          "oklch(85% 0.137 150.1)",
+          "oklch(95% 0.137 150.1)"
+        ]
+      },
+      "band-medium": {
+        "role": "semantic",
+        "displayName": "Risk Medium",
+        "canonical": "#a16207",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.121 66.4)",
+          "oklch(26% 0.121 66.4)",
+          "oklch(38% 0.121 66.4)",
+          "oklch(50% 0.121 66.4)",
+          "oklch(62% 0.121 66.4)",
+          "oklch(74% 0.121 66.4)",
+          "oklch(85% 0.121 66.4)",
+          "oklch(95% 0.121 66.4)"
+        ]
+      },
+      "band-high": {
+        "role": "semantic",
+        "displayName": "Risk High",
+        "canonical": "#c2410c",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.174 38.4)",
+          "oklch(26% 0.174 38.4)",
+          "oklch(38% 0.174 38.4)",
+          "oklch(50% 0.174 38.4)",
+          "oklch(62% 0.174 38.4)",
+          "oklch(74% 0.174 38.4)",
+          "oklch(85% 0.174 38.4)",
+          "oklch(95% 0.174 38.4)"
+        ]
+      },
+      "band-critical": {
+        "role": "semantic",
+        "displayName": "Risk Critical",
+        "canonical": "#b91c1c",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.190 27.5)",
+          "oklch(26% 0.190 27.5)",
+          "oklch(38% 0.190 27.5)",
+          "oklch(50% 0.190 27.5)",
+          "oklch(62% 0.190 27.5)",
+          "oklch(74% 0.190 27.5)",
+          "oklch(85% 0.190 27.5)",
+          "oklch(95% 0.190 27.5)"
+        ]
+      },
+      "warn-bg": {
+        "role": "semantic",
+        "displayName": "Warning Amber Ground",
+        "canonical": "#fef6dc",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.035 92.8)",
+          "oklch(26% 0.035 92.8)",
+          "oklch(38% 0.035 92.8)",
+          "oklch(50% 0.035 92.8)",
+          "oklch(62% 0.035 92.8)",
+          "oklch(74% 0.035 92.8)",
+          "oklch(85% 0.035 92.8)",
+          "oklch(95% 0.035 92.8)"
+        ]
+      },
+      "warn-line": {
+        "role": "semantic",
+        "displayName": "Warning Amber Hairline",
+        "canonical": "#ebcb6b",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.121 91.3)",
+          "oklch(26% 0.121 91.3)",
+          "oklch(38% 0.121 91.3)",
+          "oklch(50% 0.121 91.3)",
+          "oklch(62% 0.121 91.3)",
+          "oklch(74% 0.121 91.3)",
+          "oklch(85% 0.121 91.3)",
+          "oklch(95% 0.121 91.3)"
+        ]
+      },
+      "warn-fg": {
+        "role": "semantic",
+        "displayName": "Warning Amber Ink",
+        "canonical": "#713f12",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.090 57.7)",
+          "oklch(26% 0.090 57.7)",
+          "oklch(38% 0.090 57.7)",
+          "oklch(50% 0.090 57.7)",
+          "oklch(62% 0.090 57.7)",
+          "oklch(74% 0.090 57.7)",
+          "oklch(85% 0.090 57.7)",
+          "oklch(95% 0.090 57.7)"
+        ]
+      },
+      "ok": {
+        "role": "semantic",
+        "displayName": "Health Teal",
+        "canonical": "#0f766e",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.086 186.4)",
+          "oklch(26% 0.086 186.4)",
+          "oklch(38% 0.086 186.4)",
+          "oklch(50% 0.086 186.4)",
+          "oklch(62% 0.086 186.4)",
+          "oklch(74% 0.086 186.4)",
+          "oklch(85% 0.086 186.4)",
+          "oklch(95% 0.086 186.4)"
+        ]
+      },
+      "danger": {
+        "role": "semantic",
+        "displayName": "Error Rose",
+        "canonical": "#be123c",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.198 16.9)",
+          "oklch(26% 0.198 16.9)",
+          "oklch(38% 0.198 16.9)",
+          "oklch(50% 0.198 16.9)",
+          "oklch(62% 0.198 16.9)",
+          "oklch(74% 0.198 16.9)",
+          "oklch(85% 0.198 16.9)",
+          "oklch(95% 0.198 16.9)"
+        ]
+      },
+      "canvas-dark": {
+        "role": "neutral",
+        "displayName": "Night Canvas (dark)",
+        "canonical": "#0b0f14",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.012 254.2)",
+          "oklch(26% 0.012 254.2)",
+          "oklch(38% 0.012 254.2)",
+          "oklch(50% 0.012 254.2)",
+          "oklch(62% 0.012 254.2)",
+          "oklch(74% 0.012 254.2)",
+          "oklch(85% 0.012 254.2)",
+          "oklch(95% 0.012 254.2)"
+        ]
+      },
+      "panel-dark": {
+        "role": "neutral",
+        "displayName": "Slate Panel (dark)",
+        "canonical": "#111823",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.024 259.3)",
+          "oklch(26% 0.024 259.3)",
+          "oklch(38% 0.024 259.3)",
+          "oklch(50% 0.024 259.3)",
+          "oklch(62% 0.024 259.3)",
+          "oklch(74% 0.024 259.3)",
+          "oklch(85% 0.024 259.3)",
+          "oklch(95% 0.024 259.3)"
+        ]
+      },
+      "raised-dark": {
+        "role": "neutral",
+        "displayName": "Raised Slate (dark)",
+        "canonical": "#1a2332",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.031 260.4)",
+          "oklch(26% 0.031 260.4)",
+          "oklch(38% 0.031 260.4)",
+          "oklch(50% 0.031 260.4)",
+          "oklch(62% 0.031 260.4)",
+          "oklch(74% 0.031 260.4)",
+          "oklch(85% 0.031 260.4)",
+          "oklch(95% 0.031 260.4)"
+        ]
+      },
+      "line-dark": {
+        "role": "neutral",
+        "displayName": "Hairline (dark)",
+        "canonical": "#1f2a3b",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.035 258.9)",
+          "oklch(26% 0.035 258.9)",
+          "oklch(38% 0.035 258.9)",
+          "oklch(50% 0.035 258.9)",
+          "oklch(62% 0.035 258.9)",
+          "oklch(74% 0.035 258.9)",
+          "oklch(85% 0.035 258.9)",
+          "oklch(95% 0.035 258.9)"
+        ]
+      },
+      "line-strong-dark": {
+        "role": "neutral",
+        "displayName": "Strong Hairline (dark)",
+        "canonical": "#243044",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.040 260.4)",
+          "oklch(26% 0.040 260.4)",
+          "oklch(38% 0.040 260.4)",
+          "oklch(50% 0.040 260.4)",
+          "oklch(62% 0.040 260.4)",
+          "oklch(74% 0.040 260.4)",
+          "oklch(85% 0.040 260.4)",
+          "oklch(95% 0.040 260.4)"
+        ]
+      },
+      "fg-dark": {
+        "role": "neutral",
+        "displayName": "Ink (dark)",
+        "canonical": "#f1f5f9",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.007 247.9)",
+          "oklch(26% 0.007 247.9)",
+          "oklch(38% 0.007 247.9)",
+          "oklch(50% 0.007 247.9)",
+          "oklch(62% 0.007 247.9)",
+          "oklch(74% 0.007 247.9)",
+          "oklch(85% 0.007 247.9)",
+          "oklch(95% 0.007 247.9)"
+        ]
+      },
+      "fg-muted-dark": {
+        "role": "neutral",
+        "displayName": "Muted Ink (dark)",
+        "canonical": "#94a3b8",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.035 256.8)",
+          "oklch(26% 0.035 256.8)",
+          "oklch(38% 0.035 256.8)",
+          "oklch(50% 0.035 256.8)",
+          "oklch(62% 0.035 256.8)",
+          "oklch(74% 0.035 256.8)",
+          "oklch(85% 0.035 256.8)",
+          "oklch(95% 0.035 256.8)"
+        ]
+      },
+      "fg-subtle-dark": {
+        "role": "neutral",
+        "displayName": "Subtle Ink (dark)",
+        "canonical": "#7d8ca1",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.036 256.8)",
+          "oklch(26% 0.036 256.8)",
+          "oklch(38% 0.036 256.8)",
+          "oklch(50% 0.036 256.8)",
+          "oklch(62% 0.036 256.8)",
+          "oklch(74% 0.036 256.8)",
+          "oklch(85% 0.036 256.8)",
+          "oklch(95% 0.036 256.8)"
+        ]
+      },
+      "accent-dark": {
+        "role": "primary",
+        "displayName": "Signal Sky (dark)",
+        "canonical": "#38bdf8",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.139 232.7)",
+          "oklch(26% 0.139 232.7)",
+          "oklch(38% 0.139 232.7)",
+          "oklch(50% 0.139 232.7)",
+          "oklch(62% 0.139 232.7)",
+          "oklch(74% 0.139 232.7)",
+          "oklch(85% 0.139 232.7)",
+          "oklch(95% 0.139 232.7)"
+        ]
+      },
+      "accent-fill-dark": {
+        "role": "primary",
+        "displayName": "Harbour Sky Fill (dark)",
+        "canonical": "#0ea5e9",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.148 237.3)",
+          "oklch(26% 0.148 237.3)",
+          "oklch(38% 0.148 237.3)",
+          "oklch(50% 0.148 237.3)",
+          "oklch(62% 0.148 237.3)",
+          "oklch(74% 0.148 237.3)",
+          "oklch(85% 0.148 237.3)",
+          "oklch(95% 0.148 237.3)"
+        ]
+      },
+      "accent-fill-hover-dark": {
+        "role": "primary",
+        "displayName": "Deep Harbour (dark)",
+        "canonical": "#38bdf8",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.139 232.7)",
+          "oklch(26% 0.139 232.7)",
+          "oklch(38% 0.139 232.7)",
+          "oklch(50% 0.139 232.7)",
+          "oklch(62% 0.139 232.7)",
+          "oklch(74% 0.139 232.7)",
+          "oklch(85% 0.139 232.7)",
+          "oklch(95% 0.139 232.7)"
+        ]
+      },
+      "on-accent-dark": {
+        "role": "primary",
+        "displayName": "On Accent (dark)",
+        "canonical": "#0b0f14",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.012 254.2)",
+          "oklch(26% 0.012 254.2)",
+          "oklch(38% 0.012 254.2)",
+          "oklch(50% 0.012 254.2)",
+          "oklch(62% 0.012 254.2)",
+          "oklch(74% 0.012 254.2)",
+          "oklch(85% 0.012 254.2)",
+          "oklch(95% 0.012 254.2)"
+        ]
+      },
+      "selected-dark": {
+        "role": "primary",
+        "displayName": "Selected Mist (dark)",
+        "canonical": "#1a2332",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.031 260.4)",
+          "oklch(26% 0.031 260.4)",
+          "oklch(38% 0.031 260.4)",
+          "oklch(50% 0.031 260.4)",
+          "oklch(62% 0.031 260.4)",
+          "oklch(74% 0.031 260.4)",
+          "oklch(85% 0.031 260.4)",
+          "oklch(95% 0.031 260.4)"
+        ]
+      },
+      "band-low-dark": {
+        "role": "semantic",
+        "displayName": "Risk Low (dark)",
+        "canonical": "#22c55e",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.192 149.6)",
+          "oklch(26% 0.192 149.6)",
+          "oklch(38% 0.192 149.6)",
+          "oklch(50% 0.192 149.6)",
+          "oklch(62% 0.192 149.6)",
+          "oklch(74% 0.192 149.6)",
+          "oklch(85% 0.192 149.6)",
+          "oklch(95% 0.192 149.6)"
+        ]
+      },
+      "band-medium-dark": {
+        "role": "semantic",
+        "displayName": "Risk Medium (dark)",
+        "canonical": "#eab308",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.162 86.0)",
+          "oklch(26% 0.162 86.0)",
+          "oklch(38% 0.162 86.0)",
+          "oklch(50% 0.162 86.0)",
+          "oklch(62% 0.162 86.0)",
+          "oklch(74% 0.162 86.0)",
+          "oklch(85% 0.162 86.0)",
+          "oklch(95% 0.162 86.0)"
+        ]
+      },
+      "band-high-dark": {
+        "role": "semantic",
+        "displayName": "Risk High (dark)",
+        "canonical": "#f97316",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.187 47.6)",
+          "oklch(26% 0.187 47.6)",
+          "oklch(38% 0.187 47.6)",
+          "oklch(50% 0.187 47.6)",
+          "oklch(62% 0.187 47.6)",
+          "oklch(74% 0.187 47.6)",
+          "oklch(85% 0.187 47.6)",
+          "oklch(95% 0.187 47.6)"
+        ]
+      },
+      "band-critical-dark": {
+        "role": "semantic",
+        "displayName": "Risk Critical (dark)",
+        "canonical": "#ef4444",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.200 25.3)",
+          "oklch(26% 0.200 25.3)",
+          "oklch(38% 0.200 25.3)",
+          "oklch(50% 0.200 25.3)",
+          "oklch(62% 0.200 25.3)",
+          "oklch(74% 0.200 25.3)",
+          "oklch(85% 0.200 25.3)",
+          "oklch(95% 0.200 25.3)"
+        ]
+      },
+      "warn-bg-dark": {
+        "role": "semantic",
+        "displayName": "Warning Amber Ground (dark)",
+        "canonical": "#2a2410",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.034 93.2)",
+          "oklch(26% 0.034 93.2)",
+          "oklch(38% 0.034 93.2)",
+          "oklch(50% 0.034 93.2)",
+          "oklch(62% 0.034 93.2)",
+          "oklch(74% 0.034 93.2)",
+          "oklch(85% 0.034 93.2)",
+          "oklch(95% 0.034 93.2)"
+        ]
+      },
+      "warn-line-dark": {
+        "role": "semantic",
+        "displayName": "Warning Amber Hairline (dark)",
+        "canonical": "#4a3d12",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.062 92.0)",
+          "oklch(26% 0.062 92.0)",
+          "oklch(38% 0.062 92.0)",
+          "oklch(50% 0.062 92.0)",
+          "oklch(62% 0.062 92.0)",
+          "oklch(74% 0.062 92.0)",
+          "oklch(85% 0.062 92.0)",
+          "oklch(95% 0.062 92.0)"
+        ]
+      },
+      "warn-fg-dark": {
+        "role": "semantic",
+        "displayName": "Warning Amber Ink (dark)",
+        "canonical": "#fde68a",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.115 95.7)",
+          "oklch(26% 0.115 95.7)",
+          "oklch(38% 0.115 95.7)",
+          "oklch(50% 0.115 95.7)",
+          "oklch(62% 0.115 95.7)",
+          "oklch(74% 0.115 95.7)",
+          "oklch(85% 0.115 95.7)",
+          "oklch(95% 0.115 95.7)"
+        ]
+      },
+      "ok-dark": {
+        "role": "semantic",
+        "displayName": "Health Teal (dark)",
+        "canonical": "#2dd4bf",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.133 181.9)",
+          "oklch(26% 0.133 181.9)",
+          "oklch(38% 0.133 181.9)",
+          "oklch(50% 0.133 181.9)",
+          "oklch(62% 0.133 181.9)",
+          "oklch(74% 0.133 181.9)",
+          "oklch(85% 0.133 181.9)",
+          "oklch(95% 0.133 181.9)"
+        ]
+      },
+      "danger-dark": {
+        "role": "semantic",
+        "displayName": "Error Rose (dark)",
+        "canonical": "#fb7185",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.169 13.4)",
+          "oklch(26% 0.169 13.4)",
+          "oklch(38% 0.169 13.4)",
+          "oklch(50% 0.169 13.4)",
+          "oklch(62% 0.169 13.4)",
+          "oklch(74% 0.169 13.4)",
+          "oklch(85% 0.169 13.4)",
+          "oklch(95% 0.169 13.4)"
+        ]
+      },
+      "ev": {
+        "role": "graph-relation",
+        "displayName": "Evidence Violet",
+        "canonical": "#6d28d9",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.241 292.6)",
+          "oklch(26% 0.241 292.6)",
+          "oklch(38% 0.241 292.6)",
+          "oklch(50% 0.241 292.6)",
+          "oklch(62% 0.241 292.6)",
+          "oklch(74% 0.241 292.6)",
+          "oklch(85% 0.241 292.6)",
+          "oklch(95% 0.241 292.6)"
+        ]
+      },
+      "change": {
+        "role": "graph-relation",
+        "displayName": "Change Ochre",
+        "canonical": "#b7791f",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.125 70.4)",
+          "oklch(26% 0.125 70.4)",
+          "oklch(38% 0.125 70.4)",
+          "oklch(50% 0.125 70.4)",
+          "oklch(62% 0.125 70.4)",
+          "oklch(74% 0.125 70.4)",
+          "oklch(85% 0.125 70.4)",
+          "oklch(95% 0.125 70.4)"
+        ]
+      },
+      "cycle": {
+        "role": "graph-relation",
+        "displayName": "Cycle Amber",
+        "canonical": "#b45309",
+        "theme": "light",
+        "tonalRamp": [
+          "oklch(15% 0.146 49.0)",
+          "oklch(26% 0.146 49.0)",
+          "oklch(38% 0.146 49.0)",
+          "oklch(50% 0.146 49.0)",
+          "oklch(62% 0.146 49.0)",
+          "oklch(74% 0.146 49.0)",
+          "oklch(85% 0.146 49.0)",
+          "oklch(95% 0.146 49.0)"
+        ]
+      },
+      "ev-dark": {
+        "role": "graph-relation",
+        "displayName": "Evidence Violet (dark)",
+        "canonical": "#a78bfa",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.159 293.5)",
+          "oklch(26% 0.159 293.5)",
+          "oklch(38% 0.159 293.5)",
+          "oklch(50% 0.159 293.5)",
+          "oklch(62% 0.159 293.5)",
+          "oklch(74% 0.159 293.5)",
+          "oklch(85% 0.159 293.5)",
+          "oklch(95% 0.159 293.5)"
+        ]
+      },
+      "change-dark": {
+        "role": "graph-relation",
+        "displayName": "Change Ochre (dark)",
+        "canonical": "#a9873a",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.103 85.1)",
+          "oklch(26% 0.103 85.1)",
+          "oklch(38% 0.103 85.1)",
+          "oklch(50% 0.103 85.1)",
+          "oklch(62% 0.103 85.1)",
+          "oklch(74% 0.103 85.1)",
+          "oklch(85% 0.103 85.1)",
+          "oklch(95% 0.103 85.1)"
+        ]
+      },
+      "cycle-dark": {
+        "role": "graph-relation",
+        "displayName": "Cycle Amber (dark)",
+        "canonical": "#f59e0b",
+        "theme": "dark",
+        "tonalRamp": [
+          "oklch(15% 0.165 70.1)",
+          "oklch(26% 0.165 70.1)",
+          "oklch(38% 0.165 70.1)",
+          "oklch(50% 0.165 70.1)",
+          "oklch(62% 0.165 70.1)",
+          "oklch(74% 0.165 70.1)",
+          "oklch(85% 0.165 70.1)",
+          "oklch(95% 0.165 70.1)"
+        ]
+      }
+    },
+    "themes": {
+      "mechanism": "data-theme='dark' on the root switches the semantic variables; preference is System / Light / Dark in the account menu, and System follows prefers-color-scheme.",
+      "roleVariables": [
+        "--canvas",
+        "--panel",
+        "--raised",
+        "--line",
+        "--line-strong",
+        "--fg",
+        "--fg-muted",
+        "--fg-subtle",
+        "--accent",
+        "--accent-fill",
+        "--accent-fill-hover",
+        "--on-accent",
+        "--selected",
+        "--band-low",
+        "--band-medium",
+        "--band-high",
+        "--band-critical",
+        "--ev",
+        "--change",
+        "--cycle",
+        "--warn-bg",
+        "--warn-line",
+        "--warn-fg",
+        "--ok",
+        "--danger"
+      ]
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Sign in heading only."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Page h1, with 13px meta on the same baseline."
+      },
+      "title-small": {
+        "displayName": "Title small",
+        "purpose": "Empty-state heading."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "All running text; descriptions cap at 52ch."
+      },
+      "control": {
+        "displayName": "Control",
+        "purpose": "Nav, buttons, field labels (500), banners, rail section headings (600), page meta."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Risk badges, menu captions, hints; role and entity chips drop to 11px/500."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "Ids, tenants, counts, score ranges, system emails; 13px for page-meta ids and the tenant field, 10-10.5px for kbd hints."
+      },
+      "mono-readout": {
+        "displayName": "Mono readout",
+        "purpose": "The status strip only."
+      }
+    },
+    "shadows": [
+      {
+        "name": "float",
+        "token": "--shadow-float",
+        "value": "0 10px 28px -6px rgb(15 23 42 / 0.18)",
+        "dark": "0 10px 28px -6px rgb(0 0 0 / 0.6)",
+        "purpose": "Account menu, search hint popover and the density-bar tooltip (Tailwind shadow-float)."
+      },
+      {
+        "name": "shadow-card",
+        "value": "0 1px 3px rgb(0 0 0 / 0.4)",
+        "purpose": "Skip-to-content link when focused."
+      }
+    ],
+    "focus": {
+      "global": "outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px",
+      "fields": "border-color: var(--accent); box-shadow: 0 0 0 2px color-mix(in oklab, var(--accent) 30%, transparent)"
+    },
+    "motion": [
+      {
+        "name": "state-change",
+        "value": "150ms",
+        "purpose": "Colour changes on hover and focus for buttons, fields, nav and menu rows."
+      },
+      {
+        "name": "shell-change",
+        "value": "200ms cubic-bezier(0, 0, 0.2, 1)",
+        "purpose": "Sidebar width, and the status strip crossfading to and from the warn state."
+      },
+      {
+        "name": "live-ping",
+        "value": "1.2s cubic-bezier(0.16, 1, 0.3, 1) 1 forwards",
+        "purpose": "One expanding ping from the live dot per completed health check; motion-safe only."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation and transition durations 0.01ms",
+        "purpose": "prefers-reduced-motion: reduce cancels the ping, skeleton pulse and transitions."
+      },
+      {
+        "name": "graph-dim",
+        "value": "150ms ease-out (edge opacity), 150ms colour (nodes)",
+        "purpose": "Graph nodes and edges dimming or returning for cycles, touch-grid hover and quiet edges."
+      },
+      {
+        "name": "graph-zoom",
+        "value": "150ms",
+        "purpose": "Zoom in and out from the strip under the canvas."
+      },
+      {
+        "name": "graph-fit",
+        "value": "200ms, maxZoom 1.15",
+        "purpose": "Fit to depth <= 1 from the strip, and reframing to the loop nodes when cycles turn on. The first fit is instant."
+      },
+      {
+        "name": "graph-layout",
+        "value": "none (300 force ticks before first paint)",
+        "purpose": "The force layout settles before paint; nodes never drift into place."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "target",
+        "value": "1280px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one primary action per screen (Sign in).",
+      "html": "<button class=\"ds-btn-primary\">Sign in</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:0 20px;border:0;border-radius:6px;background:var(--accent-fill,#0369a1);color:var(--on-accent,#fff);font:600 14px/1 'Inter Variable',Inter,system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease-out}.ds-btn-primary:hover{background:var(--accent-fill-hover,#075985)}.ds-btn-primary:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}.ds-btn-primary:disabled{opacity:.7;cursor:wait}"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Hairline button for secondary actions such as Retry.",
+      "html": "<button class=\"ds-btn-secondary\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/></svg>Retry</button>",
+      "css": ".ds-btn-secondary{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff);color:var(--fg,#0f172a);font:500 13px/1 'Inter Variable',Inter,system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease-out}.ds-btn-secondary:hover{background:var(--raised,#eef2f6)}.ds-btn-secondary:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input-field",
+      "description": "Form field on the sign-in screen; sky border and 30% ring on focus, rose border when invalid.",
+      "html": "<label class=\"ds-field\"><span>Email</span><input type=\"email\" placeholder=\"investigator@demo.dev\"></label>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;width:320px;font:500 13px/1.5 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg,#0f172a)}.ds-field input{height:40px;padding:0 12px;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff);color:var(--fg,#0f172a);font:400 14px 'Inter Variable',Inter,system-ui,sans-serif;transition:border-color 150ms ease-out}.ds-field input::placeholder{color:var(--fg-subtle,#5b6878)}.ds-field input:hover{border-color:var(--fg-subtle,#5b6878)}.ds-field input:focus-visible{outline:none;border-color:var(--accent,#0369a1);box-shadow:0 0 0 2px color-mix(in oklab,var(--accent,#0369a1) 30%,transparent)}.ds-field input[aria-invalid=true]{border-color:var(--danger,#be123c)}"
+    },
+    {
+      "name": "Sidebar Navigation",
+      "kind": "nav",
+      "refersTo": "nav-item",
+      "description": "Labelled rail items; the active item gets the selected ground, 500 weight and a sky icon.",
+      "html": "<ul class=\"ds-nav\"><li><a href=\"#\" aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><rect x=\"3\" y=\"3\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"14\" y=\"3\" width=\"7\" height=\"5\" rx=\"1\"/><rect x=\"14\" y=\"12\" width=\"7\" height=\"9\" rx=\"1\"/><rect x=\"3\" y=\"16\" width=\"7\" height=\"5\" rx=\"1\"/></svg>Dashboard</a></li><li><a href=\"#\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" aria-hidden=\"true\"><path d=\"M10.27 21a2 2 0 0 0 3.46 0\"/><path d=\"M3.26 15.33A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.67C19.41 13.96 18 12.5 18 8A6 6 0 0 0 6 8c0 4.5-1.41 5.96-2.74 7.33\"/></svg>Alerts</a></li></ul>",
+      "css": ".ds-nav{list-style:none;margin:0;padding:6px;width:160px;display:flex;flex-direction:column;gap:2px;background:var(--panel,#fff);border-right:1px solid var(--line,#e1e7ed)}.ds-nav a{display:flex;align-items:center;gap:10px;height:36px;padding:0 10px;border-radius:6px;color:var(--fg-muted,#475569);font:400 13px 'Inter Variable',Inter,system-ui,sans-serif;text-decoration:none;transition:background-color 150ms ease-out,color 150ms ease-out}.ds-nav a:hover{background:var(--raised,#eef2f6);color:var(--fg,#0f172a)}.ds-nav a[aria-current=page]{background:var(--selected,#e4eff7);color:var(--fg,#0f172a);font-weight:500}.ds-nav a[aria-current=page] svg{color:var(--accent,#0369a1)}.ds-nav a:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}"
+    },
+    {
+      "name": "Risk Badge",
+      "kind": "chip",
+      "refersTo": "risk-badge-critical",
+      "description": "Icon + label + band colour; the only place band colours appear.",
+      "html": "<span class=\"ds-risk ds-risk-critical\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" aria-hidden=\"true\"><path d=\"M2.59 7.72 7.72 2.59A2 2 0 0 1 9.13 2h5.74a2 2 0 0 1 1.41.59l5.13 5.13a2 2 0 0 1 .59 1.41v5.74a2 2 0 0 1-.59 1.41l-5.13 5.13a2 2 0 0 1-1.41.59H9.13a2 2 0 0 1-1.41-.59l-5.13-5.13A2 2 0 0 1 2 14.87V9.13a2 2 0 0 1 .59-1.41z\"/><path d=\"M12 8v4\"/><path d=\"M12 16h.01\"/></svg>Critical</span> <span class=\"ds-risk ds-risk-low\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.25\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg>Low</span>",
+      "css": ".ds-risk{display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:6px;font:600 12px/1.333 'Inter Variable',Inter,system-ui,sans-serif}.ds-risk-critical{color:var(--band-critical,#b91c1c);background:color-mix(in oklab,var(--band-critical,#b91c1c) 10%,transparent);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--band-critical,#b91c1c) 35%,transparent)}.ds-risk-low{color:var(--band-low,#15803d);background:color-mix(in oklab,var(--band-low,#15803d) 10%,transparent);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--band-low,#15803d) 30%,transparent)}"
+    },
+    {
+      "name": "Status Strip",
+      "kind": "custom",
+      "refersTo": "status-strip",
+      "description": "Permanent mono health readout pinned below content; crossfades to the warn family when stale.",
+      "html": "<footer class=\"ds-strip\"><span class=\"ds-strip-live\"><i></i>Connected</span><span>API <b>ok</b></span><span>DB <b>ok</b></span><span>Redis <b>ok</b></span><span>checked 4s ago</span></footer><footer class=\"ds-strip ds-strip-stale\"><span class=\"ds-strip-live\"><i></i>API unreachable</span><span>API <b>down</b></span><span>retry in 12s</span></footer>",
+      "css": ".ds-strip{display:flex;align-items:center;gap:16px;height:28px;padding:0 16px;border-top:1px solid var(--line,#e1e7ed);background:var(--panel,#fff);color:var(--fg-muted,#475569);font:400 11.5px/1.5 'JetBrains Mono',ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums;transition:background-color 200ms ease-out,color 200ms ease-out,border-color 200ms ease-out}.ds-strip b{font-weight:500;color:var(--ok,#0f766e)}.ds-strip-live{display:flex;align-items:center;gap:8px}.ds-strip-live i{width:8px;height:8px;border-radius:50%;background:var(--ok,#0f766e)}.ds-strip-stale{border-top-color:var(--warn-line,#ebcb6b);background:var(--warn-bg,#fef6dc);color:var(--warn-fg,#713f12)}.ds-strip-stale b{color:inherit;font-weight:600;text-decoration:underline dotted;text-underline-offset:2px}.ds-strip-stale .ds-strip-live i{background:var(--warn-fg,#713f12)}"
+    },
+    {
+      "name": "Connection Banner",
+      "kind": "custom",
+      "refersTo": "connection-banner",
+      "description": "Amber banner under the topbar when the backend is degraded or unreachable.",
+      "html": "<div class=\"ds-banner\" role=\"alert\"><p>Can't reach the Sentinel API at localhost:8000. Anything on screen may be out of date.</p><span class=\"ds-banner-count\">retrying in 12s</span><button type=\"button\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8\"/><path d=\"M21 3v5h-5\"/></svg>Retry now</button></div>",
+      "css": ".ds-banner{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:8px 16px;border-bottom:1px solid var(--warn-line,#ebcb6b);background:var(--warn-bg,#fef6dc);color:var(--warn-fg,#713f12);font:400 13px/1.5 'Inter Variable',Inter,system-ui,sans-serif}.ds-banner p{margin:0;flex:1 1 14rem}.ds-banner-count{font:400 12px 'JetBrains Mono',ui-monospace,Consolas,monospace}.ds-banner button{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 10px;border:1px solid var(--warn-line,#ebcb6b);border-radius:6px;background:transparent;color:inherit;font:500 13px 'Inter Variable',Inter,system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease-out}.ds-banner button:hover{background:color-mix(in oklab,var(--warn-line,#ebcb6b) 40%,transparent)}.ds-banner button:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}"
+    },
+    {
+      "name": "Tenant Chip",
+      "kind": "chip",
+      "refersTo": "tenant-chip",
+      "description": "Hairline mono chip naming the active tenant in the topbar.",
+      "html": "<span class=\"ds-tenant\">tenant_demo</span>",
+      "css": ".ds-tenant{display:inline-flex;align-items:center;padding:4px 8px;border:1px solid var(--line,#e1e7ed);border-radius:6px;color:var(--fg-muted,#475569);font:400 12px/1.333 'JetBrains Mono',ui-monospace,Consolas,monospace}"
+    },
+    {
+      "name": "Phase Placeholder Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Dashed panel marking an area that arrives in a later phase.",
+      "html": "<section class=\"ds-slot\"><h2>Arrives in Phase 2</h2><p>Every open alert, ranked by band, with its evidence one click away.</p></section>",
+      "css": ".ds-slot{display:grid;place-items:center;align-content:center;gap:8px;min-height:180px;padding:24px;border:1px dashed var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff);text-align:center;font:400 14px/1.5 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-muted,#475569)}.ds-slot h2{margin:0;font-size:16px;font-weight:600;color:var(--fg,#0f172a)}.ds-slot p{margin:0;max-width:52ch}"
+    },
+    {
+      "name": "Entity Chip",
+      "kind": "chip",
+      "refersTo": "entity-chip",
+      "description": "24px pill showing a person, account, customer or transaction inline: initials or kind-icon disc, label, mono short id; full id in title.",
+      "html": "<a class=\"ds-entity\" href=\"#\" title=\"Open timeline: emp_01j8z2k9934\"><span class=\"ds-entity-disc\">AP</span><span class=\"ds-entity-label\">Ananya Patil</span><span class=\"ds-entity-id\">emp_…9934</span></a> <a class=\"ds-entity\" href=\"#\" title=\"Open timeline: cust_01fy9zww20z58a\"><span class=\"ds-entity-disc\"><svg width=\"12\" height=\"12\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"8\" r=\"5\"/><path d=\"M20 21a8 8 0 0 0-16 0\"/></svg></span><span class=\"ds-entity-label\">Karan Apte</span><span class=\"ds-entity-id\">cust_…z58a</span></a>",
+      "css": ".ds-entity{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 8px 0 3px;border:1px solid var(--line-strong,#c9d3dd);border-radius:9999px;background:var(--panel,#fff);color:var(--fg,#0f172a);font:500 12px/1 'Inter Variable',Inter,system-ui,sans-serif;white-space:nowrap;text-decoration:none;transition:background-color 150ms ease-out}.ds-entity:hover{background:var(--raised,#eef2f6)}.ds-entity:hover .ds-entity-label{text-decoration:underline;text-underline-offset:3px}.ds-entity:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}.ds-entity-disc{display:grid;place-items:center;width:18px;height:18px;border-radius:50%;background:var(--raised,#eef2f6);color:var(--fg-muted,#475569);font-size:9px;font-weight:600}.ds-entity-id{font:400 10.5px/1 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-subtle,#5b6878);font-variant-numeric:tabular-nums}"
+    },
+    {
+      "name": "Toggle Chip",
+      "kind": "chip",
+      "refersTo": "toggle-chip",
+      "description": "Category and time-range filter; pressed takes the selected ground and ink, never sky.",
+      "html": "<div class=\"ds-toggles\"><button class=\"ds-toggle\" aria-pressed=\"true\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/></svg>Transaction</button><button class=\"ds-toggle\" aria-pressed=\"false\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/></svg>Approval</button></div>",
+      "css": ".ds-toggles{display:flex;gap:8px}.ds-toggle{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 10px;border:1px solid var(--line,#e1e7ed);border-radius:6px;background:var(--panel,#fff);color:var(--fg-subtle,#5b6878);font:500 13px/1 'Inter Variable',Inter,system-ui,sans-serif;cursor:pointer;transition:background-color 150ms ease-out,color 150ms ease-out}.ds-toggle:hover{background:var(--raised,#eef2f6)}.ds-toggle[aria-pressed=true]{border-color:var(--line-strong,#c9d3dd);background:var(--selected,#e4eff7);color:var(--fg,#0f172a)}.ds-toggle:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}"
+    },
+    {
+      "name": "Lane Row",
+      "kind": "custom",
+      "refersTo": "lane-row-selected",
+      "description": "Two lanes on one clock: selected (selected ground, inset sky ring, sky icon and time), linked (delay tag), dimmed (subtle ink, not opacity).",
+      "html": "<ul class=\"ds-lanes\"><li class=\"ds-lane-row\"><div class=\"ds-lane-l\"><span class=\"ds-lane-title\">Card payment · HP Petrol Pump<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/></svg></span><span class=\"ds-lane-meta\"><span class=\"ds-tag\">+25h after</span><span class=\"ds-amt\">-₹908.69</span></span></div><time>19:43</time><div></div></li><li class=\"ds-lane-row\" aria-selected=\"true\"><div></div><time>18:14</time><div class=\"ds-lane-r\"><span class=\"ds-lane-title ds-people\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"10\" cy=\"7\" r=\"4\"/><path d=\"M10.3 15H7a4 4 0 0 0-4 4v2\"/><circle cx=\"18\" cy=\"18\" r=\"3\"/><path d=\"M18 14v1\"/><path d=\"M18 21v1\"/><path d=\"M21 18h1\"/><path d=\"M14 18h1\"/></svg>Edited profile · KYC document</span></div></li><li class=\"ds-lane-row ds-dim\"><div class=\"ds-lane-l\"><span class=\"ds-lane-title\">UPI payment · Zomato<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 3 4 7l4 4\"/><path d=\"M4 7h16\"/><path d=\"m16 21 4-4-4-4\"/><path d=\"M20 17H4\"/></svg></span><span class=\"ds-lane-meta\"><span class=\"ds-amt\">-₹407.51</span></span></div><time>15:28</time><div></div></li></ul>",
+      "css": ".ds-lanes{list-style:none;margin:0;padding:0;width:560px;border:1px solid var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff);font:400 14px/1.5 'Inter Variable',Inter,system-ui,sans-serif;overflow:hidden}.ds-lane-row{display:grid;grid-template-columns:minmax(0,1fr) 64px minmax(0,1fr);border-bottom:1px solid var(--line,#e1e7ed);transition:background-color 150ms ease-out}.ds-lane-row:last-child{border-bottom:0}.ds-lane-row:hover{background:color-mix(in oklab,var(--raised,#eef2f6) 60%,transparent)}.ds-lane-row time{padding:8px 0;border-inline:1px solid var(--line,#e1e7ed);text-align:center;font:400 12px/1.5 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-subtle,#5b6878)}.ds-lane-l,.ds-lane-r{display:flex;flex-direction:column;gap:4px;padding:8px 12px}.ds-lane-l{align-items:flex-end;text-align:right}.ds-lane-title{display:inline-flex;align-items:center;gap:8px;color:var(--fg,#0f172a)}.ds-lane-title svg{color:var(--fg-muted,#475569)}.ds-people{font-weight:500}.ds-lane-meta{display:flex;gap:8px;align-items:center}.ds-amt{font:400 12px 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-muted,#475569)}.ds-tag{padding:0 6px;border:1px solid var(--line-strong,#c9d3dd);border-radius:4px;font:400 11px/1.6 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-muted,#475569)}.ds-lane-row[aria-selected=true]{background:var(--selected,#e4eff7);box-shadow:inset 0 0 0 1px var(--accent,#0369a1)}.ds-lane-row[aria-selected=true] time,.ds-lane-row[aria-selected=true] svg{color:var(--accent,#0369a1)}.ds-dim .ds-lane-title,.ds-dim .ds-lane-title svg,.ds-dim .ds-amt{color:var(--fg-subtle,#5b6878)}"
+    },
+    {
+      "name": "Inspector",
+      "kind": "card",
+      "refersTo": "inspector",
+      "description": "340px sticky panel beside the lanes: title with inline sky category icon (no eyebrow) over a 104px-term definition list.",
+      "html": "<aside class=\"ds-insp\"><h2><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><circle cx=\"10\" cy=\"7\" r=\"4\"/><path d=\"M10.3 15H7a4 4 0 0 0-4 4v2\"/><circle cx=\"18\" cy=\"18\" r=\"3\"/><path d=\"M18 14v1\"/><path d=\"M18 21v1\"/><path d=\"M21 18h1\"/><path d=\"M14 18h1\"/></svg>Edited profile · KYC document</h2><dl><dt>Category</dt><dd>Profile change</dd><dt>When</dt><dd class=\"ds-m\">Sep 26, 2026, 18:14:34</dd><dt>Action</dt><dd class=\"ds-m\">profile.edit</dd><dt>IP address</dt><dd class=\"ds-m\">10.20.3.22</dd></dl><section><h3>What changed</h3><p><s>Aadhaar XXXX-XXXX-8239</s> → <b>Passport X2226670</b></p></section></aside>",
+      "css": ".ds-insp{display:flex;flex-direction:column;gap:16px;width:340px;padding:16px;border:1px solid var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff);font:400 13px/1.5 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg,#0f172a)}.ds-insp h2{display:flex;align-items:flex-start;gap:8px;margin:0;font-size:15px;font-weight:600}.ds-insp h2 svg{margin-top:2px;flex-shrink:0;color:var(--accent,#0369a1)}.ds-insp dl{display:grid;grid-template-columns:104px minmax(0,1fr);align-items:center;gap:8px 12px;margin:0}.ds-insp dt{color:var(--fg-subtle,#5b6878)}.ds-insp dd{margin:0;min-width:0;overflow-wrap:anywhere}.ds-m{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace;font-variant-numeric:tabular-nums}.ds-insp section{display:flex;flex-direction:column;gap:6px}.ds-insp h3{margin:0;font-size:12px;font-weight:600;color:var(--fg-muted,#475569)}.ds-insp p{margin:0}.ds-insp s{color:var(--fg-subtle,#5b6878)}.ds-insp b{font-weight:500}"
+    },
+    {
+      "name": "Density Bar",
+      "kind": "custom",
+      "refersTo": "density-bar",
+      "description": "Diverging event-count bars: left lane in subtle ink above a strong-hairline axis, right lane in ink below; the 48-hour window as a selected-ground band.",
+      "html": "<section class=\"ds-dens\"><div class=\"ds-dens-plot\"><span class=\"ds-dens-win\"></span><span class=\"ds-col\"><i class=\"u\" style=\"height:18px\"></i><i class=\"d\" style=\"height:0\"></i></span><span class=\"ds-col\"><i class=\"u\" style=\"height:9px\"></i><i class=\"d\" style=\"height:12px\"></i></span><span class=\"ds-col\"><i class=\"u\" style=\"height:24px\"></i><i class=\"d\" style=\"height:0\"></i></span><span class=\"ds-col\"><i class=\"u\" style=\"height:6px\"></i><i class=\"d\" style=\"height:21px\"></i></span><span class=\"ds-col\"><i class=\"u\" style=\"height:15px\"></i><i class=\"d\" style=\"height:6px\"></i></span><span class=\"ds-col\"><i class=\"u\" style=\"height:27px\"></i><i class=\"d\" style=\"height:0\"></i></span><span class=\"ds-col\"><i class=\"u\" style=\"height:12px\"></i><i class=\"d\" style=\"height:9px\"></i></span><span class=\"ds-col\"><i class=\"u\" style=\"height:21px\"></i><i class=\"d\" style=\"height:0\"></i></span></div><div class=\"ds-dens-axis\"><span>Wed, Jul 1</span><span class=\"ds-dens-key\"><b class=\"k-l\"></b>Money, above the line <b class=\"k-r\"></b>People, below</span><span>Sun, Sep 27</span></div></section>",
+      "css": ".ds-dens{display:flex;flex-direction:column;gap:4px;width:560px;padding:8px 12px 6px;border:1px solid var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff)}.ds-dens-plot{position:relative;display:grid;grid-template-columns:repeat(8,1fr);gap:2px;height:64px}.ds-dens-win{position:absolute;top:0;bottom:0;left:75%;right:0;background:var(--selected,#e4eff7)}.ds-col{position:relative;display:grid;grid-template-rows:1fr 1fr}.ds-col .u{align-self:end;background:var(--fg-subtle,#5b6878)}.ds-col .d{align-self:start;background:var(--fg,#0f172a)}.ds-dens-plot::after{content:'';position:absolute;left:0;right:0;top:50%;border-top:1px solid var(--line-strong,#c9d3dd)}.ds-dens-axis{display:flex;justify-content:space-between;gap:12px;font:400 11px/1.4 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-subtle,#5b6878)}.ds-dens-key{display:inline-flex;align-items:center;gap:6px;font:400 11.5px/1.4 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-muted,#475569)}.ds-dens-key b{width:10px;height:10px;border-radius:2px}.k-l{background:var(--fg-subtle,#5b6878)}.k-r{background:var(--fg,#0f172a)}"
+    },
+    {
+      "name": "Graph Nodes",
+      "kind": "custom",
+      "refersTo": "node-customer",
+      "description": "One silhouette per entity kind: customer rounded rect, account hexagon with a masked mono number, employee pill with initials, transaction diamond with a mono short id. Dimmed by ink and border, never opacity; selected by a sky ring, never a fill.",
+      "html": "<div class=\"ds-nodes\"><div class=\"ds-n-cust ds-n-focus\"><b>Karan Apte</b><code>cust_…z58a</code></div><div class=\"ds-n-acct\"><span>XXXXXXXX1158</span></div><div class=\"ds-n-emp\" tabindex=\"0\"><i>VR</i>Vidya Rao</div><div class=\"ds-n-tx\"><i></i><code>tx_…9eg3</code></div><div class=\"ds-n-cust ds-n-dim\"><b>Priya Khan</b><code>cust_…s5v7</code></div></div>",
+      "css": ".ds-nodes{display:flex;flex-wrap:wrap;align-items:center;gap:20px;padding:20px;background:var(--canvas,#f6f8fa);background-image:radial-gradient(var(--line-strong,#c9d3dd) 1px,transparent 1px);background-size:22px 22px}.ds-n-cust{min-width:96px;padding:6px 12px;text-align:center;border:1px solid var(--line-strong,#c9d3dd);border-radius:7px;background:var(--panel,#fff);transition:color 150ms,border-color 150ms}.ds-n-cust b{display:block;font:500 12px/1.33 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg,#0f172a)}.ds-n-cust code{font:400 10px/1.4 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-subtle,#5b6878)}.ds-n-focus{border:1.5px solid var(--fg,#0f172a);outline:2px solid var(--accent,#0369a1);outline-offset:4px}.ds-n-dim{border-color:var(--line,#e1e7ed)}.ds-n-dim b{color:var(--fg-subtle,#5b6878)}.ds-n-acct{position:relative;width:108px;height:30px;background:var(--line-strong,#c9d3dd);clip-path:polygon(10% 0,90% 0,100% 50%,90% 100%,10% 100%,0 50%)}.ds-n-acct span{position:absolute;inset:1px;display:grid;place-items:center;background:var(--panel,#fff);clip-path:polygon(10% 0,90% 0,100% 50%,90% 100%,10% 100%,0 50%);font:400 10.5px/1 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg,#0f172a)}.ds-n-emp{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px 0 4px;border:1px solid var(--line-strong,#c9d3dd);border-radius:9999px;background:var(--panel,#fff);font:500 12px/1 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg,#0f172a)}.ds-n-emp:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:4px}.ds-n-emp i{display:grid;place-items:center;width:20px;height:20px;border-radius:9999px;background:var(--raised,#eef2f6);font:600 9px/1 'Inter Variable',Inter,system-ui,sans-serif;font-style:normal;color:var(--fg-muted,#475569)}.ds-n-tx{display:inline-flex;align-items:center;gap:6px;padding:2px 4px;border-radius:4px;background:var(--panel,#fff)}.ds-n-tx i{width:10px;height:10px;transform:rotate(45deg);border:1px solid var(--ev,#6d28d9);background:var(--panel,#fff)}.ds-n-tx code{font:400 10px/1 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-muted,#475569)}"
+    },
+    {
+      "name": "Edge Grammar",
+      "kind": "custom",
+      "refersTo": "cycle-badge",
+      "description": "docs/03 edge strokes per type, one bundle per repeated relation with a mono xN, quiet unanchored people edges at width 1 and 28% opacity, and a cycle leg in Cycle Amber with a warn-family Cycle badge.",
+      "html": "<svg class=\"ds-edges\" viewBox=\"0 0 360 150\" width=\"360\" height=\"150\" aria-hidden=\"true\"><defs><marker id=\"ds-arw\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"7\" markerHeight=\"7\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" style=\"fill:var(--fg-subtle,#5b6878)\"/></marker><marker id=\"ds-arw-c\" viewBox=\"0 0 10 10\" refX=\"9\" refY=\"5\" markerWidth=\"6\" markerHeight=\"6\" orient=\"auto\"><path d=\"M0,0 L10,5 L0,10 z\" style=\"fill:var(--cycle,#b45309)\"/></marker></defs><line x1=\"10\" y1=\"15\" x2=\"200\" y2=\"15\" style=\"stroke:var(--fg-muted,#475569)\" stroke-width=\"2.5\" marker-end=\"url(#ds-arw)\"/><line x1=\"10\" y1=\"37\" x2=\"200\" y2=\"37\" style=\"stroke:var(--line-strong,#c9d3dd)\" stroke-width=\"1\" stroke-dasharray=\"5 4\"/><line x1=\"10\" y1=\"59\" x2=\"200\" y2=\"59\" style=\"stroke:var(--accent,#0369a1)\" stroke-width=\"1.25\" stroke-dasharray=\"1.5 3.5\"/><line x1=\"10\" y1=\"81\" x2=\"200\" y2=\"81\" style=\"stroke:var(--change,#b7791f)\" stroke-width=\"1.75\"/><line x1=\"10\" y1=\"103\" x2=\"200\" y2=\"103\" style=\"stroke:var(--ev,#6d28d9)\" stroke-width=\"1\" opacity=\"0.28\"/><line x1=\"10\" y1=\"132\" x2=\"200\" y2=\"132\" style=\"stroke:var(--cycle,#b45309)\" stroke-width=\"3.25\" marker-end=\"url(#ds-arw-c)\"/><text x=\"105\" y=\"11\" class=\"ds-count\">×3</text><foreignObject x=\"84\" y=\"121\" width=\"50\" height=\"22\"><span class=\"ds-cycle\">Cycle</span></foreignObject><text x=\"214\" y=\"19\" class=\"ds-enum\">TRANSFER ×3</text><text x=\"214\" y=\"41\" class=\"ds-enum\">ACCOUNT_HOLDER</text><text x=\"214\" y=\"63\" class=\"ds-enum\">EMPLOYEE_ACCESS</text><text x=\"214\" y=\"85\" class=\"ds-enum\">PROFILE_CHANGE</text><text x=\"214\" y=\"107\" class=\"ds-enum\">EMPLOYEE_ACTION, quiet</text><text x=\"214\" y=\"136\" class=\"ds-enum\">cycle leg</text></svg>",
+      "css": ".ds-edges{background:var(--canvas,#f6f8fa)}.ds-count{font:400 11px 'JetBrains Mono',ui-monospace,Consolas,monospace;fill:var(--fg-muted,#475569);paint-order:stroke;stroke:var(--canvas,#f6f8fa);stroke-width:3px}.ds-enum{font:500 11px 'JetBrains Mono',ui-monospace,Consolas,monospace;fill:var(--fg-muted,#475569)}.ds-cycle{display:inline-block;padding:1px 6px;border:1px solid var(--warn-line,#ebcb6b);border-radius:4px;background:var(--warn-bg,#fef6dc);color:var(--warn-fg,#713f12);font:600 11px/1.3 'Inter Variable',Inter,system-ui,sans-serif}"
+    },
+    {
+      "name": "Graph Toolbar",
+      "kind": "chip",
+      "refersTo": "edge-type-toggle",
+      "description": "One row: depth and layout segmented radios, a divider, the five docs/09 edge-type toggles in mono with their own stroke as swatch, and the Highlight cycles switch at the far right.",
+      "html": "<div class=\"ds-gtb\"><div class=\"ds-seg\" role=\"radiogroup\" aria-label=\"Depth\"><button role=\"radio\" aria-checked=\"false\">1-hop</button><button role=\"radio\" aria-checked=\"true\">2-hop</button></div><span class=\"ds-div\"></span><button class=\"ds-etog\" aria-pressed=\"true\"><svg width=\"14\" height=\"8\" aria-hidden=\"true\"><line x1=\"1\" y1=\"4\" x2=\"13\" y2=\"4\" style=\"stroke:var(--fg-muted,#475569)\" stroke-width=\"1.75\"/></svg>TRANSFER</button><button class=\"ds-etog\" aria-pressed=\"false\"><svg width=\"14\" height=\"8\" aria-hidden=\"true\"><line x1=\"1\" y1=\"4\" x2=\"13\" y2=\"4\" style=\"stroke:var(--change,#b7791f)\" stroke-width=\"1.75\"/></svg>PROFILE_CHANGE</button><button class=\"ds-cyc\" role=\"switch\" aria-checked=\"true\"><span class=\"ds-trk\"><span></span></span>Highlight cycles</button></div>",
+      "css": ".ds-gtb{display:flex;align-items:center;gap:6px}.ds-seg{display:inline-flex;overflow:hidden;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff)}.ds-seg button{height:32px;padding:0 10px;border:0;background:transparent;font:500 13px/1 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-muted,#475569);cursor:pointer;transition:background-color 150ms}.ds-seg button:hover{background:var(--raised,#eef2f6)}.ds-seg button[aria-checked=true]{background:var(--selected,#e4eff7);color:var(--fg,#0f172a)}.ds-div{width:1px;height:20px;margin:0 4px;background:var(--line-strong,#c9d3dd)}.ds-etog{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 6px;border:1px solid var(--line,#e1e7ed);border-radius:6px;background:var(--panel,#fff);font:500 11px/1 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-subtle,#5b6878);cursor:pointer;transition:background-color 150ms}.ds-etog:hover{background:var(--raised,#eef2f6)}.ds-etog[aria-pressed=true]{border-color:var(--line-strong,#c9d3dd);background:var(--selected,#e4eff7);color:var(--fg,#0f172a)}.ds-cyc{margin-left:auto;display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 10px;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff);font:500 13px/1 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg,#0f172a);cursor:pointer}.ds-cyc:hover{background:var(--raised,#eef2f6)}.ds-trk{position:relative;width:26px;height:14px;border-radius:9999px;background:var(--line-strong,#c9d3dd);transition:background-color 150ms}.ds-trk span{position:absolute;top:2px;left:2px;width:10px;height:10px;border-radius:9999px;background:var(--panel,#fff);transition:transform 150ms}.ds-cyc[aria-checked=true] .ds-trk{background:var(--cycle,#b45309)}.ds-cyc[aria-checked=true] .ds-trk span{transform:translateX(12px)}.ds-seg button:focus-visible,.ds-etog:focus-visible,.ds-cyc:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}"
+    },
+    {
+      "name": "Graph Canvas Strip",
+      "kind": "custom",
+      "refersTo": "graph-canvas-strip",
+      "description": "The strip under the canvas: the aria-live note on the left, the 28px zoom group on the right. Nothing persistent sits on the canvas itself.",
+      "html": "<div class=\"ds-gstrip\"><p aria-live=\"polite\">1 loop in the last 72 hours</p><div role=\"group\" aria-label=\"Zoom\"><button aria-label=\"Zoom in\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/><path d=\"M12 5v14\"/></svg></button><button aria-label=\"Zoom out\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><path d=\"M5 12h14\"/></svg></button><button aria-label=\"Fit to view\"><svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M8 3H5a2 2 0 0 0-2 2v3\"/><path d=\"M21 8V5a2 2 0 0 0-2-2h-3\"/><path d=\"M3 16v3a2 2 0 0 0 2 2h3\"/><path d=\"M16 21h3a2 2 0 0 0 2-2v-3\"/></svg></button></div></div>",
+      "css": ".ds-gstrip{display:flex;align-items:center;gap:12px;padding:4px 6px 4px 12px;border-top:1px solid var(--line,#e1e7ed);background:var(--panel,#fff)}.ds-gstrip p{flex:1;margin:0;font:400 12px/1.5 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-muted,#475569)}.ds-gstrip div{display:flex;gap:4px}.ds-gstrip button{display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff);color:var(--fg-muted,#475569);cursor:pointer;transition:background-color 150ms,color 150ms}.ds-gstrip button:hover{background:var(--raised,#eef2f6);color:var(--fg,#0f172a)}.ds-gstrip button:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}"
+    },
+    {
+      "name": "Touch Matrix",
+      "kind": "custom",
+      "refersTo": "touch-cell",
+      "description": "Who touched what: employees as initials columns against customers and accounts; Change Ochre squares sized by profile-change count, a dotted sky ring for access only, selected row and column on the selected ground.",
+      "html": "<div class=\"ds-tm\"><div class=\"ds-tm-tabs\" role=\"tablist\"><button role=\"tab\" aria-selected=\"false\">Entity</button><button role=\"tab\" aria-selected=\"true\">Who touched what</button></div><table><thead><tr><th></th><th><i>AP</i></th><th><i>OI</i></th><th><i>VR</i></th></tr></thead><tbody><tr class=\"sel\"><th>Karan Apte</th><td><b style=\"width:11px;height:11px\"></b></td><td><b style=\"width:7px;height:7px\"></b></td><td><s></s></td></tr><tr><th class=\"m\">XXXXXXXX1158</th><td></td><td><s></s></td><td><b style=\"width:9px;height:9px\"></b></td></tr></tbody></table></div>",
+      "css": ".ds-tm{width:320px;border:1px solid var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff)}.ds-tm-tabs{display:flex;gap:4px;padding:0 8px;border-bottom:1px solid var(--line,#e1e7ed)}.ds-tm-tabs button{height:40px;margin-bottom:-1px;padding:0 10px;border:0;border-bottom:2px solid transparent;background:none;font:500 13px/1 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-muted,#475569);cursor:pointer}.ds-tm-tabs button:hover{color:var(--fg,#0f172a)}.ds-tm-tabs button[aria-selected=true]{border-bottom-color:var(--accent,#0369a1);color:var(--fg,#0f172a)}.ds-tm table{margin:16px;border-collapse:collapse;font:500 11px/1 'Inter Variable',Inter,system-ui,sans-serif}.ds-tm thead th{padding:0 2px 4px}.ds-tm thead i{display:grid;place-items:center;width:22px;height:22px;border-radius:9999px;background:var(--raised,#eef2f6);font:600 9.5px/1 'Inter Variable',Inter,system-ui,sans-serif;font-style:normal;color:var(--fg-muted,#475569)}.ds-tm tbody th{padding-right:8px;text-align:right;color:var(--fg-muted,#475569)}.ds-tm tbody th.m{font:400 10.5px/1 'JetBrains Mono',ui-monospace,Consolas,monospace}.ds-tm td{width:30px;height:24px;padding:0;text-align:center;border:1px solid var(--line,#e1e7ed)}.ds-tm tr.sel th,.ds-tm tr.sel td{background:var(--selected,#e4eff7);color:var(--fg,#0f172a)}.ds-tm td b{display:inline-block;vertical-align:middle;border-radius:2px;background:var(--change,#b7791f)}.ds-tm td s{display:inline-block;vertical-align:middle;width:6px;height:6px;border:1.5px dotted var(--accent,#0369a1);border-radius:9999px}"
+    },
+    {
+      "name": "Record-Type Rail",
+      "kind": "nav",
+      "refersTo": "rail-item",
+      "description": "The Add data rail: record types grouped in the order a scenario is built, mono tenant counts, the current type on the selected ground. Becomes a wrapped row below 1024px.",
+      "html": "<nav class=\"ds-rail\" aria-label=\"Record type\"><div class=\"ds-rail-g\"><span>Register</span><button>Customer<i>2</i></button><button>Account<i>2</i></button></div><div class=\"ds-rail-g\"><span>Record activity</span><button aria-current=\"page\">Transaction<i>4</i></button><button>Session<i>0</i></button></div></nav>",
+      "css": ".ds-rail{width:196px;display:flex;flex-direction:column;gap:12px;padding:8px;border:1px solid var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff)}.ds-rail-g{display:flex;flex-direction:column;gap:2px}.ds-rail-g span{padding:6px 10px 4px;font:600 11px/1.3 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-subtle,#5b6878)}.ds-rail button{display:flex;align-items:center;justify-content:space-between;height:36px;padding:0 10px;border:0;border-radius:6px;background:none;font:400 13px/1 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-muted,#475569);text-align:left;cursor:pointer;transition:background-color .15s,color .15s}.ds-rail button:hover{background:var(--raised,#eef2f6);color:var(--fg,#0f172a)}.ds-rail button:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}.ds-rail button[aria-current=page]{background:var(--selected,#e4eff7);color:var(--fg,#0f172a);font-weight:500}.ds-rail i{font:400 11px/1 'JetBrains Mono',ui-monospace,Consolas,monospace;font-style:normal;font-variant-numeric:tabular-nums;color:var(--fg-subtle,#5b6878)}"
+    },
+    {
+      "name": "Form Card",
+      "kind": "card",
+      "refersTo": "form-card",
+      "description": "One record per card: heading and purpose line, labelled 40px fields with \"(optional)\" marks, a form-height segmented control, an inline rose error, and Clear plus one primary action right-aligned on a top hairline. The primary stays disabled until the form is complete.",
+      "html": "<form class=\"ds-form\"><h2>Register a customer</h2><p class=\"ds-form-d\">A bank customer. Their accounts are registered next, under Account.</p><div class=\"ds-pair\"><label>Full name<input></label><label>Risk rating<select><option disabled selected>Choose the bank’s rating</option><option>Standard</option></select></label></div><label>Segment <em>(optional)</em><input></label><div class=\"ds-seg\" role=\"radiogroup\"><button role=\"radio\" aria-checked=\"false\">UPI</button><button role=\"radio\" aria-checked=\"true\">RTGS</button><button role=\"radio\" aria-checked=\"false\">ATM</button></div><p class=\"ds-form-err\" role=\"alert\">Not saved: account acct_nobody is not registered.</p><div class=\"ds-foot\"><button type=\"button\" class=\"ds-clear\">Clear</button><button type=\"submit\" class=\"ds-save\" disabled>Register customer</button></div></form>",
+      "css": ".ds-form{width:480px;display:flex;flex-direction:column;gap:16px;padding:20px;border:1px solid var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff);font-family:'Inter Variable',Inter,system-ui,sans-serif}.ds-form h2{margin:0;font-size:16px;font-weight:600;letter-spacing:-.025em;color:var(--fg,#0f172a)}.ds-form-d{margin:-12px 0 0;font-size:13px;color:var(--fg-muted,#475569)}.ds-pair{display:grid;grid-template-columns:1fr 1fr;gap:12px}.ds-form label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500;color:var(--fg,#0f172a)}.ds-form em{font-style:normal;font-weight:400;color:var(--fg-subtle,#5b6878)}.ds-form input,.ds-form select{height:40px;padding:0 12px;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff);font:400 14px 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg,#0f172a);transition:border-color .15s}.ds-form input:hover,.ds-form select:hover{border-color:var(--fg-subtle,#5b6878)}.ds-form input:focus-visible,.ds-form select:focus-visible{outline:none;border-color:var(--accent,#0369a1);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent,#0369a1) 30%,transparent)}.ds-seg{display:inline-flex;align-self:flex-start;height:40px;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;overflow:hidden}.ds-seg button{padding:0 10px;border:0;border-left:1px solid var(--line,#e1e7ed);background:var(--panel,#fff);font:400 13px 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-muted,#475569);cursor:pointer;transition:background-color .15s,color .15s}.ds-seg button:first-child{border-left:0}.ds-seg button:hover{background:var(--raised,#eef2f6);color:var(--fg,#0f172a)}.ds-seg button:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:-2px}.ds-seg button[aria-checked=true]{background:var(--selected,#e4eff7);color:var(--fg,#0f172a);font-weight:500}.ds-form-err{margin:0;font-size:13px;color:var(--danger,#be123c)}.ds-foot{display:flex;justify-content:flex-end;gap:8px;padding-top:16px;border-top:1px solid var(--line,#e1e7ed)}.ds-clear{height:40px;padding:0 14px;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff);font:500 13px 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg,#0f172a);cursor:pointer;transition:background-color .15s}.ds-clear:hover{background:var(--raised,#eef2f6)}.ds-save{height:40px;padding:0 16px;border:0;border-radius:6px;background:var(--accent-fill,#0369a1);font:600 14px 'Inter Variable',Inter,system-ui,sans-serif;color:var(--on-accent,#fff);cursor:pointer;transition:background-color .15s}.ds-save:hover{background:var(--accent-fill-hover,#075985)}.ds-save:disabled{opacity:.5;cursor:not-allowed}.ds-clear:focus-visible,.ds-save:focus-visible{outline:2px solid var(--accent,#0369a1);outline-offset:2px}"
+    },
+    {
+      "name": "Entity Picker",
+      "kind": "input",
+      "refersTo": "picker-option",
+      "description": "A combobox over registered records only. Closed it reads name-first; open, account options show holder, masked number in mono, and type. An empty list offers a Register link instead of a dead end.",
+      "html": "<div class=\"ds-pick\"><input role=\"combobox\" aria-expanded=\"true\" value=\"Rhea Kulkarni · …7788\"><ul role=\"listbox\"><li role=\"option\" aria-selected=\"true\"><span>Rhea Kulkarni</span><code>XXXXXXXX7788</code><small>savings</small></li><li role=\"option\"><span>Sameer Joshi</span><code>XXXXXXXX8811</code><small>current</small></li></ul><ul role=\"listbox\"><li class=\"ds-pick-empty\">No employees registered yet.<button>+ Register an employee</button></li></ul></div>",
+      "css": ".ds-pick{width:320px;display:flex;flex-direction:column;gap:4px;font-family:'Inter Variable',Inter,system-ui,sans-serif}.ds-pick input{height:40px;padding:0 36px 0 12px;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff);font:400 14px 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg,#0f172a)}.ds-pick input:focus-visible{outline:none;border-color:var(--accent,#0369a1);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent,#0369a1) 30%,transparent)}.ds-pick ul{margin:0 0 8px;padding:4px 0;list-style:none;border:1px solid var(--line-strong,#c9d3dd);border-radius:6px;background:var(--panel,#fff);box-shadow:var(--shadow-float,0 10px 28px -6px rgb(15 23 42 / .18))}.ds-pick li{display:flex;align-items:baseline;gap:8px;padding:6px 12px;font-size:13px;color:var(--fg,#0f172a);cursor:pointer}.ds-pick li:hover,.ds-pick li[aria-selected=true]{background:var(--selected,#e4eff7)}.ds-pick code{font:400 12px 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-muted,#475569)}.ds-pick small{flex:1;text-align:right;font-size:12px;color:var(--fg-subtle,#5b6878)}.ds-pick li.ds-pick-empty{flex-direction:column;align-items:flex-start;gap:6px;color:var(--fg-muted,#475569);cursor:default}.ds-pick li.ds-pick-empty:hover{background:none}.ds-pick-empty button{padding:0;border:0;background:none;font:500 13px 'Inter Variable',Inter,system-ui,sans-serif;color:var(--accent,#0369a1);cursor:pointer}.ds-pick-empty button:hover{text-decoration:underline}"
+    },
+    {
+      "name": "Timeline Preview",
+      "kind": "custom",
+      "refersTo": "lane-row-selected",
+      "description": "Signature: the unsaved activity record drawn by the server as the real Timeline lane row, static and selected, with the viewpoint named. Without a row it says why: incomplete (missing fields listed), checking, problem (rose, blocks save), note.",
+      "html": "<section class=\"ds-pv\"><div class=\"ds-pv-h\"><h3>Timeline preview</h3><p>As it will appear on <b>Rhea Kulkarni</b>’s Timeline</p></div><div class=\"ds-pv-card\"><div class=\"ds-pv-lanes\"><span>Money</span><span>Time</span><span>People</span></div><div class=\"ds-pv-row\"><div class=\"l\"><strong>Outgoing RTGS debit</strong><code>-₹1,85,000</code></div><time>22:04</time><div></div></div></div><div class=\"ds-pv-card\"><p class=\"ds-pv-msg\">Fill in the receiving account and the amount to see the row.</p></div><div class=\"ds-pv-card\"><p class=\"ds-pv-msg ds-pv-bad\">This can’t be saved: the two accounts are the same.</p></div></section>",
+      "css": ".ds-pv{width:480px;display:flex;flex-direction:column;gap:8px;font-family:'Inter Variable',Inter,system-ui,sans-serif}.ds-pv-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px}.ds-pv-h h3{margin:0;font-size:13px;font-weight:600;color:var(--fg,#0f172a)}.ds-pv-h p{margin:0;font-size:12px;color:var(--fg-subtle,#5b6878)}.ds-pv-h b{font-weight:500;color:var(--fg-muted,#475569)}.ds-pv-card{overflow:hidden;border:1px solid var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff)}.ds-pv-lanes,.ds-pv-row{display:grid;grid-template-columns:1fr 64px 1fr}.ds-pv-lanes{height:32px;align-items:center;border-bottom:1px solid var(--line,#e1e7ed);font-size:12px;font-weight:600;color:var(--fg-muted,#475569)}.ds-pv-lanes span:first-child{padding-right:12px;text-align:right}.ds-pv-lanes span:nth-child(2){text-align:center;font-weight:500;color:var(--fg-subtle,#5b6878)}.ds-pv-lanes span:last-child{padding-left:12px}.ds-pv-row{background:var(--selected,#e4eff7);box-shadow:inset 0 0 0 1px var(--accent,#0369a1)}.ds-pv-row .l{display:flex;flex-direction:column;align-items:flex-end;gap:4px;padding:8px 12px;text-align:right}.ds-pv-row strong{font-size:14px;font-weight:400;color:var(--fg,#0f172a);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.ds-pv-row code{font:400 12px 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-muted,#475569)}.ds-pv-row time{padding:8px 0;border-inline:1px solid var(--line,#e1e7ed);text-align:center;font:400 12px 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--accent,#0369a1)}.ds-pv-msg{min-height:58px;box-sizing:border-box;display:flex;align-items:center;margin:0;padding:12px 14px;font-size:13px;color:var(--fg-subtle,#5b6878)}.ds-pv-msg.ds-pv-bad{color:var(--danger,#be123c)}"
+    },
+    {
+      "name": "Session Log",
+      "kind": "custom",
+      "refersTo": "log-state-saved",
+      "description": "Saved this session: newest-first entries with mono time, summary and an outlined mono state tag (saved teal, partly saved and already saved neutral, rejected rose with the verbatim reason), sky Open in Graph / Open Timeline links and a copyable short id.",
+      "html": "<section class=\"ds-log\"><header><h2>Saved this session <i>1</i></h2><button>Clear list</button></header><ol><li><div><time>22:01</time><span>Customer Rhea Kulkarni · CIF-7788</span><b class=\"ok\">saved</b></div><nav><a href=\"#\">Open in Graph</a><a href=\"#\">Open Timeline</a><button title=\"cus_01j…\">cus_…9f2a</button></nav></li><li><div><time>22:03</time><span>Transaction ₹900</span><b class=\"bad\">rejected</b></div><p>account acct_nobody is not registered</p></li><li><div><time>22:07</time><span>Imported branch-export-3.csv: 1 saved, 2 rejected</span><b>partly saved</b></div><p class=\"n\">The results table lists the reason for each rejected row.</p></li></ol></section>",
+      "css": ".ds-log{width:300px;border:1px solid var(--line-strong,#c9d3dd);border-radius:8px;background:var(--panel,#fff);font-family:'Inter Variable',Inter,system-ui,sans-serif}.ds-log header{display:flex;align-items:center;justify-content:space-between;height:44px;padding:0 14px;border-bottom:1px solid var(--line,#e1e7ed)}.ds-log h2{margin:0;font-size:13px;font-weight:600;color:var(--fg,#0f172a)}.ds-log h2 i{margin-left:4px;font:400 11px 'JetBrains Mono',ui-monospace,Consolas,monospace;font-style:normal;color:var(--fg-subtle,#5b6878)}.ds-log header button{padding:2px 6px;border:0;border-radius:4px;background:none;font:400 12px 'Inter Variable',Inter,system-ui,sans-serif;color:var(--fg-muted,#475569);cursor:pointer}.ds-log header button:hover{background:var(--raised,#eef2f6);color:var(--fg,#0f172a)}.ds-log ol{margin:0;padding:0;list-style:none}.ds-log li{display:flex;flex-direction:column;gap:4px;padding:10px 14px;border-bottom:1px solid var(--line,#e1e7ed)}.ds-log li:last-child{border-bottom:0}.ds-log li div{display:flex;align-items:flex-start;gap:8px}.ds-log time{flex-shrink:0;margin-top:1px;font:400 11px 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-subtle,#5b6878)}.ds-log span{flex:1;font-size:13px;color:var(--fg,#0f172a)}.ds-log b{flex-shrink:0;padding:0 6px;border:1px solid var(--line-strong,#c9d3dd);border-radius:4px;font:400 10.5px 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-muted,#475569)}.ds-log b.ok{color:var(--ok,#0f766e);border-color:color-mix(in srgb,var(--ok,#0f766e) 35%,transparent)}.ds-log b.bad{color:var(--danger,#be123c);border-color:color-mix(in srgb,var(--danger,#be123c) 35%,transparent)}.ds-log p{margin:0;padding-left:40px;font-size:12px;color:var(--danger,#be123c)}.ds-log p.n{color:var(--fg-muted,#475569)}.ds-log nav{display:flex;flex-wrap:wrap;gap:4px 12px;padding-left:40px;font-size:12px}.ds-log a{font-weight:500;color:var(--accent,#0369a1);text-decoration:none}.ds-log a:hover{text-decoration:underline}.ds-log nav button{padding:0;border:0;background:none;font:400 11px 'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--fg-subtle,#5b6878);cursor:pointer}.ds-log nav button:hover{color:var(--fg,#0f172a)}"
+    },
+    {
+      "name": "Import Drop Zone",
+      "kind": "custom",
+      "refersTo": "drop-zone",
+      "description": "The dashed slot for a file (The Dashed Slot Rule): the whole zone is the file input label; raised hover, sky border and selected ground while a file is dragged over it. Results are drawn in a solid hairline table with a per-row outcome.",
+      "html": "<div class=\"ds-imp\"><label class=\"ds-drop\"><svg viewBox=\"0 0 24 24\" width=\"20\" height=\"20\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z\"/><path d=\"M14 2v4a2 2 0 0 0 2 2h4\"/><path d=\"M12 12v6\"/><path d=\"m15 15-3-3-3 3\"/></svg><span>Choose a file, or drop it here</span><small>.csv or .json · up to 5,000 records</small><input type=\"file\" class=\"sr\"></label><label class=\"ds-drop ds-drop-on\"><span>Drop to read branch-export-3.csv</span><small>while a file is dragged over</small></label><table><thead><tr><th>Row</th><th>Record</th><th>Result</th></tr></thead><tbody><tr><td class=\"m\">1</td><td class=\"m\">Transaction ₹3,100</td><td class=\"ok\">saved</td></tr><tr><td class=\"m\">2</td><td class=\"m\">Transaction ₹900</td><td class=\"bad\">account acct_nobody is not registered</td></tr></tbody></table><p class=\"ds-done\">Import finished. Choose another file above to import more.</p></div>",
+      "css": ".ds-imp{width:480px;display:flex;flex-direction:column;gap:12px;font-family:'Inter Variable',Inter,system-ui,sans-serif}.ds-drop{display:flex;flex-direction:column;align-items:center;gap:6px;padding:24px 16px;border:1px dashed var(--line-strong,#c9d3dd);border-radius:8px;text-align:center;color:var(--fg-muted,#475569);cursor:pointer;transition:background-color .15s,border-color .15s}.ds-drop:hover{background:color-mix(in srgb,var(--raised,#eef2f6) 60%,transparent)}.ds-drop:focus-within{outline:2px solid var(--accent,#0369a1);outline-offset:2px}.ds-drop-on{border-color:var(--accent,#0369a1);background:var(--selected,#e4eff7)}.ds-drop span{font-size:13px;font-weight:500;color:var(--fg,#0f172a)}.ds-drop small{font-size:12px;color:var(--fg-subtle,#5b6878)}.ds-drop .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}.ds-imp table{border-collapse:collapse;border:1px solid var(--line,#e1e7ed);font-size:12px;text-align:left}.ds-imp th{padding:6px 12px;background:var(--raised,#eef2f6);font-weight:500;color:var(--fg-muted,#475569)}.ds-imp td{padding:6px 12px;border-top:1px solid var(--line,#e1e7ed);color:var(--fg,#0f172a);vertical-align:top}.ds-imp td.m{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace}.ds-imp td.m:first-child{color:var(--fg-subtle,#5b6878)}.ds-imp td.ok{font-family:'JetBrains Mono',ui-monospace,Consolas,monospace;color:var(--ok,#0f766e)}.ds-imp td.bad{color:var(--danger,#be123c)}.ds-done{margin:0;padding-top:16px;border-top:1px solid var(--line,#e1e7ed);text-align:right;font-size:13px;color:var(--fg-muted,#475569)}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Live Instrument",
+    "overview": "Sentinel's shell is an instrument panel, not a frame. Its surfaces are quiet and solid so that the one thing that must never be quiet, the truth about whether the data is live, can get loud when it changes. A permanent status readout pinned to the foot of the content column reports connection and backend health in mono. When the API is lost, the readout and a banner flip to the warning family and a retry countdown appears. When the API comes back, both settle again in 200ms.\n\nThe system is dense and desktop-first, built for investigators on long triage sessions in lit offices and for judges watching a projector. There are two themes from one token set: a cool near-white light theme for projectors and daylight, and the docs/03 near-black dark theme. The theme follows the OS, and a System/Light/Dark switch sits in the account menu. Components only ever read the semantic role tokens (canvas, panel, fg, accent...), never the raw docs/03 palette, so both themes stay exact.\n\nDepth comes from tone and hairlines, not from light effects. Surfaces are solid, edges are 1px lines, and shadows exist only under things that float over the page. There is no glass, no gradient and no glow. Colour carries meaning or it is absent.",
+    "keyCharacteristics": [
+      "Two themes from one semantic token set, following the OS; light for projector demos.",
+      "Solid surfaces separated by 1px hairlines; tonal steps (canvas, panel, raised) express depth.",
+      "A single sky accent reserved for the current location, focus and the primary action.",
+      "Health, problems, errors and risk each own a separate colour family and never borrow from each other.",
+      "Inter for language, JetBrains Mono only for machine truth: ids, tenants, counts, kbd hints, the status readout.",
+      "Motion only for state changes, 150–200ms ease-out; one live ping per completed health check.",
+      "On the graph, a node's form names its kind and an edge's stroke names its relation; a relation repeated between two nodes is drawn once, with a count.",
+      "Data entry draws each activity record as the real Timeline row it will become before it is saved, and every reference is picked from registered records."
+    ],
+    "rules": [
+      {
+        "name": "The One Signal Rule",
+        "body": "The sky accent marks only where you are, what has focus, and the one primary action on a screen. If sky appears anywhere else, it is decoration and must go. The one inherited exception is the docs/03 §5 edge grammar: EMPLOYEE_ACCESS is a dotted sky stroke, and the touch grid's \"access only\" mark repeats it as a dotted sky ring.",
+        "section": "colors"
+      },
+      {
+        "name": "The Four Families Rule",
+        "body": "Health is teal (`ok`), problems are amber (warn family), errors are rose (`danger`), and risk is the four bands. The band colours appear only in RiskBadge through `lib/risk.ts`. Never use a band for health, never use `danger` for risk, and never use amber for a failed action. A detected loop is a problem to notice, so its \"Cycle\" badge takes the warn family and its legs take Cycle Amber.",
+        "section": "colors"
+      },
+      {
+        "name": "The Dim, Don't Dye Rule",
+        "body": "When one record reveals related ones (the transfers within 48 hours of an employee's change), the related rows keep their normal ink and every unrelated row of that kind drops its text and icon to subtle ink (`fg-subtle`). The relation is named by a mono delay tag (\"+17h after\"). Never introduce a colour family or an opacity fade to mark a link. On the graph a dimmed node does the same: its label drops to subtle ink and its border to the plain hairline (`line`), at full opacity. Edges have no ink to drop, so a dimmed edge recedes to 14% opacity.",
+        "section": "colors"
+      },
+      {
+        "name": "The Relations Stay on the Graph Rule",
+        "body": "Evidence Violet, Change Ochre and Cycle Amber appear only as graph strokes and marks, the swatches that name those edges, and the touch grid. Never use them for text, grounds, status or risk.",
+        "section": "colors"
+      },
+      {
+        "name": "The Role Token Rule",
+        "body": "Components use the semantic roles (`bg-panel`, `text-fg-muted`, `border-line`), never the raw docs/03 palette (`surface-900`, `brand-400`). The raw palette exists only to feed the dark theme.",
+        "section": "colors"
+      },
+      {
+        "name": "The Machine Truth Rule",
+        "body": "Mono is reserved for ids, tenants, emails and credentials shown as system values, counts and score ranges, kbd hints, and the status readout. Never set labels, headings or prose in mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The No Display Rule",
+        "body": "The largest type in the product is the 24px sign-in headline. Hierarchy comes from weight (600 against 400) and ink level, not from scale.",
+        "section": "typography"
+      },
+      {
+        "name": "The Clear Canvas Rule",
+        "body": "No persistent chrome sits on the graph canvas. Notes, counts, legends and zoom or fit controls live in the strip under it or in the toolbar above it. Only transient floaters may cover the canvas: the edge tooltip, the error toast, and the loading status on a 60% panel veil.",
+        "section": "layout"
+      },
+      {
+        "name": "The Near Fit Rule",
+        "body": "A new load or layout change frames only the focus and its direct neighbours (depth ≤ 1), with 40px top and bottom and 48px side padding, and never zooms past 1.15. The 2-hop rim sits beyond the frame and is reached by panning (zoom runs from 0.2 to 2). Expanding a node never refits. Turning on Highlight cycles reframes to the loop nodes over 200ms under the same cap.",
+        "section": "layout"
+      },
+      {
+        "name": "The Only Floaters Cast Rule",
+        "body": "A shadow means \"this is above the page\". Cards, panels, banners and the status strip never cast one. They sit in the page and separate by hairline and tone.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Form Names the Kind Rule",
+        "body": "On the graph, each entity kind has one silhouette. A customer is a rounded rectangle (7px), an account is a hexagon with pointed sides, an employee is a pill, and a transaction is a small diamond. Colour never tells the kinds apart. Borders are 1px, and 1.5px on the focus entity.",
+        "section": "shapes"
+      },
+      {
+        "name": "The Dashed Slot Rule",
+        "body": "A dashed strong hairline means a slot: a place reserved for something that is not here yet. It is used for phase placeholder panels, for the logo slot until the team's file arrives, and for the import drop zone, which is a slot waiting for a file. Solid borders are for things that exist, so what a chosen file holds is drawn in solid hairlines; the zone itself stays dashed because it still accepts another file. The graph's edge dashes are a separate grammar and do not carry this meaning.",
+        "section": "shapes"
+      },
+      {
+        "name": "The No Default Verdict Rule",
+        "body": "An assessment the bank makes (KYC status, risk rating) never has a default. Its select opens on a disabled \"Choose the KYC status\" / \"Choose the bank's rating\" option, and saving stays disabled until one is chosen. Only an operational field with a true common value (a transfer's status, \"Completed\") may start filled.",
+        "section": "components"
+      },
+      {
+        "name": "The No Dead End Rule",
+        "body": "An empty picker says what is missing (\"No customers registered yet.\", or \"No registered customer matches …\") and, where the record can be registered here, offers \"Register a customer\" / \"Register an employee\" as a sky text link with a plus icon that opens that form.",
+        "section": "components"
+      },
+      {
+        "name": "The Real Row Rule",
+        "body": "A preview is the real component fed by the server's reading of the real record, never a mock drawn to look like one. If the server cannot draw it, the card says so.",
+        "section": "components"
+      }
+    ],
+    "dos": [
+      "**Do** read only the semantic role tokens in components, so light and dark stay exact from one set.",
+      "**Do** use the sky accent only for the current location, focus and the primary action.",
+      "**Do** show health in teal (`ok`), problems in the amber warn family, errors in rose (`danger`), and risk only through RiskBadge.",
+      "**Do** pair every status colour with an icon or text (risk icon plus label, \"down\" in semibold with a dotted underline).",
+      "**Do** set ids, tenants, counts, score ranges, kbd hints and the status readout in JetBrains Mono with tabular numerals.",
+      "**Do** separate regions with 1px hairlines and tonal steps. Keep shadows to floating menus and hints (offset plus blur, negative spread).",
+      "**Do** animate only state changes, at 150–200ms ease-out. Fire one live ping per completed health check, and let reduced motion cancel it.",
+      "**Do** mark unbuilt areas with a dashed strong hairline and an honest \"Arrives in Phase N\" empty state.",
+      "**Do** keep the logo a slot until the team's file arrives.",
+      "**Do** show people, accounts, customers and transactions inline through the entity chip, with the full id in its title.",
+      "**Do** mark related records by dimming the unrelated ones to subtle ink and tagging the related ones with a mono delay tag.",
+      "**Do** draw each graph entity kind in its own form (customer rounded rectangle, account hexagon, employee pill, transaction diamond) and each relation in its docs/03 stroke.",
+      "**Do** draw repeated relations of one type between two nodes as one bundle with a counter-scaled mono ×N.",
+      "**Do** keep the graph canvas clear. Notes and zoom or fit controls go in the strip under it, and filters go in the one-row toolbar above it.",
+      "**Do** frame only depth ≤ 1 on load, at no more than 1.15 zoom, and leave the rim to panning.",
+      "**Do** mark an optional field \"(optional)\" in subtle ink, leave required fields unmarked, and keep the primary action disabled until the form is complete.",
+      "**Do** make every reference a picker over registered records, and give an empty picker a \"Register a/an <noun>\" link.",
+      "**Do** preview an activity record with the Timeline's own lane row, read by the server, and name whose Timeline it will appear on.",
+      "**Do** group rupee amounts Indian-style as they are typed (1,85,000).",
+      "**Do** show the server's rejection reason verbatim, in rose, inline and in the log."
+    ],
+    "donts": [
+      "**Don't** use gradients, glass (backdrop blur) or glow shadows anywhere.",
+      "**Don't** put a shadow on a card, panel, banner or the status strip.",
+      "**Don't** use a band colour outside RiskBadge, or reuse `danger` or a band for health or connection state.",
+      "**Don't** add kickers or eyebrow labels above headings. Headings stand alone, with meta on the same baseline.",
+      "**Don't** add page-load choreography or looping ambient motion. The live ping runs once per check.",
+      "**Don't** invent a logo mark, metrics or sample records to fill a slot.",
+      "**Don't** set prose, labels or headings in mono.",
+      "**Don't** mark a selected node with a fill. Selection is the 2px sky ring.",
+      "**Don't** fade a graph node with opacity. Dim its ink and border.",
+      "**Don't** use Evidence Violet, Change Ochre or Cycle Amber outside graph strokes, their swatches and the touch grid.",
+      "**Don't** preselect an assessment (KYC status, risk rating). Start on a disabled \"Choose…\" option.",
+      "**Don't** draw a mock preview row or offer sample picker options. If the server cannot draw the row, say so.",
+      "**Don't** leave a finished action as a spent disabled button. Replace it with a note that says what happened and what to do next."
+    ]
+  }
+}
