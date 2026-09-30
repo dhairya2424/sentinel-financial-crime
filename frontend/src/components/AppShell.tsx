@@ -4,14 +4,20 @@ import { fetchMe } from '@/api/auth'
 import { useHotkey } from '@/hooks/useHotkey'
 import { useAuth } from '@/store/auth'
 import { useUi } from '@/store/ui'
+import { useAlertFeed } from '@/ws/useAlertFeed'
+import { useSocketLifecycle } from '@/ws/useSocket'
 import { ConnectionBanner } from './ConnectionBanner'
+import { LiveBanner } from './LiveBanner'
 import { Sidebar } from './Sidebar'
 import { StatusStrip } from './StatusStrip'
+import { Toaster } from './Toaster'
 import { Topbar } from './Topbar'
 
 export function AppShell() {
   const toggleSidebar = useUi((s) => s.toggleSidebar)
   useHotkey('b', toggleSidebar)
+  useSocketLifecycle()
+  useAlertFeed()
 
   useEffect(() => {
     const controller = new AbortController()
@@ -37,11 +43,13 @@ export function AppShell() {
       <div className="flex min-w-0 flex-1 flex-col">
         <Topbar />
         <ConnectionBanner />
+        <LiveBanner />
         <main id="main" tabIndex={-1} className="flex min-h-0 flex-1 flex-col overflow-y-auto focus:outline-none">
           <Outlet />
         </main>
         <StatusStrip />
       </div>
+      <Toaster />
     </div>
   )
 }

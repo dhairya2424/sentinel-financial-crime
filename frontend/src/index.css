@@ -210,6 +210,24 @@
   animation: live-ping 1.2s cubic-bezier(0.16, 1, 0.3, 1) 1 forwards;
 }
 
+@keyframes toast-in {
+  from {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+}
+
+/* A row that arrived live: one fade from a sky wash, never a pulse loop. */
+@keyframes alert-fresh {
+  from {
+    background-color: color-mix(in srgb, var(--accent) 16%, var(--panel));
+  }
+}
+
+@utility alert-fresh {
+  animation: alert-fresh 1.6s cubic-bezier(0.16, 1, 0.3, 1) 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

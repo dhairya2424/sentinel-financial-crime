@@ -238,3 +238,81 @@ export interface EventPreview {
   problem: string | null
   note: string | null
 }
+
+export type AlertStatus = 'open' | 'acknowledged' | 'linked_to_case' | 'resolved' | 'closed_confirmed' | 'closed_false_positive'
+
+export type RuleCode = 'R-CIRC' | 'R-STRUCT' | 'R-PROFILE_ROLE' | 'R-PROFILE_FLOW' | 'R-VELOCITY' | 'R-OFFHOURS' | 'R-DORMANT'
+
+export interface EntityRef {
+  id: string
+  type: 'customer' | 'account' | 'employee'
+  label: string
+}
+
+export interface AlertRow {
+  id: string
+  rule_code: string
+  title: string
+  risk_band: RiskBand
+  risk_score: number
+  status: AlertStatus
+  entity_ids: string[]
+  primary_entity: string | null
+  entities: EntityRef[]
+  amount_total: string | null
+  detected_at: string
+  occurrence_count: number
+}
+
+export interface AlertPage {
+  items: AlertRow[]
+  next_cursor: string | null
+}
+
+export interface RiskFactor {
+  name: string
+  raw_value: string
+  weight: number
+  contribution: number
+}
+
+export type EvidenceType = 'transaction' | 'employee_action' | 'access_right' | 'session'
+
+export interface Evidence {
+  evidence_type: EvidenceType
+  ref_id: string
+  snapshot: Record<string, unknown>
+  captured_at: string
+}
+
+export interface AlertDetail extends AlertRow {
+  rule_version: number
+  explanation: string
+  risk_factors: RiskFactor[]
+  window_start: string
+  window_end: string
+  updated_at: string
+  evidence: Evidence[]
+  linked_case_id: string | null
+}
+
+export interface AlertGraph {
+  nodes: GraphNode[]
+  edges: GraphEdge[]
+  truncated: boolean
+}
+
+export interface AlertMessage {
+  channel: string
+  type: 'alert.created' | 'alert.updated'
+  data: {
+    id: string
+    rule_code: string
+    title: string
+    risk_band: RiskBand
+    risk_score: number
+    entity_ids: string[]
+    detected_at: string
+    occurrence_count: number
+  }
+}

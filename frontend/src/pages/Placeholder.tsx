@@ -43,15 +43,6 @@ function IdMeta({ id }: { id: string | undefined }) {
   return id ? <code className="font-mono text-[13px] text-fg-muted">{id}</code> : null
 }
 
-export function AlertsScreen() {
-  return <ScreenPlaceholder screen={SCREENS.alerts} />
-}
-
-export function AlertDetailScreen() {
-  const { id } = useParams()
-  return <ScreenPlaceholder screen={SCREENS.alert} meta={<IdMeta id={id} />} />
-}
-
 export function CasesScreen() {
   return <ScreenPlaceholder screen={SCREENS.cases} />
 }

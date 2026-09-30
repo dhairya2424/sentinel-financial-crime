@@ -1,6 +1,8 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup } from '@testing-library/react'
 import { afterEach, vi } from 'vitest'
+import { socket } from '@/ws/socket'
+import { FakeWebSocket } from './ws'
 
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
@@ -23,8 +25,13 @@ class ResizeObserverStub {
 }
 Object.defineProperty(window, 'ResizeObserver', { writable: true, value: ResizeObserverStub })
 
+// Tests never open real sockets; FakeWebSocket lets a test open one and push channel messages.
+Object.defineProperty(globalThis, 'WebSocket', { writable: true, value: FakeWebSocket })
+
 afterEach(() => {
   cleanup()
+  socket.stop()
+  FakeWebSocket.instances = []
   localStorage.clear()
   vi.unstubAllGlobals()
   vi.restoreAllMocks()

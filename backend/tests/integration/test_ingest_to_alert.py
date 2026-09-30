@@ -49,6 +49,8 @@ def test_t_int_05_planted_cycle_raises_rcirc_alert_within_budget(client, world, 
     row = planted["row"]
     assert row["rule_code"] == "R-CIRC" and row["status"] == "open" and row["occurrence_count"] == 1
     assert row["amount_total"] == "630000.00"
+    labels = {e["id"]: e["label"] for e in row["entities"]}
+    assert labels[world.customer] == "Integration Customer" and labels[world.account] == f"XXXXIT{world.suffix}"
     detail = client.get(f"/v1/alerts/{row['id']}", headers=world.bearer(TENANT_A)).json()
     assert detail["risk_band"] in ("high", "critical")
     assert "loop" in detail["explanation"]

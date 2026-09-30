@@ -12,7 +12,7 @@ from app.api.graph import _ensure_graph
 from app.auth.deps import CurrentUser, get_current_user, not_found, require_role
 from app.db import get_db
 from app.graph.service import graph_service
-from app.models import Alert, AlertEvidence, Case, CaseAlert
+from app.models import Account, Alert, AlertEvidence, Case, CaseAlert, Customer, Employee
 from app.services.timeline import decode_cursor, encode_cursor
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
@@ -24,6 +24,12 @@ LINKABLE = {"open", "acknowledged", "linked_to_case"}
 GRAPH_NODE_CAP = 50
 
 
+class EntityRef(BaseModel):
+    id: str
+    type: str
+    label: str
+
+
 class AlertRow(BaseModel):
     id: str
     rule_code: str
@@ -33,6 +39,7 @@ class AlertRow(BaseModel):
     status: str
     entity_ids: list[str]
     primary_entity: str | None
+    entities: list[EntityRef] = []
     amount_total: str | None = None
     detected_at: datetime
     occurrence_count: int
@@ -83,6 +90,26 @@ def _amount_total():
         .correlate(Alert)
         .scalar_subquery()
     )
+
+
+async def _labels(db: AsyncSession, tenant_id: str, ids: set[str]) -> dict[str, EntityRef]:
+    """Names people recognise for alert entities: customer and employee names, masked account numbers."""
+    out: dict[str, EntityRef] = {}
+    by_prefix = {p: [i for i in ids if i.startswith(p)] for p in ("cust_", "acct_", "emp_")}
+    if by_prefix["cust_"]:
+        rows = await db.execute(select(Customer.id, Customer.name).where(Customer.tenant_id == tenant_id, Customer.id.in_(by_prefix["cust_"])))
+        out.update({i: EntityRef(id=i, type="customer", label=n) for i, n in rows.all()})
+    if by_prefix["acct_"]:
+        rows = await db.execute(select(Account.id, Account.account_no_masked).where(Account.tenant_id == tenant_id, Account.id.in_(by_prefix["acct_"])))
+        out.update({i: EntityRef(id=i, type="account", label=m) for i, m in rows.all()})
+    if by_prefix["emp_"]:
+        rows = await db.execute(select(Employee.id, Employee.name).where(Employee.tenant_id == tenant_id, Employee.id.in_(by_prefix["emp_"])))
+        out.update({i: EntityRef(id=i, type="employee", label=n) for i, n in rows.all()})
+    return out
+
+
+def _entities(alert: Alert, labels: dict[str, EntityRef]) -> list[EntityRef]:
+    return [labels[i] for i in alert.entity_ids if i in labels]
 
 
 def _row(alert: Alert, amount: Decimal | None) -> dict[str, Any]:
@@ -144,7 +171,8 @@ async def list_alerts(
     rows = (await db.execute(select(Alert, _amount_total()).where(*clauses).order_by(Alert.detected_at.desc(), Alert.id.desc()).limit(limit + 1))).all()
     page = rows[:limit]
     next_cursor = encode_cursor(page[-1][0].detected_at, page[-1][0].id) if len(rows) > limit else None
-    return AlertPage(items=[AlertRow(**_row(a, amt)) for a, amt in page], next_cursor=next_cursor)
+    labels = await _labels(db, user.tenant_id, {i for a, _ in page for i in a.entity_ids})
+    return AlertPage(items=[AlertRow(**_row(a, amt), entities=_entities(a, labels)) for a, amt in page], next_cursor=next_cursor)
 
 
 async def _detail(db: AsyncSession, alert: Alert) -> AlertDetail:
@@ -155,6 +183,7 @@ async def _detail(db: AsyncSession, alert: Alert) -> AlertDetail:
     linked = await db.scalar(select(CaseAlert.case_id).where(CaseAlert.alert_id == alert.id).order_by(CaseAlert.linked_at.desc()).limit(1))
     return AlertDetail(
         **_row(alert, amount if any(e.evidence_type == "transaction" for e in evidence) else None),
+        entities=_entities(alert, await _labels(db, alert.tenant_id, set(alert.entity_ids))),
         rule_version=alert.rule_version,
         explanation=alert.explanation,
         risk_factors=list(alert.risk_factors),

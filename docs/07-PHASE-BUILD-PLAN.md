@@ -1190,6 +1190,10 @@ Append rows during P5-B (and any doc-touching repair). Columns: Date | Doc | Sec
 | 2026-09-28 | 08-SECURITY | §5 | Audit action `entity.create` added | new registration routes |
 | 2026-09-28 | 04-FRONTEND | §1 routes | `/add` (Add data, admin + investigator) added beside the Timeline | new screen for entering real records |
 | 2026-09-28 | seed data | tenant_demo | Synthetic corpus removed (`python -m app.seed.reset_to_loop`); only the planted `tx_demo_loop_*` loop, its 3 accounts and 3 holders remain | user direction: keep the demo loop, everything else real |
+| 2026-09-30 | 05-BACKEND | §6 Alerts | `entities: [{id,type,label}]` on alert rows and detail | code addition in P3-C: rows and chips name people and accounts |
+| 2026-09-30 | 03-UIUX | §4 | "assignee" filter omitted from the Alert Inbox | alerts have no assignee (cases do, P4) |
+| 2026-09-30 | 03-UIUX | §7 | Evidence panel rendered as a full-width ledger below the risk factors (still always mounted); a score-composition bar above the factor table; the inline timeline reads the primary entity's Timeline only and counts evidence found elsewhere | user-chosen layout (options round: "evidence ledger" + "composition bar"); mixed viewpoints showed the same transfer as + and − |
+| 2026-09-30 | 07-PHASE | P3-C step 1 | WS URL derives from VITE_API_URL (http→ws) unless VITE_WS_URL is set; live arrival toasts app-wide and never replaces the open alert | one config value; user choice "highlight + toast" |
 | 2026-09-30 | 09-DATA-DICT | §3 WS types | Added `alert.updated`, `heartbeat`, `subscribed`, `unsubscribed`, `error` | code addition in P3-B: an extended alert must reach the UI; acks and errors make the protocol observable |
 | 2026-09-30 | 05-BACKEND | §5, §6 Alerts, Ops | WS close code 4401 and acks; alert list/detail shapes, ack only from open (409), link-case rules; ops health `pipeline` block | code addition in P3-B |
 | 2026-09-30 | 02-TRD | §3 | Dedup counts only new evidence; window-boundary fallback; live baselines; delivery/retry rules | P3-B prompt counted every re-detection as an occurrence, which inflates counts on every nearby event |
