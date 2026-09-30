@@ -114,6 +114,8 @@
 
 **Consequences:** T-INT-15 asserts re-export digest equality; regenerated exports after note-add legitimately change digest.
 
+*As built (P4-A):* `generated_by` is left out of the hash as well, so the same data exported by two people gives one digest. The bundle's `case` omits `export_digest` and its `audit` omits `case.export` rows, since both change on every export. Canonical form: `json.dumps(rest, sort_keys=True, separators=(",", ":"), ensure_ascii=False)` in UTF-8, where `rest` is the bundle without `generated_at`, `generated_by` and `digest_sha256`.
+
 ---
 
 ## ADR-009: Frontend EvidencePanel has no dismiss API by construction

@@ -233,6 +233,7 @@ async def link_case(alert_id: str, body: LinkCase, user: CurrentUser = Depends(a
     exists = await db.scalar(select(CaseAlert.case_id).where(CaseAlert.case_id == case.id, CaseAlert.alert_id == alert.id))
     if exists is None:
         db.add(CaseAlert(case_id=case.id, alert_id=alert.id, linked_by=user.id))
+        case.updated_at = func.now()
     previous = alert.status
     alert.status, alert.updated_at = "linked_to_case", func.now()
     audit.log(
@@ -246,6 +247,10 @@ async def link_case(alert_id: str, body: LinkCase, user: CurrentUser = Depends(a
     )
     await db.commit()
     await db.refresh(alert)
+    await db.refresh(case)
+    from app.cases.service import announce  # imported here: the cases service builds on this module
+
+    await announce(user.tenant_id, case, [alert])
     return await _detail(db, alert)
 
 

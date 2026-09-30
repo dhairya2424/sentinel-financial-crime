@@ -426,6 +426,20 @@ Alerts contract notes (as built in P3-B): the list filters are `band`, `rule`, `
  "digest_sha256":"..."}
 ```
 
+Cases contract notes (as built in P4-A):
+- **Create:** `alert_ids` (≤ 50) must be `open` or `acknowledged` alerts of the tenant (404 unknown, 409 otherwise). `group_by_entities` adds every other open/acknowledged alert sharing any entity, newest first, up to 50 in total. An unset `priority` follows the most serious linked alert's band (`medium` with no alerts). `case_number` is `CASE-<year>-<NNNN>`, a per-tenant sequence behind a transaction advisory lock.
+- **Transitions (docs/04 §6):** `open→in_review|closed_*`, `in_review→escalated|closed_*`, `escalated→closed_*`; anything else is 400, a no-op PATCH is 400, and any change to a closed case (including notes and assignment) is 409.
+- **Closing:** needs `close_note` ≥ 10 characters after trimming (422 `close_note required (>=10 chars)`). The note is stored as a case note, `closed_at` is set, and the verdict is copied to every linked alert.
+- **Permissions:** investigators change only cases they created or are assigned (403 otherwise), and closing straight from `open` is manager/admin only. Assign takes an active, non-viewer user of the tenant; investigators may assign only themselves. Assigning an `open` case moves it to `in_review`.
+- **Response shapes:** list rows add `alert_count`, `top_band`, `assignee_name`; `assignee=me|none|<user id>`; keyset cursor on `updated_at`. The detail adds `alerts` (alert rows), `notes` and `audit` (case and linked-alert rows, oldest first).
+- **Live updates:** every change publishes `case.updated` `{id,status,assignee_id,updated_at}` on `cases:{tenant}`. Alerts whose status changed (linked or closed) also get `alert.updated` with `status` in `data`.
+- **Export:**
+  - Returns `Content-Disposition: attachment`, `X-Content-Type-Options: nosniff` and `X-Digest-SHA256`, and records `cases.export_digest` without touching `updated_at`.
+  - The bundle also carries `evidence_count` and `evidence_truncated`, and `graph_snapshot.focus`/`truncated` (entities plus 1-hop, ≤ 300 nodes, sorted).
+  - `timeline` holds ≤ 200 merged items, each with a `viewpoint`. `case` omits `export_digest`, and `audit` omits `case.export` rows, so re-exports stay stable.
+  - Evidence is included in full up to 5,000 rows; `evidence_truncated` marks anything beyond that.
+- **Dashboard (`GET /v1/dashboard/metrics`, all roles):** `{open_cases, open_cases_by_priority, critical_24h, high_24h, alerts_24h, fp_rate_7d (closed_false_positive ÷ cases closed in 7 d, null if none), closed_7d, top_entities:[{entity_id, alert_count, type, label}] (top 5, 30 d), ingest:{events_per_min (this tenant's stream entries in the last minute), lag_ms, backlog}}`. The same payload goes out as `metrics.update` on `dashboard:{tenant}` every 15 s while someone is subscribed, and only when it changed.
+
 ### Rules & Ops
 ```
 GET  /rules                 → active versions

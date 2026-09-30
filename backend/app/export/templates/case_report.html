@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ b.case.case_number }} · {{ b.case.title }} · Sentinel evidence report</title>
+<style>
+  :root { --ink:#0f172a; --muted:#475569; --subtle:#64748b; --line:#e2e8f0; --strong:#cbd5e1; --panel:#f8fafc; }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 32px; color: var(--ink); background: #fff; font: 13px/1.5 "Inter Variable", Inter, system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 980px; margin: 0 auto; }
+  h1 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  h2 { font-size: 15px; margin: 28px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--strong); }
+  h3 { font-size: 13px; margin: 18px 0 6px; }
+  p { margin: 4px 0; }
+  .mono, code, td.mono { font-family: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 12px; }
+  .muted { color: var(--muted); }
+  .subtle { color: var(--subtle); }
+  dl.meta { display: grid; grid-template-columns: max-content 1fr; gap: 2px 16px; margin: 12px 0 0; }
+  dl.meta dt { color: var(--subtle); }
+  dl.meta dd { margin: 0; }
+  table { width: 100%; border-collapse: collapse; margin: 6px 0 10px; }
+  th, td { text-align: left; vertical-align: top; padding: 4px 8px 4px 0; border-bottom: 1px solid var(--line); }
+  th { font-weight: 600; color: var(--muted); font-size: 12px; border-bottom-color: var(--strong); }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  code { word-break: break-word; }
+  .alert { border: 1px solid var(--strong); border-radius: 6px; padding: 12px 14px; margin: 12px 0; break-inside: avoid-page; }
+  .band { display: inline-block; border: 1px solid var(--strong); border-radius: 4px; padding: 0 6px; font-size: 12px; font-weight: 600; text-transform: capitalize; }
+  .explain { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; margin: 8px 0; }
+  .note { border-left: 2px solid var(--strong); padding: 2px 0 2px 10px; margin: 8px 0; white-space: pre-wrap; }
+  .digest { word-break: break-all; }
+  footer { margin-top: 32px; padding-top: 10px; border-top: 1px solid var(--strong); color: var(--subtle); font-size: 12px; }
+  @media print {
+    body { padding: 0; font-size: 12px; }
+    h2 { break-after: avoid-page; }
+    tr { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <p class="subtle mono">Sentinel · case evidence report</p>
+    <h1>{{ b.case.case_number }} — {{ b.case.title }}</h1>
+    <dl class="meta">
+      <dt>Status</dt><dd>{{ b.case.status | replace("_", " ") }}</dd>
+      <dt>Priority</dt><dd>{{ b.case.priority }}</dd>
+      <dt>Assignee</dt><dd>{{ b.case.assignee_name or "Unassigned" }}</dd>
+      <dt>Opened</dt><dd><span class="mono">{{ b.case.created_at }}</span> by {{ b.case.created_by_name or b.case.created_by }}</dd>
+      {% if b.case.closed_at %}<dt>Closed</dt><dd class="mono">{{ b.case.closed_at }}</dd>{% endif %}
+      <dt>Generated</dt><dd><span class="mono">{{ b.generated_at }}</span> by {{ b.generated_by.name or b.generated_by.id }} ({{ b.generated_by.role }})</dd>
+      <dt>Evidence</dt><dd>{{ b.evidence_count }} record{{ "" if b.evidence_count == 1 else "s" }} across {{ b.alerts | length }} alert{{ "" if b.alerts | length == 1 else "s" }}{% if b.evidence_truncated %} — <strong>truncated</strong>: this report carries the first {{ b.evidence_count }}{% endif %}</dd>
+      <dt>SHA-256</dt><dd class="mono digest">{{ b.digest_sha256 }}</dd>
+    </dl>
+    {% if b.case.description %}<p class="explain">{{ b.case.description }}</p>{% endif %}
+  </header>
+
+  <h2>Alerts ({{ b.alerts | length }})</h2>
+  {% for a in b.alerts %}
+  <section class="alert">
+    <p><span class="band">{{ a.risk_band }} {{ a.risk_score }}</span> <span class="mono">{{ a.rule_code }} v{{ a.rule_version }}</span> <strong>{{ a.title }}</strong></p>
+    <p class="muted">Detected <span class="mono">{{ a.detected_at }}</span> · window <span class="mono">{{ a.window_start }} → {{ a.window_end }}</span> · occurrence ×{{ a.occurrence_count }} · {{ a.status | replace("_", " ") }}{% if a.amount_total %} · total {{ a.amount_total | inr }}{% endif %}</p>
+    <p class="muted">Entities: {% for e in a.entities %}{{ e.label }} <span class="subtle mono">({{ e.type }} {{ e.id }})</span>{{ ", " if not loop.last }}{% endfor %}</p>
+    <p class="explain">{{ a.explanation }}</p>
+
+    <h3>Risk factors</h3>
+    <table>
+      <thead><tr><th>Factor</th><th>Raw value</th><th class="num">Weight</th><th class="num">Contribution</th></tr></thead>
+      <tbody>
+      {% for f in a.risk_factors %}
+        <tr><td class="mono">{{ f.name }}</td><td>{{ f.raw_value }}{% if f.imputed %} <span class="subtle">· neutral default</span>{% endif %}</td><td class="num mono">{{ "%.2f" | format(f.weight) }}</td><td class="num mono">{{ "%.1f" | format(f.contribution * 100) }}</td></tr>
+      {% endfor %}
+        <tr><th>Composite</th><td></td><td class="num mono">{{ "%.2f" | format(a.risk_factors | sum(attribute="weight")) }}</td><td class="num mono"><strong>{{ "%.1f" | format((a.risk_factors | sum(attribute="contribution")) * 100) }} → {{ a.risk_score }}</strong></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Evidence ({{ a.evidence | length }})</h3>
+    <table>
+      <thead><tr><th>Type</th><th>Record</th><th>Snapshot</th><th>Captured</th></tr></thead>
+      <tbody>
+      {% for e in a.evidence %}
+        <tr>
+          <td>{{ e.type | replace("_", " ") }}</td>
+          <td class="mono">{{ e.ref_id }}</td>
+          <td>
+            {% if e.type == "transaction" %}
+              <span class="mono">{{ e.snapshot.from_account_id or "—" }} → {{ e.snapshot.to_account_id or "—" }}</span> · {{ e.snapshot.amount | inr }} · <span class="mono">{{ e.snapshot.value_ts }}</span>{% if e.snapshot.channel %} · {{ e.snapshot.channel }}{% endif %}
+            {% else %}
+              <code>{{ e.snapshot | tojson }}</code>
+            {% endif %}
+          </td>
+          <td class="mono subtle">{{ e.captured_at }}</td>
+        </tr>
+      {% else %}
+        <tr><td colspan="4" class="muted">No evidence records on this alert.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </section>
+  {% else %}
+  <p class="muted">No alerts are linked to this case.</p>
+  {% endfor %}
+
+  <h2>Graph snapshot</h2>
+  <p class="muted">{{ b.graph_snapshot.nodes | length }} entities and {{ b.graph_snapshot.edges | length }} relations around the case's {{ b.graph_snapshot.focus | length }} entities{% if b.graph_snapshot.truncated %} (capped at 300 entities){% endif %}.</p>
+  <table>
+    <thead><tr><th>Entity</th><th>Type</th><th>Id</th><th class="num">Links</th></tr></thead>
+    <tbody>
+    {% for n in b.graph_snapshot.nodes %}
+      <tr><td>{% if n.id in b.graph_snapshot.focus %}<strong>{{ n.label }}</strong>{% else %}{{ n.label }}{% endif %}</td><td>{{ n.type }}</td><td class="mono">{{ n.id }}</td><td class="num mono">{{ n.degree }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <table>
+    <thead><tr><th>Relation</th><th>From</th><th>To</th><th>Detail</th></tr></thead>
+    <tbody>
+    {% for e in b.graph_snapshot.edges %}
+      <tr><td>{{ e.type }}</td><td class="mono">{{ e.source }}</td><td class="mono">{{ e.target }}</td><td class="mono subtle">{% if e.type == "TRANSFER" %}{{ e.props.amount | inr }} · {{ e.props.ts }}{% else %}{{ e.id }}{% endif %}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Timeline ({{ b.timeline | length }})</h2>
+  <table>
+    <thead><tr><th>When</th><th>Event</th><th>Actor</th><th class="num">Amount</th><th>Record</th></tr></thead>
+    <tbody>
+    {% for i in b.timeline %}
+      <tr><td class="mono">{{ i.ts }}</td><td>{{ i.title }}</td><td>{{ i.actor.name if i.actor else "" }}</td><td class="num mono">{{ i.value | inr }}</td><td class="mono subtle">{{ i.ref_id }}</td></tr>
+    {% else %}
+      <tr><td colspan="5" class="muted">No timeline events for these entities.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h2>Notes ({{ b.notes | length }})</h2>
+  {% for n in b.notes %}
+  <p class="muted"><strong>{{ n.author_name or n.author_id }}</strong> · <span class="mono">{{ n.created_at }}</span></p>
+  <div class="note">{{ n.body }}</div>
+  {% else %}
+  <p class="muted">No notes.</p>
+  {% endfor %}
+
+  <h2>Decision history</h2>
+  <table>
+    <thead><tr><th>When</th><th>Who</th><th>Action</th><th>On</th><th>Detail</th></tr></thead>
+    <tbody>
+    {% for r in b.audit %}
+      <tr><td class="mono">{{ r.at }}</td><td>{{ r.actor_name or r.actor_user or r.actor_kind }}</td><td class="mono">{{ r.action }}</td><td class="mono subtle">{{ r.object_id }}</td><td><code>{{ r.detail | tojson }}</code></td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <footer>
+    <p>SHA-256 <span class="mono digest">{{ b.digest_sha256 }}</span> is taken over the JSON bundle of this case without <code>generated_at</code>, <code>generated_by</code> and the digest itself (keys sorted, separators <code>,</code> and <code>:</code>, UTF-8). Exporting unchanged data again gives the same value.</p>
+  </footer>
+</main>
+</body>
+</html>

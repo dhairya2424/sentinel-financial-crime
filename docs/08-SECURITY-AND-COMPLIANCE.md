@@ -65,7 +65,7 @@
 
 Every state change writes `audit_log` row: `actor_user|system`, `action`, `object_type/id`, `detail` JSON (from→to for status changes), `created_at`.
 
-**Mandatory audit actions (checked by test):** `login`, `login_failed`, `ingest.batch`, `alert.ack`, `alert.link`, `case.create`, `case.assign`, `case.note`, `case.status`, `case.export`, `rule.update`, `ops.replay`, `graph.rebuild` (admin repair of the in-memory graph, added in P2-A), `entity.create` (a customer, account or employee registered through `/v1/entities`, added with the Add data screen), `demo.replant` (the S1 demo loop re-planted by `app.seed.suspicious`, with the alerts it removed and the events it replayed).
+**Mandatory audit actions (checked by test):** `login`, `login_failed`, `ingest.batch`, `alert.ack`, `alert.link`, `case.create`, `case.assign`, `case.note`, `case.status`, `case.export`, `rule.update`, `ops.replay`, `graph.rebuild` (admin repair of the in-memory graph, added in P2-A), `entity.create` (a customer, account or employee registered through `/v1/entities`, added with the Add data screen), `case.update` (priority or description changed, with from/to), `demo.replant` (the S1 demo loop re-planted by `app.seed.suspicious`, with the alerts it removed and the events it replayed).
 
 Audit table is append-only: no UPDATE/DELETE API; DB role in prod should deny DML on `audit_log` except INSERT (migration note).
 
