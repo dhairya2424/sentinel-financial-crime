@@ -14,7 +14,11 @@ interface SocketStatus {
 export const useSocketStatus = create<SocketStatus>(() => ({ state: 'down', since: Date.now(), retryAt: null }))
 
 export const RESYNC_EVENT = 'ws.resync'
-export const WS_URL = (import.meta.env.VITE_WS_URL ?? API_URL.replace(/^http/, 'ws')).replace(/\/+$/, '')
+/** Behind the demo nginx the API is same-origin (VITE_API_URL=""), so the socket follows the page's own host. */
+function sameOriginWs(): string {
+  return typeof window === 'undefined' ? '' : `${window.location.protocol === 'https:' ? 'wss' : 'ws'}://${window.location.host}`
+}
+export const WS_URL = (import.meta.env.VITE_WS_URL || (API_URL ? API_URL.replace(/^http/, 'ws') : sameOriginWs())).replace(/\/+$/, '')
 
 const MIN_BACKOFF_MS = 1_000
 const MAX_BACKOFF_MS = 30_000

@@ -16,6 +16,7 @@ interface AlertsState {
   setFilters: (filters: AlertFilters) => void
   markAcknowledged: (id: string) => void
   replace: (row: AlertRow) => void
+  remove: (id: string) => void
   seen: (id: string) => void
 }
 
@@ -54,6 +55,9 @@ export const useAlerts = create<AlertsState>((set) => ({
   },
   replace: (row) => {
     set((s) => ({ items: s.items.map((x) => (x.id === row.id ? row : x)) }))
+  },
+  remove: (id) => {
+    set((s) => (s.items.some((x) => x.id === id) ? { items: s.items.filter((x) => x.id !== id) } : s))
   },
   seen: (id) => {
     set((s) => {

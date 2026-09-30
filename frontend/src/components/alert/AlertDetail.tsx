@@ -187,7 +187,7 @@ export function AlertDetail({ alertId, caseRequested = 0 }: AlertDetailProps) {
 
       {alert && (
         <div className="flex flex-col gap-4">
-          <AlertGraph alertId={alert.id} entityIds={alert.entity_ids} evidenceIds={evidenceIds} />
+          <AlertGraph alertId={alert.id} entityIds={alert.entity_ids} evidenceIds={evidenceIds} until={alert.window_end} />
           <EvidenceTimeline entities={alert.entities} evidenceIds={evidenceIds} />
         </div>
       )}

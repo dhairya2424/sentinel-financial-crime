@@ -7,7 +7,7 @@ import { getAlertGraph } from '@/api/alerts'
 import type { AlertGraph as AlertGraphData, GraphNode } from '@/api/types'
 import type { BundleFlowEdge } from '@/graph/BundleEdge'
 import { ArrowMarkers } from '@/graph/ArrowMarkers'
-import { bundleEdges, nodeAriaLabel, type Bundle, type XY } from '@/graph/model'
+import { bundleEdges, graphQuery, nodeAriaLabel, type Bundle, type XY } from '@/graph/model'
 import type { EntityFlowNode } from '@/graph/nodes'
 import { EDGE_COMPONENTS, NODE_TYPES } from '@/graph/registry'
 
@@ -16,6 +16,8 @@ interface AlertGraphProps {
   entityIds: readonly string[]
   /** Transfers the alert's evidence names; drawn as cycle legs. */
   evidenceIds: ReadonlySet<string>
+  /** The alert's window end: Graph Explorer's cycle search is anchored to it. */
+  until?: string
 }
 
 type GraphState = { status: 'loading' } | { status: 'loaded'; graph: AlertGraphData } | { status: 'error'; message: string }
@@ -101,7 +103,7 @@ function Refit({ box }: { box: RefObject<HTMLDivElement | null> }) {
 }
 
 /** A read-only snapshot of the alert's entities and their direct transfer neighbours (docs/03 §7). */
-export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps) {
+export function AlertGraph({ alertId, entityIds, evidenceIds, until }: AlertGraphProps) {
   const [state, setState] = useState<GraphState>({ status: 'loading' })
   const [attempt, setAttempt] = useState(0)
   const box = useRef<HTMLDivElement>(null)
@@ -225,7 +227,7 @@ export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps)
             {flow && flow.outside > 0 && ` +${String(flow.outside)} connected ${flow.outside === 1 ? 'entity' : 'entities'} outside this alert.`}
           </span>
           {primary && (
-            <Link to={`/graph?node=${encodeURIComponent(primary)}`} className="inline-flex items-center gap-1 font-medium text-accent hover:underline">
+            <Link to={`/graph?${graphQuery({ node: primary, depth: 2, until: until ?? null })}`} className="inline-flex items-center gap-1 font-medium text-accent hover:underline">
               Open in Graph Explorer
               <ArrowUpRight aria-hidden="true" className="size-3.5" />
             </Link>

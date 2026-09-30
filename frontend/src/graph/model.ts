@@ -7,17 +7,23 @@ export type LayoutMode = 'force' | 'rings'
 export interface GraphParams {
   node: string | null
   depth: Depth
+  /** End of the 72-hour cycle window; null means now. Links from an alert pin it to the alert's window, so its loop
+   * stays findable however long after the transfers someone opens it. */
+  until: string | null
 }
 
 export function parseGraphParams(params: URLSearchParams): GraphParams {
   const node = params.get('node')?.trim()
-  return { node: node ? node : null, depth: params.get('depth') === '1' ? 1 : 2 }
+  const until = params.get('until')?.trim()
+  const valid = until && /[zZ]|[+-]\d{2}:?\d{2}$/.test(until) && !Number.isNaN(Date.parse(until))
+  return { node: node ? node : null, depth: params.get('depth') === '1' ? 1 : 2, until: valid ? until : null }
 }
 
-export function graphQuery({ node, depth }: GraphParams): string {
+export function graphQuery({ node, depth, until }: GraphParams): string {
   const params = new URLSearchParams()
   if (node) params.set('node', node)
   params.set('depth', String(depth))
+  if (until) params.set('until', until)
   return params.toString()
 }
 

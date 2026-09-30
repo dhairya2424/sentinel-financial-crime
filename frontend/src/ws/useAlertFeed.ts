@@ -1,5 +1,5 @@
 import { getAlert } from '@/api/alerts'
-import type { AlertMessage, AlertRow } from '@/api/types'
+import type { AlertMessage, AlertRemovedMessage, AlertRow } from '@/api/types'
 import { RISK_BANDS } from '@/lib/risk'
 import { useAlerts } from '@/store/alerts'
 import { useAuth } from '@/store/auth'
@@ -17,6 +17,12 @@ function isAlertMessage(raw: unknown): raw is AlertMessage {
   return (type === 'alert.created' || type === 'alert.updated') && typeof data === 'object' && data !== null
 }
 
+function isRemoval(raw: unknown): raw is AlertRemovedMessage {
+  if (typeof raw !== 'object' || raw === null) return false
+  const { type, data } = raw as { type?: unknown; data?: { id?: unknown } }
+  return type === 'alert.removed' && typeof data?.id === 'string'
+}
+
 /**
  * App-wide listener on this tenant's alert channel (mounted once, in AppShell). A new alert raises a toast
  * straight away, then its full row (with entity names) is fetched and prepended to the ledger. The alert
@@ -25,6 +31,10 @@ function isAlertMessage(raw: unknown): raw is AlertMessage {
 export function useAlertFeed(): void {
   const tenant = useAuth((s) => s.user?.tenant_id ?? null)
   useChannel(tenant ? `alerts:${tenant}` : null, (raw) => {
+    if (isRemoval(raw)) {
+      useAlerts.getState().remove(raw.data.id)
+      return
+    }
     if (!isAlertMessage(raw)) return
     const { data, type } = raw
     if (type === 'alert.created') {

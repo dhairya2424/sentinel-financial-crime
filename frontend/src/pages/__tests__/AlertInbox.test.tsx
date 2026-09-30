@@ -144,6 +144,22 @@ describe('Alert Inbox', () => {
     expect(router.state.location.pathname).toBe('/alerts/alert_loop')
   })
 
+  it('an alert.removed message drops that row, so a re-planted demo loop is not listed twice', async () => {
+    open('/alerts')
+    const rows = await screen.findAllByTestId('alert-row')
+    const ws = FakeWebSocket.latest()
+    act(() => {
+      ws?.open()
+    })
+    act(() => {
+      ws?.receive({ channel: 'alerts:tenant_demo', type: 'alert.removed', data: { id: 'alert_loop', reason: 'demo.replant' } })
+    })
+    await waitFor(() => {
+      expect(screen.getAllByTestId('alert-row')).toHaveLength(rows.length - 1)
+    })
+    expect(screen.getAllByTestId('alert-row').map((r) => r.textContent)).not.toContainEqual(expect.stringContaining('Circular transfer'))
+  })
+
   it('band chips and the rule select drive the API query and the URL', async () => {
     const { fetchMock, router } = open('/alerts')
     await screen.findAllByTestId('alert-row')

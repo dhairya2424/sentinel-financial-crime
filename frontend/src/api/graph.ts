@@ -22,7 +22,8 @@ export function getNeighbors(
   return api<Neighborhood>(`/v1/graph/neighbors?${query.toString()}`, { signal })
 }
 
-export function getCycles(nodeId: string, windowHours = 72, signal?: AbortSignal): Promise<CycleResult> {
+export function getCycles(nodeId: string, windowHours = 72, until: string | null = null, signal?: AbortSignal): Promise<CycleResult> {
   const query = new URLSearchParams({ node_id: nodeId, window_hours: String(windowHours) })
+  if (until) query.set('until', until)
   return api<CycleResult>(`/v1/graph/cycles?${query.toString()}`, { signal })
 }

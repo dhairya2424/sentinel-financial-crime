@@ -48,11 +48,16 @@ describe('edge style map', () => {
 
 describe('URL state', () => {
   it('parses ?node&depth with depth defaulting to 2', () => {
-    expect(parseGraphParams(new URLSearchParams('node=acct_123&depth=1'))).toEqual({ node: 'acct_123', depth: 1 })
-    expect(parseGraphParams(new URLSearchParams('node=cust_9'))).toEqual({ node: 'cust_9', depth: 2 })
-    expect(parseGraphParams(new URLSearchParams('depth=7'))).toEqual({ node: null, depth: 2 })
-    expect(parseGraphParams(new URLSearchParams('node=%20%20'))).toEqual({ node: null, depth: 2 })
-    expect(graphQuery({ node: 'acct_123', depth: 2 })).toBe('node=acct_123&depth=2')
+    expect(parseGraphParams(new URLSearchParams('node=acct_123&depth=1'))).toEqual({ node: 'acct_123', depth: 1, until: null })
+    expect(parseGraphParams(new URLSearchParams('node=cust_9'))).toEqual({ node: 'cust_9', depth: 2, until: null })
+    expect(parseGraphParams(new URLSearchParams('depth=7'))).toEqual({ node: null, depth: 2, until: null })
+    expect(parseGraphParams(new URLSearchParams('node=%20%20'))).toEqual({ node: null, depth: 2, until: null })
+    expect(graphQuery({ node: 'acct_123', depth: 2, until: null })).toBe('node=acct_123&depth=2')
+    const anchored = parseGraphParams(new URLSearchParams('node=cust_9&until=2026-09-28T07%3A37%3A19%2B00%3A00'))
+    expect(anchored.until).toBe('2026-09-28T07:37:19+00:00')
+    expect(graphQuery(anchored)).toBe('node=cust_9&depth=2&until=2026-09-28T07%3A37%3A19%2B00%3A00')
+    expect(parseGraphParams(new URLSearchParams('node=cust_9&until=2026-09-28T07:37:19')).until).toBeNull()
+    expect(parseGraphParams(new URLSearchParams('node=cust_9&until=yesterday')).until).toBeNull()
   })
 })
 

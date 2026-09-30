@@ -99,7 +99,7 @@ export function GraphExplorer() {
 
   return (
     <ReactFlowProvider>
-      <Explorer key={`${current.node}/${String(current.depth)}`} focus={current.node} depth={current.depth} go={go} />
+      <Explorer key={`${current.node}/${String(current.depth)}`} focus={current.node} depth={current.depth} until={current.until} go={go} />
     </ReactFlowProvider>
   )
 }
@@ -118,7 +118,7 @@ const CYCLES_OFF: CycleState = {
   loops: 0,
 }
 
-function Explorer({ focus, depth, go }: { focus: string; depth: Depth; go: (next: Partial<GraphParams>) => void }) {
+function Explorer({ focus, depth, until, go }: { focus: string; depth: Depth; until: string | null; go: (next: Partial<GraphParams>) => void }) {
   const { fitView, zoomIn, zoomOut } = useReactFlow()
   const wrapRef = useRef<HTMLDivElement>(null)
   const [attempt, setAttempt] = useState(0)
@@ -277,7 +277,7 @@ function Explorer({ focus, depth, go }: { focus: string; depth: Depth; go: (next
     }
     const roots = cycleRoots(store.nodes.get(focus), bundles)
     setCycles({ ...CYCLES_OFF, status: 'loading' })
-    Promise.all(roots.map((r) => getCycles(r).then((res) => ({ root: r, res }))))
+    Promise.all(roots.map((r) => getCycles(r, 72, until).then((res) => ({ root: r, res }))))
       .then(async (results) => {
         const legs = new Set(results.flatMap((r) => r.res.legs.flat()))
         const loopNodes = new Set(results.flatMap((r) => r.res.cycles.flat()))
@@ -323,11 +323,12 @@ function Explorer({ focus, depth, go }: { focus: string; depth: Depth; go: (next
   const firstLoad = loading && store.nodes.size === 0
   const loadError = loaded?.error ?? null
 
+  const span = until ? `in the 72 hours to ${tsFormat.format(new Date(until))}` : 'in the last 72 hours'
   const canvasNote =
     cycles.status === 'on'
       ? cycles.loops === 0
-        ? `No loops through ${focusNode?.label ?? 'this entity'}'s accounts in the last 72 hours`
-        : `${String(cycles.loops)} ${cycles.loops === 1 ? 'loop' : 'loops'} in the last 72 hours`
+        ? `No loops through ${focusNode?.label ?? 'this entity'}'s accounts ${span}`
+        : `${String(cycles.loops)} ${cycles.loops === 1 ? 'loop' : 'loops'} ${span}`
       : loaded?.truncated
         ? 'Showing the first 400 nodes. Expand from a node to see more.'
         : 'Double-click a node to expand it. Hover an edge for its transactions.'

@@ -6,17 +6,7 @@
     <meta name="color-scheme" content="light dark" />
     <title>Sentinel</title>
     <link rel="icon" href="data:," />
-    <script>
-      (function () {
-        var pref = 'system';
-        try {
-          var raw = localStorage.getItem('sentinel-theme');
-          if (raw) pref = JSON.parse(raw).state.preference || 'system';
-        } catch (e) {}
-        var dark = pref === 'dark' || (pref === 'system' && matchMedia('(prefers-color-scheme: dark)').matches);
-        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
-      })();
-    </script>
+    <script src="/theme-init.js"></script>
   </head>
   <body>
     <div id="root"></div>

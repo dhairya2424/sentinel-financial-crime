@@ -304,6 +304,13 @@ export interface AlertGraph {
   truncated: boolean
 }
 
+/** The alert no longer exists: the S1 demo re-plant removed it so detection can run again from scratch. */
+export interface AlertRemovedMessage {
+  channel: string
+  type: 'alert.removed'
+  data: { id: string; reason: string }
+}
+
 export interface AlertMessage {
   channel: string
   type: 'alert.created' | 'alert.updated'

@@ -38,7 +38,7 @@ export function initials(name: string): string {
 
 export const apiHost = (() => {
   try {
-    return new URL(API_URL).host
+    return API_URL ? new URL(API_URL).host : window.location.host
   } catch {
     return API_URL
   }
