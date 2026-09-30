@@ -156,6 +156,18 @@ CI gates: pytest -q | npm test | typecheck | lint | gitleaks | pip-audit | npm a
 | graph rebuild | startup log | ≤30000ms for 100k rows |
 | export ≤500 evidence | T-INT-15 timing | ≤5000ms |
 
+**Measured (2026-09-30, P3 gate)** with `python -m tests.perf.bench_nfr` against the running stack (API + PostgreSQL 16 + Redis 7 in Docker, one Windows 11 dev laptop). It uses throwaway tenants that are deleted after the run.
+
+| Check | n | p50 ms | p95 ms | max ms | Budget | Result |
+|---|---|---|---|---|---|---|
+| ingest → WS `alert.created` (3-leg loop, public API, real WebSocket) | 20 | 117 | 200 | 200 | p95 ≤ 5000 | PASS |
+| graph 2-hop (`neighbors`, depth 2) on 10,000 nodes / 90,000 transfers | 200 | 17 | 21 | 24 | p95 ≤ 500 | PASS |
+| alert list API (`GET /v1/alerts`, warm connection) | 30 | 20 | 23 | 24 | p95 ≤ 300 | PASS |
+| graph rebuild from PostgreSQL, 100,000 rows | 1 | 2274 | 2274 | 2274 | ≤ 30000 | PASS |
+| export ≤ 500 evidence | — | — | — | — | ≤ 5000 | not built yet (P4 case export) |
+
+Single-run cross-checks: T-INT-05 ingest→alert 124–177 ms, T-INT-06 ≈ 195 ms, S1 re-plant publish→alert 86 ms (`test_demo_replant.py`). The 2-hop figure is the in-process graph call. The HTTP route adds serialisation, so the ≤500 budget has headroom for it.
+
 ## 9. Test Data Management
 
 - All synthetic; **no production data** in repo.

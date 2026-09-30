@@ -38,7 +38,7 @@ docker compose down -v                 # RESET dev DB (destroys data!)
 python -m app.seed.users
 python -m app.seed.rules
 python -m app.seed.legitimate --customers 50 --days 90
-python -m app.seed.suspicious --only S1,S2,S3,S4,S5   # demo scenarios
+python -m app.seed.suspicious --only S1               # re-plant the demo loop live (as built: S1 is the only scenario)
 python -m app.seed --scenario mixed                     # combined convenience
 
 # Tests / quality

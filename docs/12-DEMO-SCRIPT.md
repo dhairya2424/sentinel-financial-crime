@@ -22,21 +22,23 @@ Narrator: *"Everything you'll see is live — WebSocket-fed, sub-5-second from t
 
 | Step | Action | Say |
 |---|---|---|
-| 1 | Open second terminal, run `python -m app.seed.suspicious --only S1` | "I'm planting a classic circular scheme now — ₹6 lakh looping through three accounts in four hours." |
-| 2 | Stay on Alert Inbox (`/alerts`) — do NOT refresh | "Watch the inbox…" |
-| 3 | New `R-CIRC` row appears with highlight | "…alert arrived in under 5 seconds with no page reload. Detection window, not batch overnight." |
+| 1 | Open second terminal (in `backend/`), run `python -m app.seed.suspicious --only S1` | "I'm planting a classic circular scheme now: ₹7.2 lakh looping through three accounts in four hours." |
+| 2 | Stay on Alert Inbox (`/alerts`); do NOT refresh | "Watch the inbox…" |
+| 3 | New `R-CIRC` row appears with highlight and a toast; the terminal prints the detection time | "…the alert arrived in a fraction of a second with no page reload. Detection window, not batch overnight." |
 
-**If alert is slow/missed (venue risk):** fall back — pre-open the S1 alert from earlier seed (`/alerts?rule=R-CIRC`), narrate as "here's what just fired in our pre-seeded run."
+*As built:* S1 is the planted demo loop (`tx_demo_loop_1..3`, ₹2,40,000 each, Karan Apte → Priya Khan → Nikhil Gokhale → Karan Apte). Planting removes the alert the loop raised before and replays its three transfers through the live pipeline, so detection runs from scratch; the command waits for the new alert and prints how long it took. It is audited (`demo.replant`) and refuses if a case holds the alert. Rehearse with `--dry-run` first. S1 is the only scenario: tenants otherwise hold only data people entered.
+
+**If alert is slow/missed (venue risk):** fall back to pre-opening the existing loop alert (`/alerts?rule=R-CIRC`) and narrate it as "here's what fired in our rehearsal run."
 
 ## 3. Explainability Tour (75s) ★ mandatory outcome
 
 Click the R-CIRC alert (or pre-opened one). Point at **each block** in order (docs/03 §7):
 
-1. **Explanation prose** — "₹4.2L moved in a loop: A-1 → A-7 → A-9 → A-1…"
-2. **Risk factors table** — "Not one number: four weighted factors. Amount vs p95 = 4.2× contributes 35%, temporal proximity 25%… they sum to the composite — the band is derived, never hidden."
-3. **Evidence panel (right)** — "Mandatory. It cannot be dismissed — try to find a score-only view; there isn't one in the product." Click a transaction row → raw JSON drawer.
-4. **Inline mini-graph** — cycle edges amber with `Cycle ×3` badge.
-5. **Acknowledge** — status flips, audited.
+1. **Explanation prose** — "₹7,20,000 moved in a loop across 3 accounts within 4h: XXXXXXXX1158 (Karan Apte) → XXXXXXXX5082 (Priya Khan) → XXXXXXXX8018 (Nikhil Gokhale) → back."
+2. **Risk factors** — "Not one number: four weighted factors, and the bar shows how they add up to 74, High. Linkage depth 25, temporal proximity 23.6. Amount and velocity are drawn dashed: these accounts have too little history to compare against, so those factors hold neutral defaults, and the product says so (25 of the 74 points) instead of inventing a ratio."
+3. **Evidence panel (below the factors)** — "Mandatory. It cannot be dismissed; there is no score-only view in the product." Click a transaction row → raw record drawer with its source table.
+4. **Inline mini-graph** — the three loop legs in amber, each labelled "Cycle"; "Open in Graph Explorer" for the full neighbourhood.
+5. **Acknowledge** (or press A) — status flips to Acknowledged, audited.
 
 > Judge line: *"Regulators ask 'why' — this panel is the answer, attached to every alert by design."*
 
@@ -124,6 +126,6 @@ alert_latency_p95_ms: NNNN   [target <=5000] PASS
 |---|---|
 | Wi-Fi down | Everything is localhost — run entirely offline; show screenshots for export step if browser download blocked |
 | WS banner shows reconnecting | Refresh once; narrate backoff design honestly if persists |
-| S1 plant doesn't alert (bad seed state) | Pre-open alert from cold seed; run `--only S1` again after `docker compose restart api` |
+| S1 plant doesn't alert (the command says "no R-CIRC alert after 10s") | Check the API is up (its pipeline worker runs in-process); `docker compose restart api`, then run `--only S1` again. Meanwhile pre-open the loop alert. |
 | Demo laptop slow | Stop `npm run dev` HMR; use prebuilt `docker compose` web container |
 | Judge wants depth | Have docs/ open at TRD §4 algorithms and test report ready |

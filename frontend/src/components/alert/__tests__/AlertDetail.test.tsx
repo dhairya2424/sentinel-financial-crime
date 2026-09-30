@@ -118,7 +118,7 @@ describe('AlertDetail', () => {
     expect(within(screen.getByTestId('evidence-panel')).getByRole('heading', { name: 'Evidence (1)' })).toBeInTheDocument()
   })
 
-  it('T-FE-07: Acknowledge calls the API and the status follows', async () => {
+  it('Acknowledge calls the API and the status follows', async () => {
     let posted = 0
     show({
       'GET /v1/alerts/alert_loop': () => json(DETAIL),
