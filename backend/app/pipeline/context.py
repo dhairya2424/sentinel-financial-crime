@@ -5,8 +5,9 @@ O(affected). The window is widened just enough for every rule to see what it nee
 - R-CIRC: loops of up to six accounts, so accounts within five transfer hops of the event are included.
 - R-STRUCT: every outgoing transfer of the affected customers, across all their accounts.
 - R-PROFILE_*: employee actions within 48h, and the entitlements held when each action happened.
-- Baselines and last activity are counted live from the store, because ingest does not maintain the
-  stored baseline columns; the larger of stored and live wins.
+- Baselines and last activity are counted from the stored transactions themselves. The accounts table's
+  baseline columns are ignored: no write path maintains them, and a value left there by an old seed would
+  let invented history inflate a real alert.
 """
 
 from __future__ import annotations
@@ -248,7 +249,6 @@ async def _account_profiles(
 ) -> dict[str, AccountProfile]:
     if not accounts:
         return {}
-    stored = {a.id: a for a in await db.scalars(select(Account).where(Account.tenant_id == tenant_id, Account.id.in_(accounts)))}
     base = select(Transaction.from_account_id, func.count(), func.coalesce(func.sum(Transaction.amount), 0)).where(
         Transaction.tenant_id == tenant_id,
         Transaction.status == "completed",
@@ -266,15 +266,8 @@ async def _account_profiles(
     last = dict(last_rows.all())
     profiles = {}
     for acct in accounts:
-        row = stored.get(acct)
         n, amt = live.get(acct, (0, Decimal(0)))
-        profiles[acct] = AccountProfile(
-            acct,
-            holder_of.get(acct),
-            max(n, row.baseline_30d_count if row else 0),
-            max(Decimal(amt), row.baseline_30d_amount if row else Decimal(0)),
-            last.get(acct),
-        )
+        profiles[acct] = AccountProfile(acct, holder_of.get(acct), n, Decimal(amt), last.get(acct))
     return profiles
 
 

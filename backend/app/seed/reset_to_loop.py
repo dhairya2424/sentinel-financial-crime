@@ -5,7 +5,11 @@ Users (logins), rules and the append-only audit log are never touched. Everythin
 deleted, so all further data comes from real entry (the Add data screen or POST /v1/ingest/events).
 
     python -m app.seed.reset_to_loop --dry-run
-    python -m app.seed.reset_to_loop
+    python -m app.seed.reset_to_loop --force
+
+It also clears the kept accounts' stored baselines and last-activity time, which the seed computed from the
+invented history. Since the wipe, tenants hold data people entered, and this script deletes that too, so a
+real run needs --force; always look at the --dry-run output first.
 
 Restart the API (or call admin POST /v1/graph/rebuild) afterwards so the in-memory graph matches.
 """
@@ -40,6 +44,9 @@ async def reset(tenant_id: str, dry_run: bool) -> dict[str, int]:
             (Employee, Employee.tenant_id == tenant_id),
         ]
         counts: dict[str, int] = {}
+        await db.execute(
+            update(Account).where(Account.id.in_(keep_accounts)).values(baseline_30d_count=0, baseline_30d_amount=0, last_activity_at=None)
+        )
         for model, where in plan:
             if model is Employee:
                 await db.execute(update(Employee).where(where).values(manager_id=None))
@@ -55,7 +62,10 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--tenant", default="tenant_demo")
     parser.add_argument("--dry-run", action="store_true", help="report what would be deleted, change nothing")
+    parser.add_argument("--force", action="store_true", help="required for a real run: this also deletes records people entered")
     args = parser.parse_args()
+    if not args.dry_run and not args.force:
+        raise SystemExit("Refusing to run: this deletes every record except the demo loop, including real entries. Use --dry-run first, then --force.")
     counts = asyncio.run(reset(args.tenant, args.dry_run))
     print(("DRY RUN, nothing changed: " if args.dry_run else "") + ", ".join(f"{k}={v}" for k, v in counts.items()))
 
