@@ -440,6 +440,9 @@ Cases contract notes (as built in P4-A):
   - Evidence is included in full up to 5,000 rows; `evidence_truncated` marks anything beyond that.
 - **Dashboard (`GET /v1/dashboard/metrics`, all roles):** `{open_cases, open_cases_by_priority, critical_24h, high_24h, alerts_24h, fp_rate_7d (closed_false_positive ÷ cases closed in 7 d, null if none), closed_7d, top_entities:[{entity_id, alert_count, type, label}] (top 5, 30 d), ingest:{events_per_min (this tenant's stream entries in the last minute), lag_ms, backlog}}`. The same payload goes out as `metrics.update` on `dashboard:{tenant}` every 15 s while someone is subscribed, and only when it changed.
 
+### Users (as built in P4-B)
+`GET /v1/users/assignees` (any role): `[{id, full_name, role}]` for active non-viewer users of the caller's tenant, ordered by name; no emails. It feeds the assignee pickers, since `GET /v1/users` stays admin-only. CORS exposes `Content-Disposition` and `X-Digest-SHA256`, so the browser export can keep the server's file name and show the digest.
+
 ### Rules & Ops
 ```
 GET  /rules                 → active versions

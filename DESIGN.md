@@ -419,7 +419,7 @@ Three hues that exist only to draw relations on the Graph Explorer. They are str
 ### Named Rules
 **The One Signal Rule.** The sky accent marks only where you are, what has focus, and the one primary action on a screen. If sky appears anywhere else, it is decoration and must go. The one inherited exception is the docs/03 §5 edge grammar: EMPLOYEE_ACCESS is a dotted sky stroke, and the touch grid's "access only" mark repeats it as a dotted sky ring.
 
-**The Four Families Rule.** Health is teal (`ok`), problems are amber (warn family), errors are rose (`danger`), and risk is the four bands. The band colours appear only in RiskBadge through `lib/risk.ts`. Never use a band for health, never use `danger` for risk, and never use amber for a failed action. A detected loop is a problem to notice, so its "Cycle" badge takes the warn family and its legs take Cycle Amber.
+**The Four Families Rule.** Health is teal (`ok`), problems are amber (warn family), errors are rose (`danger`), and risk is the four bands. The band colours appear only in RiskBadge through `lib/risk.ts`, with one exception: the Dashboard's alerts-by-band small multiples fill each row's bars in that row's band colour, and a RiskBadge names the row. Band colours are never stacked or placed side by side in one chart: the palette validator fails high against critical (ΔE 6.1 for normal vision) and medium against high (ΔE 0.6 deutan). Case priority is urgency, not risk, so it never takes a band colour. Never use a band for health, never use `danger` for risk, and never use amber for a failed action. A detected loop is a problem to notice, so its "Cycle" badge takes the warn family and its legs take Cycle Amber.
 
 **The Dim, Don't Dye Rule.** When one record reveals related ones (the transfers within 48 hours of an employee's change), the related rows keep their normal ink and every unrelated row of that kind drops its text and icon to subtle ink (`fg-subtle`). The relation is named by a mono delay tag ("+17h after"). Never introduce a colour family or an opacity fade to mark a link. On the graph a dimmed node does the same: its label drops to subtle ink and its border to the plain hairline (`line`), at full opacity. Edges have no ink to drop, so a dimmed edge recedes to 14% opacity.
 
@@ -667,6 +667,38 @@ A 320px read-only React Flow frame. It draws only the alert's own entities:
 ### Evidence Timeline
 The alert's evidence as lane rows from the primary entity's Timeline, with a note counting evidence found on other Timelines. When every row sits in one lane, the empty lane is dropped: the header reads Time | lane label, and rows read time, then card, left to right.
 
+### Priority Badge
+Case priority is a 20px outlined tag in neutral ink: a lucide signal icon (low → critical, SignalLow to Signal) and the word. Critical is set in semibold ink, never in a band colour. The screen-reader name is "Priority: …".
+
+### Case Board (signature)
+The Case Manager has two views with the same data, and the choice is remembered in `localStorage` (`sentinel.cases.view`).
+- **Kanban:** four raised columns (Open, In review, Escalated, Closed, where both closed verdicts share the last column and its newest 12 are shown). Each card is a panel link with the mono case number and the worst linked alert's RiskBadge, a two-line title, the Priority Badge (plus a verdict tag once closed), then a mono footer: assignee initials (a dashed ring when unassigned), the alert count and the age.
+- **List:** a hairline table with the same facts and an Open / Closed / All scope.
+- **Live updates:** a card that changes on the cases channel moves column and takes the one-shot `alert-fresh` wash. Being handed a case raises a toast for the assignee only.
+
+### Case File (signature)
+The case detail page puts reading on the left and deciding on the right.
+- **Left:** the header (mono number, status tag, Priority Badge, worst RiskBadge, title, "Opened … by … · N alerts · Total ₹…"), the linked alerts, then the notes feed and its composer. Enter saves a note; Shift+Enter adds a new line.
+- **Right:** a 320px rail, sticky at `lg`. It holds the Decision panel, then the Audit trail.
+  - **Decision panel:** the lifecycle track, then the Status, Priority and Assignee selects, "Close case…", and Export JSON / HTML with a spinner and a "Saved … · SHA-256 …" line.
+  - **Audit trail:** a vertical hairline with a dot per row, newest first, each row in words ("Assigned · Sneha Manager", then from → to) over a mono time and action code.
+- **Locked controls:** disabled controls carry their reason as a tooltip ("invalid transition", "This case is closed", read-only role).
+
+### Lifecycle Track
+A four-cell segmented strip: Open, In review, Escalated, Closed. Done steps sit on the raised ground in muted ink. The current step is Selected Mist, semibold, with a 2px sky underline. Steps the status select allows next take a dashed sky inset outline. The dropdown stays the control; the track only shows where the case is and where it can go.
+
+### Dialog and Sheet
+- **Dialog:** a centred modal (max 512px, the float shadow, the Card radius). Focus moves in (to `[data-autofocus]` first) and is trapped. Escape and the backdrop close it unless a request is in flight, and focus returns to what opened it.
+- **Sheet:** the same behaviour as a right-edge panel (max 768px) that slides in once (`sheet-in`, 220ms). It holds a linked alert's full AlertDetail inside a case, evidence panel included.
+- **Close-case dialog:** two verdict radios and a disposition note. Its "at least 10 characters" error appears only after a submit attempt, never on blur.
+
+### Dashboard (signature)
+- **KPI strip:** one hairline-divided strip, not four cards: Open cases (with counts by priority), Critical and High in the last 24 hours (a RiskBadge as each label), and the false-positive rate (with the count of closed cases). Values are 28px mono.
+- **Alerts by band:** 7-day small multiples on a shared scale, one row per band (RiskBadge, bars of at most 24px with 4px rounded tops, row total). Day labels sit under the last row only. A hidden table carries every value.
+- **Top linked entities:** a horizontal bar chart in `fg-muted` ink with the value at each bar's tip, plus "Open timeline:" links.
+- **Ingest:** a 2px `fg-muted` line of events per minute, sampled from the feed while the page is open.
+- **Live badge:** "Live · last change Xs ago". The feed publishes only when a figure changes, so this counts from the last change. Without the socket the page polls every 30 s and says so.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -703,6 +735,7 @@ The alert's evidence as lane rows from the primary entity's Timeline, with a not
 - **Don't** fade a graph node with opacity. Dim its ink and border.
 - **Don't** use Evidence Violet, Change Ochre or Cycle Amber outside graph strokes, their swatches and the touch grid.
 - **Don't** draw a neutral-default risk factor as a filled measurement. Outline it and say how many points it carries.
+- **Don't** stack band colours in one chart, or give case priority a band colour.
 - **Don't** preselect an assessment (KYC status, risk rating). Start on a disabled "Choose…" option.
 - **Don't** draw a mock preview row or offer sample picker options. If the server cannot draw the row, say so.
 - **Don't** leave a finished action as a spent disabled button. Replace it with a note that says what happened and what to do next.

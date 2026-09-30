@@ -146,6 +146,11 @@ CI gates: pytest -q | npm test | typecheck | lint | gitleaks | pip-audit | npm a
 | T-FE-14 | Route guards | viewer redirected from /admin/rules |
 | T-FE-15 | WS reconnect banner | shown on disconnect mock |
 
+*As built (P4-B):*
+- **T-FE-12 and T-FE-13** are in `pages/__tests__/CaseDetail.test.tsx`, along with the export-download test, the T-FE-01 regression inside the case drawer, viewer lock-out and investigator self-assign only.
+- **T-FE-14** is in `__tests__/app.test.tsx`.
+- **The live move of a Kanban card** on `case.updated` is in `pages/__tests__/CaseManager.test.tsx`.
+
 ## 8. Performance Verification (NFR-01/02/03)
 
 | Check | Method | Budget |

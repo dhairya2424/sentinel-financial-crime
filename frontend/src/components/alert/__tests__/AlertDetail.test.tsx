@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { MemoryRouter } from 'react-router'
+import { createMemoryRouter, MemoryRouter, RouterProvider } from 'react-router'
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { AlertDetail as AlertDetailData, User } from '@/api/types'
 import { useAlerts } from '@/store/alerts'
@@ -47,6 +47,27 @@ export const DETAIL: AlertDetailData = {
     },
   ],
   linked_case_id: null,
+}
+
+export const CASE = {
+  id: 'case_01',
+  case_number: 'CASE-2026-0001',
+  title: 'Loop through payee accounts',
+  description: null,
+  priority: 'high',
+  status: 'open',
+  assignee_id: null,
+  assignee_name: null,
+  created_by: 'usr_i',
+  created_by_name: 'Ishan Investigator',
+  created_at: '2026-09-30T04:40:00Z',
+  updated_at: '2026-09-30T04:40:00Z',
+  closed_at: null,
+  export_digest: null,
+  alert_count: 1,
+  top_band: 'high',
+  notes: [],
+  audit: [],
 }
 
 const GRAPH = { nodes: [], edges: [], truncated: false }
@@ -153,13 +174,46 @@ describe('AlertDetail', () => {
     expect(screen.getByTestId('evidence-panel')).toBeInTheDocument()
   })
 
-  it('→ Case opens the case dialog, which says when cases arrive', async () => {
-    show({ 'GET /v1/alerts/alert_loop': () => json(DETAIL) })
+  it('→ Case starts a case prefilled from the alert, grouped by shared entities, and opens it', async () => {
+    const posted: unknown[] = []
+    mockApi({
+      'GET /v1/alerts/alert_loop': () => json(DETAIL),
+      'GET /v1/alerts/alert_loop/graph': () => json(GRAPH),
+      'GET /v1/timeline/customer/cust_karan': () => json(TIMELINE),
+      'POST /v1/cases': (init) => {
+        posted.push(JSON.parse(init?.body as string))
+        return json({ ...CASE, alerts: [] }, 201)
+      },
+    })
+    const router = createMemoryRouter(
+      [
+        { path: '/', element: <AlertDetail alertId="alert_loop" /> },
+        { path: '/cases/:id', element: <p>case page</p> },
+      ],
+      { initialEntries: ['/'] },
+    )
+    render(<RouterProvider router={router} />)
     const user = userEvent.setup()
     await user.click(await screen.findByRole('button', { name: /Case/ }))
     const dialog = screen.getByRole('dialog', { name: 'Start a case' })
-    expect(dialog).toHaveTextContent('P4')
-    await user.click(within(dialog).getByRole('button', { name: 'Close' }))
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(within(dialog).getByLabelText('Title')).toHaveValue(DETAIL.title)
+    expect(within(dialog).getByLabelText('Priority')).toHaveValue('high')
+    expect(within(dialog).getByRole('checkbox', { name: /Group linked alerts by shared entities/ })).toBeChecked()
+    await user.click(within(dialog).getByRole('button', { name: 'Open case' }))
+    expect(await screen.findByText('case page')).toBeInTheDocument()
+    expect(posted).toEqual([{ title: DETAIL.title, priority: 'high', alert_ids: ['alert_loop'], group_by_entities: true }])
+    expect(router.state.location.pathname).toBe('/cases/case_01')
+  })
+
+  it('→ Case on an alert already in a case links to that case instead', async () => {
+    show({
+      'GET /v1/alerts/alert_loop': () => json({ ...DETAIL, status: 'linked_to_case', linked_case_id: 'case_01' }),
+      'GET /v1/cases/case_01': () => json({ ...CASE, alerts: [] }),
+    })
+    const user = userEvent.setup()
+    await user.click(await screen.findByRole('button', { name: /Case/ }))
+    const dialog = screen.getByRole('dialog', { name: 'Already in a case' })
+    expect(await within(dialog).findByText('Loop through payee accounts')).toBeInTheDocument()
+    expect(within(dialog).getByRole('link', { name: /Open CASE-2026-0001/ })).toHaveAttribute('href', '/cases/case_01')
   })
 })

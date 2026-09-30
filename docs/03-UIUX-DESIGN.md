@@ -133,11 +133,26 @@ Empty state: "No alerts match filters" + illustration. Loading: 6 skeleton rows.
 - **Case detail:** header (status dropdown, priority, assignee select — manager role), linked alerts list (each opens AlertDetail in modal/drawer), notes feed (author, ts, text), audit trail timeline, actions: `Add note`, `Close case` (note mandatory — validated), `Export evidence` (JSON / HTML buttons → download).
 - **Assignment (D1):** assignee select → `POST /v1/cases/{id}/assign` → WS `case.updated` updates all viewers live.
 
+*As built (P4-B):*
+- **Layout:** the user chose Option 1, "Case File": the case reads down the left, and every decision sits in a sticky right rail. It includes Option 2's lifecycle track (Open → In review → Escalated → Closed, with allowed next steps dashed).
+- **Case Manager:** the Kanban / List choice is remembered. Filters are an Open / Closed / All scope (list view) and an assignee (anyone, me, unassigned, or a person).
+- **Status and assignee selects:** the status select offers exactly the five docs/09 statuses, with invalid moves disabled and titled "invalid transition". The assignee select lists `GET /v1/users/assignees`; investigators can pick only themselves.
+- **Closing:** picking a closed status opens a verdict dialog with a note of at least 10 characters, and the server's 422 is shown inside the dialog.
+- **Linked alerts:** each opens its full AlertDetail in a right-edge sheet, evidence panel included.
+- **Creating a case:** [→Case] on an alert opens a create dialog (title from the alert, priority from its band, grouping on by default). An alert already in a case links to that case instead.
+- **Viewers:** see every control disabled, with the reason given.
+
 ## 9. Screen: Dashboard (E1)
 
 - KPI cards: Open cases, Critical/High alerts (24h), False-positive rate (trailing 7d), Ingestion lag.
 - Charts (Recharts): alerts by band over time (stacked area), top 5 linked entities (horizontal bar), ingestion events/min (line).
 - "Live" badge driven by WS; every card subscribes to `dashboard:{tenant}` channel.
+
+*As built (P4-B):*
+- **KPIs:** a single KPI strip: open cases (by priority), critical and high alerts in 24 h, and the false-positive rate over 7 days. Ingestion lag moved into the Ingest chart's header, next to events per minute and backlog.
+- **Alerts by band:** drawn as 7-day small multiples (one row per band, shared scale) instead of a stacked area. Run through the palette validator, the band colours fail as adjacent fills: high against critical ΔE 6.1 for normal vision, medium against high ΔE 0.6 deutan. Counts come from `GET /v1/alerts?from=`, bucketed by day in the browser.
+- **Other charts:** top entities as a horizontal bar; events per minute as a line sampled from `metrics.update` while the page is open.
+- **Freshness:** the badge reads "last change Xs ago", since the feed publishes only when a figure changes. Without the socket the page polls every 30 s.
 
 ## 10. Screen: Admin / Rules (F-13, role=admin)
 

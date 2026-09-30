@@ -194,7 +194,8 @@ export function AlertDetail({ alertId, caseRequested = 0 }: AlertDetailProps) {
 
       {caseOpen && alert && (
         <CaseDialog
-          alertTitle={alert.title}
+          alert={alert}
+          status={status ?? alert.status}
           onClose={() => {
             setCaseOpen(false)
           }}

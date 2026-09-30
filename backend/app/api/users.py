@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.auth import UserOut
-from app.auth.deps import CurrentUser, Role, not_found, require_role
+from app.auth.deps import CurrentUser, Role, get_current_user, not_found, require_role
 from app.auth.passwords import WeakPasswordError, check_policy, hash_password
 from app.db import get_db, tenant_scope
 from app.ids import new_id
@@ -44,6 +44,20 @@ class UserCreate(BaseModel):
 async def list_users(admin: CurrentUser = Depends(admin_only), db: AsyncSession = Depends(get_db)) -> list[UserOut]:
     rows = await db.scalars(tenant_scope(select(User).order_by(User.email), User, admin.tenant_id))
     return [UserOut.of(u) for u in rows]
+
+
+class Assignee(BaseModel):
+    id: str
+    full_name: str
+    role: Role
+
+
+@router.get("/assignees", response_model=list[Assignee])
+async def list_assignees(user: CurrentUser = Depends(get_current_user), db: AsyncSession = Depends(get_db)) -> list[Assignee]:
+    """Who can work a case (PRD D1): active investigators, managers and admins of the tenant. Names only, no emails."""
+    stmt = select(User).where(User.is_active, User.role != "viewer").order_by(User.full_name)
+    rows = await db.scalars(tenant_scope(stmt, User, user.tenant_id))
+    return [Assignee(id=u.id, full_name=u.full_name, role=u.role) for u in rows]  # type: ignore[arg-type]
 
 
 @router.get("/{user_id}", response_model=UserOut)

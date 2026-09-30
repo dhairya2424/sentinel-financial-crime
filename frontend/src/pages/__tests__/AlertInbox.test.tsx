@@ -129,7 +129,7 @@ describe('Alert Inbox', () => {
     act(() => {
       ws?.open()
     })
-    expect(ws?.sent).toContainEqual({ op: 'subscribe', channels: ['alerts:tenant_demo'] })
+    expect(ws?.sent).toContainEqual({ op: 'subscribe', channels: expect.arrayContaining(['alerts:tenant_demo', 'cases:tenant_demo']) as unknown })
     act(() => {
       ws?.receive({ channel: 'alerts:tenant_demo', type: 'alert.created', data: { ...LIVE, entity_ids: LIVE.entity_ids } })
     })

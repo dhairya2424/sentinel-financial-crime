@@ -3,12 +3,9 @@ import { AppShell } from '@/components/AppShell'
 import { RequireAuth, RequireRole } from '@/components/RequireAuth'
 import { Dashboard } from '@/pages/Dashboard'
 import { Login } from '@/pages/Login'
-import {
-  CaseDetailScreen,
-  CasesScreen,
-  NotFoundScreen,
-  RulesScreen,
-} from '@/pages/Placeholder'
+import { NotFoundScreen, RulesScreen } from '@/pages/Placeholder'
+import { CaseDetail } from '@/pages/CaseDetail'
+import { CaseManager } from '@/pages/CaseManager'
 import { AddData } from '@/pages/AddData'
 import { AlertInbox } from '@/pages/AlertInbox'
 import { GraphExplorer } from '@/pages/GraphExplorer'
@@ -26,8 +23,8 @@ export const routes: RouteObject[] = [
           { index: true, element: <Dashboard /> },
           { path: 'alerts', element: <AlertInbox /> },
           { path: 'alerts/:id', element: <AlertInbox /> },
-          { path: 'cases', element: <CasesScreen /> },
-          { path: 'cases/:id', element: <CaseDetailScreen /> },
+          { path: 'cases', element: <CaseManager /> },
+          { path: 'cases/:id', element: <CaseDetail /> },
           { path: 'graph', element: <GraphExplorer /> },
           { path: 'timeline', element: <TimelineIndexScreen /> },
           { path: 'timeline/:type/:id', element: <TimelineScreen /> },

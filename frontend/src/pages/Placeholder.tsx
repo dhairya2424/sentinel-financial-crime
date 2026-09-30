@@ -1,6 +1,6 @@
 import { Compass } from 'lucide-react'
 import type { ReactNode } from 'react'
-import { Link, useParams } from 'react-router'
+import { Link } from 'react-router'
 import { EmptyState } from '@/components/EmptyState'
 import { SCREENS, type Screen } from '@/lib/screens'
 
@@ -37,19 +37,6 @@ export function ScreenPlaceholder({ screen, title, meta }: ScreenPlaceholderProp
       </section>
     </Page>
   )
-}
-
-function IdMeta({ id }: { id: string | undefined }) {
-  return id ? <code className="font-mono text-[13px] text-fg-muted">{id}</code> : null
-}
-
-export function CasesScreen() {
-  return <ScreenPlaceholder screen={SCREENS.cases} />
-}
-
-export function CaseDetailScreen() {
-  const { id } = useParams()
-  return <ScreenPlaceholder screen={SCREENS.case} meta={<IdMeta id={id} />} />
 }
 
 export function RulesScreen() {

@@ -318,3 +318,98 @@ export interface AlertMessage {
     occurrence_count: number
   }
 }
+
+/** docs/09 §3: exactly these values; the UI never offers anything else. */
+export type CaseStatus = 'open' | 'in_review' | 'escalated' | 'closed_confirmed' | 'closed_false_positive'
+export type CasePriority = 'low' | 'medium' | 'high' | 'critical'
+
+export interface CaseRow {
+  id: string
+  case_number: string
+  title: string
+  description: string | null
+  priority: CasePriority
+  status: CaseStatus
+  assignee_id: string | null
+  assignee_name: string | null
+  created_by: string
+  created_at: string
+  updated_at: string
+  closed_at: string | null
+  export_digest: string | null
+  alert_count: number
+  /** The most serious band among the linked alerts. */
+  top_band: RiskBand | null
+}
+
+export interface CasePage {
+  items: CaseRow[]
+  next_cursor: string | null
+}
+
+export interface CaseNote {
+  id: string
+  author_id: string
+  author_name: string | null
+  body: string
+  created_at: string
+}
+
+export interface CaseAuditRow {
+  id: number
+  at: string
+  actor_user: string | null
+  actor_name: string | null
+  actor_kind: 'user' | 'system' | 'pipeline'
+  action: string
+  object_type: string | null
+  object_id: string | null
+  detail: Record<string, unknown>
+}
+
+export interface CaseDetail extends CaseRow {
+  created_by_name: string | null
+  alerts: AlertRow[]
+  notes: CaseNote[]
+  audit: CaseAuditRow[]
+}
+
+export interface CaseCreate {
+  title: string
+  priority?: CasePriority
+  description?: string
+  alert_ids?: string[]
+  group_by_entities?: boolean
+}
+
+export interface CasePatch {
+  status?: CaseStatus
+  priority?: CasePriority
+  description?: string
+  close_note?: string
+}
+
+export interface CaseMessage {
+  channel: string
+  type: 'case.updated'
+  data: { id: string; status: CaseStatus; assignee_id: string | null; updated_at: string }
+}
+
+export interface Assignee {
+  id: string
+  full_name: string
+  role: Role
+}
+
+export interface DashboardMetrics {
+  open_cases: number
+  open_cases_by_priority: Record<CasePriority, number>
+  critical_24h: number
+  high_24h: number
+  alerts_24h: number
+  /** closed_false_positive ÷ cases closed in the last 7 days; null when none closed. */
+  fp_rate_7d: number | null
+  closed_7d: number
+  top_entities: { entity_id: string; alert_count: number; type: EntityRef['type'] | null; label: string | null }[]
+  ingest: { events_per_min: number | null; lag_ms: number | null; backlog: number | null }
+}

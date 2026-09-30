@@ -54,6 +54,8 @@ def create_app() -> FastAPI:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+        # The export's file name and digest travel in headers, which a cross-origin page cannot read unless exposed.
+        expose_headers=["Content-Disposition", "X-Digest-SHA256"],
     )
 
     @app.exception_handler(HTTPException)

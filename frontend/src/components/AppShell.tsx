@@ -5,6 +5,7 @@ import { useHotkey } from '@/hooks/useHotkey'
 import { useAuth } from '@/store/auth'
 import { useUi } from '@/store/ui'
 import { useAlertFeed } from '@/ws/useAlertFeed'
+import { useCaseFeed } from '@/ws/useCaseFeed'
 import { useSocketLifecycle } from '@/ws/useSocket'
 import { ConnectionBanner } from './ConnectionBanner'
 import { LiveBanner } from './LiveBanner'
@@ -18,6 +19,7 @@ export function AppShell() {
   useHotkey('b', toggleSidebar)
   useSocketLifecycle()
   useAlertFeed()
+  useCaseFeed()
 
   useEffect(() => {
     const controller = new AbortController()

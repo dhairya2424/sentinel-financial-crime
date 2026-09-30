@@ -8,6 +8,18 @@ import { useAuth } from '@/store/auth'
 import { useHealth } from '@/store/health'
 import { json, mockApi } from '@/test/fetch'
 
+const METRICS = {
+  open_cases: 0,
+  open_cases_by_priority: { low: 0, medium: 0, high: 0, critical: 0 },
+  critical_24h: 0,
+  high_24h: 0,
+  alerts_24h: 0,
+  fp_rate_7d: null,
+  closed_7d: 0,
+  top_entities: [],
+  ingest: { events_per_min: 0, lag_ms: null, backlog: 0 },
+}
+
 function userFor(role: Role): User {
   return { id: `usr_${role}`, email: `${role}@demo.dev`, role, tenant_id: 'tenant_demo', full_name: 'Ishan Investigator' }
 }
@@ -68,9 +80,13 @@ describe('routing and guards', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent("don't match an active account")
   })
 
-  it('redirects an investigator away from /admin/rules and explains why', async () => {
+  it('T-FE-14: redirects an investigator away from /admin/rules and explains why', async () => {
     signIn('investigator')
-    mockApi({ 'GET /v1/auth/me': () => json(userFor('investigator')) })
+    mockApi({
+      'GET /v1/auth/me': () => json(userFor('investigator')),
+      'GET /v1/dashboard/metrics': () => json(METRICS),
+      'GET /v1/alerts': () => json({ items: [], next_cursor: null }),
+    })
     const router = renderAt('/admin/rules')
     expect(await screen.findByRole('heading', { name: 'Dashboard' })).toBeInTheDocument()
     expect(router.state.location.pathname).toBe('/')
@@ -99,12 +115,11 @@ describe('routing and guards', () => {
     expect(useAuth.getState().accessToken).toBeNull()
   })
 
-  it('renders placeholders for every docs/04 route', async () => {
-    signIn('investigator')
-    mockApi({ 'GET /v1/auth/me': () => json(userFor('investigator')) })
-    renderAt('/cases/case_01')
-    expect(await screen.findByText('Arrives in Phase 4')).toBeInTheDocument()
-    expect(screen.getByText('case_01')).toBeInTheDocument()
+  it('renders a placeholder for a docs/04 route that is not built yet', async () => {
+    signIn('admin')
+    mockApi({ 'GET /v1/auth/me': () => json(userFor('admin')) })
+    renderAt('/admin/rules')
+    expect(await screen.findByText('Arrives in Phase 5')).toBeInTheDocument()
   })
 })
 

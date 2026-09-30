@@ -274,3 +274,13 @@ def test_dashboard_metrics_reflect_cases_and_alerts(client, world, make_alerts):
     assert data["fp_rate_7d"] is None or 0 <= data["fp_rate_7d"] <= 1
     assert data["top_entities"][0]["entity_id"] == world.account and data["top_entities"][0]["label"] == f"XXXXIT{world.suffix}"
     assert set(data["ingest"]) == {"events_per_min", "lag_ms", "backlog"}
+
+
+def test_assignees_lists_people_who_can_work_a_case(client, world):
+    for role in ("viewer", "investigator", "manager"):
+        r = client.get("/v1/users/assignees", headers=world.bearer(TENANT_A, role))
+        assert r.status_code == 200, r.text
+        people = {p["id"]: p for p in r.json()}
+        assert {"usr_itest_investigator", "usr_itest_manager", "usr_itest_admin"} <= set(people)
+        assert "usr_itest_viewer" not in people and set(next(iter(people.values()))) == {"id", "full_name", "role"}
+    assert "usr_itest_investigator" not in {p["id"] for p in client.get("/v1/users/assignees", headers=world.bearer(TENANT_B)).json()}
