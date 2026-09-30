@@ -38,6 +38,7 @@ BLOCK_MS = 2000
 BATCH = 50
 MAX_DELIVERIES = 3
 RECLAIM_IDLE_MS = 15_000
+STALE_CONSUMER_MS = 3_600_000
 CONSUMER = f"w-{socket.gethostname()}-{os.getpid()}"
 
 
@@ -74,6 +75,14 @@ async def ensure_group() -> None:
     except ResponseError as exc:
         if "BUSYGROUP" not in str(exc):
             raise
+    await _prune_consumers()
+
+
+async def _prune_consumers() -> None:
+    """Drop consumers left behind by processes that died without leaving: idle for an hour and holding nothing."""
+    for consumer in await redis.xinfo_consumers(STREAM, GROUP):
+        if consumer["name"] != CONSUMER and consumer["pending"] == 0 and consumer["idle"] > STALE_CONSUMER_MS:
+            await redis.xgroup_delconsumer(STREAM, GROUP, consumer["name"])
 
 
 async def process_event(tenant_id: str, kind: str, event_id: str, ingested_at: float | None = None) -> int:
@@ -185,3 +194,14 @@ async def stop() -> None:
         except asyncio.CancelledError:
             pass
         _task = None
+    await _leave_group()
+
+
+async def _leave_group() -> None:
+    """Deregister this process's consumer so exited processes do not pile up in the group. A consumer still holding
+    pending messages stays registered; another process reclaims those after RECLAIM_IDLE_MS."""
+    try:
+        if not await redis.xpending_range(STREAM, GROUP, min="-", max="+", count=1, consumername=CONSUMER):
+            await redis.xgroup_delconsumer(STREAM, GROUP, CONSUMER)
+    except Exception as exc:  # noqa: BLE001 - shutdown must not fail on a Redis hiccup
+        log.warning("could not leave consumer group: %s", exc)

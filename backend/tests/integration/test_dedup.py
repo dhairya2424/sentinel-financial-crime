@@ -2,7 +2,7 @@
 
 from datetime import UTC, datetime, timedelta
 
-from .conftest import TENANT_A, poll
+from .conftest import TENANT_A, pipeline_drained, poll
 
 
 def iso(dt: datetime) -> str:
@@ -46,9 +46,8 @@ def test_t_int_08_overlapping_extension_grows_the_same_alert(client, world):
     assert detail["window_end"] >= iso(now - timedelta(minutes=54)).replace("Z", "+00:00")
 
     # Unrelated small transfers re-run detection over the same loop; nothing new, so nothing changes.
-    processed = client.get("/v1/ops/health").json()["pipeline"]["processed"]
     noise = [tx(world, "d5", a, None, now - timedelta(minutes=30), amount="100.00"), tx(world, "d6", a, None, now - timedelta(minutes=20), amount="100.00")]
     assert client.post("/v1/ingest/events", json={"events": noise}, headers=h).json()["accepted"] == 2
-    poll(lambda: client.get("/v1/ops/health").json()["pipeline"]["processed"] >= processed + 2)
+    poll(pipeline_drained)
     after = client.get(f"/v1/alerts/{alert_id}", headers=h).json()
     assert after["occurrence_count"] == 2 and len(after["evidence"]) == 4

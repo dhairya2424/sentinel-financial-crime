@@ -7,11 +7,13 @@ from datetime import UTC, datetime
 from typing import Any
 
 import pytest
+import redis as redis_sync
 from fastapi.testclient import TestClient
 from sqlalchemy import delete
 from sqlalchemy.dialects.postgresql import insert
 
 from app.auth.jwt import create_access_token
+from app.config import get_settings
 from app.db import SessionLocal, engine
 from app.main import app
 from app.models import Account, Alert, Case, Customer, Employee, EmployeeAction, EmployeeSession, IngestFailure, Transaction, User
@@ -20,6 +22,16 @@ from app.seed.users import ensure_tenant
 TENANT_A = "tenant_itest_a"
 TENANT_B = "tenant_itest_b"
 ROLES = ("admin", "manager", "investigator", "viewer")
+
+
+def pipeline_drained() -> bool:
+    """True once every stream entry has been read and acknowledged by some pipeline consumer, whichever process it is."""
+    client = redis_sync.Redis.from_url(get_settings().REDIS_URL, decode_responses=True)
+    try:
+        group = next(g for g in client.xinfo_groups("events") if g["name"] == "pipeline")
+        return group["pending"] == 0 and group["lag"] == 0
+    finally:
+        client.close()
 
 
 def poll(fetch: Callable[[], Any], timeout: float = 5.0, interval: float = 0.05) -> tuple[Any, float]:
