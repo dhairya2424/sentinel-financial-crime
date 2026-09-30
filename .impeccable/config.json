@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "design-system-font",
+        "value": "variable",
+        "createdAt": "2026-09-30T11:44:46.817Z",
+        "reason": "model triage: the report's stack is the DESIGN.md typography stack verbatim (\"Inter Variable\", Inter, …); the hook reads the word Variable of the quoted family name as a separate font"
+      }
+    ]
+  }
+}
