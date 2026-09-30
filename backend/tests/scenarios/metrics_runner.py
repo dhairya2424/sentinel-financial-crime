@@ -47,10 +47,14 @@ def report(scenarios: list[ScenarioResult], legit: LegitimateResult | None, tole
     ok = True
     if scenarios:
         detected = sum(r.detected for r in scenarios)
-        rate = detected / len(SCENARIO_IDS)
-        passed = rate >= DETECTION_TARGET and len(scenarios) == len(SCENARIO_IDS)
+        if len(scenarios) == len(SCENARIO_IDS):
+            rate = detected / len(SCENARIO_IDS)
+            passed = rate >= DETECTION_TARGET
+            lines.append(f"detection_rate: {detected}/{len(SCENARIO_IDS)} ({rate:.0%})   [target >={DETECTION_TARGET:.0%}] {verdict(passed)}")
+        else:
+            passed = detected == len(scenarios)
+            lines.append(f"detected: {detected}/{len(scenarios)} of the scenarios run   [subset: the >={DETECTION_TARGET:.0%} gate needs all five] {verdict(passed)}")
         ok &= passed
-        lines.append(f"detection_rate: {detected}/{len(SCENARIO_IDS)} ({rate:.0%})   [target >={DETECTION_TARGET:.0%}] {verdict(passed)}")
     if legit is not None:
         passed = legit.rate <= tolerance
         ok &= passed
@@ -87,6 +91,7 @@ def report(scenarios: list[ScenarioResult], legit: LegitimateResult | None, tole
 
 
 def main() -> None:
+    sys.stdout.reconfigure(encoding="utf-8")  # titles carry ₹, × and →; Windows consoles default to cp1252
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--only", help="comma-separated scenario ids, e.g. S1,S3")
     parser.add_argument("--skip-legit", action="store_true", help="leave out the legitimate corpus")

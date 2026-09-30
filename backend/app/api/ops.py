@@ -1,11 +1,12 @@
 import asyncio
 import logging
+import time
 from datetime import UTC, datetime
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, ConfigDict, TypeAdapter, ValidationError
-from sqlalchemy import select, text
+from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import audit
@@ -21,6 +22,7 @@ from app.services.ingest import MODELS, ingest_events
 router = APIRouter(prefix="/ops", tags=["ops"])
 log = logging.getLogger("sentinel.ops")
 PING_TIMEOUT_S = 2.0
+RATE_SCAN_CAP = 20_000
 admin_role = require_role("admin")
 EVENT = TypeAdapter(Event)
 
@@ -49,6 +51,23 @@ async def _ping_redis() -> str:
     return "ok" if await redis.ping() else "fail"
 
 
+async def _ingest_signals() -> dict[str, int | None]:
+    """docs/11 §4: dead letters waiting for a replay, and the event stream's size, backlog and last-minute rate
+    (every tenant; counts only, no tenant data)."""
+    since = int(time.time() * 1000) - 60_000
+    async with engine.connect() as conn:
+        open_failures = await conn.scalar(select(func.count()).select_from(IngestFailure).where(IngestFailure.replayed_at.is_(None)))
+    length = await redis.xlen(worker.STREAM)
+    group = next((g for g in await redis.xinfo_groups(worker.STREAM) if g["name"] == worker.GROUP), None)
+    recent = await redis.xrange(worker.STREAM, min=f"{since}-0", max="+", count=RATE_SCAN_CAP)
+    return {
+        "failures_open": int(open_failures or 0),
+        "stream_length": int(length),
+        "backlog": None if group is None else int(group.get("pending") or 0) + int(group.get("lag") or 0),
+        "events_per_min": len(recent),
+    }
+
+
 async def _check(name: str, probe) -> str:
     try:
         return await asyncio.wait_for(probe(), PING_TIMEOUT_S)
@@ -60,7 +79,12 @@ async def _check(name: str, probe) -> str:
 @router.get("/health")
 async def health() -> dict[str, object]:
     db, rds = await asyncio.gather(_check("db", _ping_db), _check("redis", _ping_redis))
-    return {"db": db, "redis": rds, "pipeline": worker.metrics.snapshot(), "ws_clients": hub.client_count()}
+    try:
+        ingest = await asyncio.wait_for(_ingest_signals(), PING_TIMEOUT_S)
+    except Exception as exc:  # noqa: BLE001 - health must answer even when a store is down; db/redis already say which
+        log.warning("health ingest signals unavailable: %s", exc)
+        ingest = {"failures_open": None, "stream_length": None, "backlog": None, "events_per_min": None}
+    return {"db": db, "redis": rds, "pipeline": worker.metrics.snapshot(), "ws_clients": hub.client_count(), "ingest": ingest}
 
 
 async def _replay_ingest(db: AsyncSession, failure: IngestFailure, user: CurrentUser) -> tuple[str | None, str]:

@@ -21,6 +21,7 @@ real data. They run as verification fixtures in throwaway tenants that are delet
 
 import argparse
 import asyncio
+import json
 import time
 
 from sqlalchemy import delete, select
@@ -62,6 +63,13 @@ async def clear_for_replant(db: AsyncSession, tenant_id: str, scenario: str, pre
     return alert_ids, txs
 
 
+async def announce_removed(tenant_id: str, alert_ids: list[str]) -> None:
+    """Tell open Alert Inboxes that the earlier alerts are gone, so the re-planted loop is not listed twice."""
+    channel = f"alerts:{tenant_id}"
+    for alert_id in alert_ids:
+        await redis.publish(channel, json.dumps({"channel": channel, "type": "alert.removed", "data": {"id": alert_id, "reason": "demo.replant"}}))
+
+
 async def _raised(tenant_id: str, rule: str, txs: list[str]) -> str | None:
     async with SessionLocal() as db:
         return await db.scalar(
@@ -87,6 +95,7 @@ async def plant(tenant_id: str, scenario: str, dry_run: bool = False) -> None:
                 print(f"DRY RUN, nothing changed: {scenario} would remove alert(s) {removed or 'none'} and publish {', '.join(txs)}")
                 return
             await tx.commit()
+        await announce_removed(tenant_id, removed)
         print(f"{scenario} ({label}): removed {len(removed)} earlier alert(s); publishing {len(txs)} transfers")
         started = time.perf_counter()
         await publish(tenant_id, [("transaction", tx) for tx in txs])

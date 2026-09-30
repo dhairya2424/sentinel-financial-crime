@@ -4,7 +4,8 @@
 
 Everything runs in two throwaway tenants, which are deleted afterwards, success or not:
 - tenant_perf: 20 three-account loops are registered and ingested through the public API. Each one is timed from the
-  POST until its alert.created arrives on a real WebSocket. The alert list is then read 30 times.
+  POST until its alert.created arrives on a real WebSocket. The alert list is then read 30 times. Then one alert holding
+  500 evidence rows goes into a case, and the case's JSON export is timed 10 times (the "export ≤ 500 evidence" budget).
 - tenant_perf_bulk: 100,000 rows (2,500 customers, 7,500 accounts, 90,000 transfers) are bulk-inserted. The graph is
   rebuilt from PostgreSQL exactly as at API startup, then 200 two-hop neighbourhood reads run on the 10,000-node result.
 The bulk rows are a load fixture only. They exist for the length of the run and never reach tenant_demo.
@@ -21,16 +22,17 @@ from decimal import Decimal
 
 import httpx
 import websockets
-from sqlalchemy import delete, insert, update
+from sqlalchemy import delete, insert, select, update
 
 from app.auth.jwt import create_access_token
 from app.db import SessionLocal, engine
 from app.graph.service import GraphService
-from app.models import Account, Alert, AuditLog, Case, Customer, Employee, IngestFailure, Tenant, Transaction, User
+from app.ids import new_id
+from app.models import Account, Alert, AlertEvidence, AuditLog, Case, Customer, Employee, IngestFailure, Tenant, Transaction, User
 from app.seed.users import ensure_tenant
 
 PERF, BULK = "tenant_perf", "tenant_perf_bulk"
-LOOPS, LIST_RUNS, HOPS_RUNS = 20, 30, 200
+LOOPS, LIST_RUNS, HOPS_RUNS, EXPORT_RUNS, EXPORT_EVIDENCE = 20, 30, 200, 10, 500
 BULK_CUSTOMERS, BULK_ACCOUNTS, BULK_TRANSFERS = 2_500, 7_500, 90_000
 
 
@@ -110,6 +112,31 @@ async def alert_list(base: str, token: str) -> list[float]:
     return samples
 
 
+async def export_500(base: str, token: str) -> list[float]:
+    """One alert with 500 frozen transaction snapshots, linked to a case, exported as JSON."""
+    alert_id, now = new_id("alert"), datetime.now(UTC)
+    async with SessionLocal() as db, db.begin():
+        accounts = list(await db.scalars(select(Account.id).where(Account.tenant_id == PERF).order_by(Account.id).limit(3)))
+        db.add(Alert(id=alert_id, tenant_id=PERF, rule_code="R-CIRC", rule_version=1, title="Export benchmark", explanation="500 evidence rows.",
+                     risk_score=74, risk_band="high", risk_factors=[{"name": "linkage_depth", "raw_value": "3 hops", "weight": 1.0, "contribution": 0.74}],
+                     entity_ids=accounts, window_start=now - timedelta(hours=4), window_end=now, dedup_key=f"bench:{alert_id}"))
+        await db.flush()
+        for i in range(EXPORT_EVIDENCE):
+            db.add(AlertEvidence(id=new_id("ev"), tenant_id=PERF, alert_id=alert_id, evidence_type="transaction", ref_id=f"tx_bench_{i}",
+                                 snapshot={"id": f"tx_bench_{i}", "amount": "1000.00", "from_account_id": accounts[0], "to_account_id": accounts[1], "value_ts": now.isoformat()}))
+    samples = []
+    async with httpx.AsyncClient(base_url=base, headers={"Authorization": f"Bearer {token}"}, timeout=60) as api:
+        case = (await api.post("/v1/cases", json={"title": "Export benchmark", "alert_ids": [alert_id]})).raise_for_status().json()
+        for _ in range(EXPORT_RUNS):
+            started = time.perf_counter()
+            body = (await api.get(f"/v1/cases/{case['id']}/export", params={"format": "json"})).raise_for_status().json()
+            samples.append((time.perf_counter() - started) * 1000)
+        held = sum(len(a.get("evidence", [])) for a in body["alerts"])
+        if held < EXPORT_EVIDENCE:
+            raise AssertionError(f"export carried {held} evidence rows, expected {EXPORT_EVIDENCE}")
+    return samples
+
+
 async def _bulk_rows() -> None:
     rnd = random.Random(7)
     customers = [{"id": f"cust_pb_{i}", "tenant_id": BULK, "external_ref": f"PB-{i}", "name": f"Bulk Holder {i}"} for i in range(BULK_CUSTOMERS)]
@@ -153,6 +180,7 @@ async def main(base: str) -> None:
         token = await _perf_user()
         ws = await ingest_to_ws(base, token)
         lists = await alert_list(base, token)
+        exports = await export_500(base, token)
         rebuild_ms, nodes, hops = await rebuild_and_hops()
     finally:
         await _drop(PERF, BULK)
@@ -162,6 +190,7 @@ async def main(base: str) -> None:
     print(row("ingest → WS alert.created (3-leg loop, live API)", ws, "p95 ≤ 5000"))
     print(row(f"graph 2-hop, {nodes:,} nodes", hops, "p95 ≤ 500"))
     print(row("alert list API (GET /v1/alerts)", lists, "p95 ≤ 300"))
+    print(row(f"case export JSON, {EXPORT_EVIDENCE} evidence rows", exports, "≤ 5000"))
     print(f"| graph rebuild from PostgreSQL, {BULK_CUSTOMERS + BULK_ACCOUNTS + BULK_TRANSFERS:,} rows | 1 | {rebuild_ms:.0f} | {rebuild_ms:.0f} | {rebuild_ms:.0f} | ≤ 30000 |")
 
 

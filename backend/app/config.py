@@ -18,7 +18,6 @@ class Settings(BaseSettings):
     TENANT_DEFAULT: str = "tenant_demo"
     REPORTING_THRESHOLD: int = 50000
     CYCLE_MIN_AMOUNT: int = 500000
-    PIPELINE_CONCURRENCY: int = 2
 
     @model_validator(mode="after")
     def _check_secret(self) -> "Settings":

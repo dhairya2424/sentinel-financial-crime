@@ -30,7 +30,11 @@ async def ensure_tenant(db: AsyncSession, tenant_id: str) -> None:
             name="Demo Bank",
             base_currency="INR",
             timezone="Asia/Kolkata",
-            config={"reporting_threshold": get_settings().REPORTING_THRESHOLD, "off_hours": ["19:00", "09:00"]},
+            config={
+                "reporting_threshold": get_settings().REPORTING_THRESHOLD,
+                "min_cycle_amount": get_settings().CYCLE_MIN_AMOUNT,
+                "off_hours": ["19:00", "09:00"],
+            },
         )
         .on_conflict_do_nothing(index_elements=["id"])
     )

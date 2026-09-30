@@ -15,7 +15,8 @@ import logging
 import os
 import socket
 import time
-from dataclasses import asdict, dataclass
+from collections import deque
+from dataclasses import asdict, dataclass, field
 from typing import Any
 
 from redis.exceptions import ResponseError
@@ -42,6 +43,9 @@ STALE_CONSUMER_MS = 3_600_000
 CONSUMER = f"w-{socket.gethostname()}-{os.getpid()}"
 
 
+LATENCY_SAMPLES = 200
+
+
 @dataclass
 class Metrics:
     processed: int = 0
@@ -49,9 +53,13 @@ class Metrics:
     alerts_updated: int = 0
     errors: int = 0
     last_lag_ms: float | None = None
+    latencies: deque = field(default_factory=lambda: deque(maxlen=LATENCY_SAMPLES), repr=False)
 
     def snapshot(self) -> dict[str, Any]:
-        return {**asdict(self), "stream_lag_ms": self.last_lag_ms}
+        ordered = sorted(self.latencies)
+        p95 = ordered[max(0, round(0.95 * len(ordered) + 0.5) - 1)] if ordered else None
+        counters = {k: v for k, v in asdict(self).items() if k != "latencies"}
+        return {**counters, "stream_lag_ms": self.last_lag_ms, "alert_latency_p95_ms": p95, "alert_latency_samples": len(ordered)}
 
 
 metrics = Metrics()
@@ -119,7 +127,9 @@ async def process_event(tenant_id: str, kind: str, event_id: str, ingested_at: f
             metrics.alerts_updated += 1
     _span("ws_publish_ms", (time.perf_counter() - publish_started) * 1000, published=len(messages))
     if ingested_at is not None and messages:
-        _span("event_to_ws_ms", (time.time() - ingested_at) * 1000, id=event_id)
+        latency = (time.time() - ingested_at) * 1000
+        metrics.latencies.append(round(latency, 1))
+        _span("event_to_ws_ms", latency, id=event_id)
     return len(changes)
 
 

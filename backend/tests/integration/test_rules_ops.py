@@ -185,3 +185,24 @@ def test_replay_is_admin_only_and_tenant_scoped(client, world):
     assert client.post("/v1/ops/replay-batch", json={"failure_id": failure_id}, headers=world.bearer(TENANT_B, "admin")).status_code == 404
     assert client.post("/v1/ops/replay-batch", json={"failure_id": "fail_missing"}, headers=world.bearer(TENANT_A, "admin")).status_code == 404
     assert client.post("/v1/ops/replay-batch", json={"failure_id": failure_id, "batch": 1}, headers=world.bearer(TENANT_A, "admin")).status_code == 422
+
+
+def test_ops_health_reports_every_runbook_signal(client, world):
+    """docs/11 §4: db/redis, pipeline counters and latency p95, WS clients, open ingest failures and the stream.
+    An open dead letter is counted until it is replayed (INC-2)."""
+    before = client.get("/v1/ops/health").json()
+    assert before["db"] == "ok" and before["redis"] == "ok"
+    assert {"processed", "errors", "stream_lag_ms", "alert_latency_p95_ms"} <= set(before["pipeline"])
+    assert {"failures_open", "stream_length", "backlog", "events_per_min"} <= set(before["ingest"])
+    assert isinstance(before["ws_clients"], int)
+    failure_id = _dead_letter(client, world, f"{world.tx}_health", f"{world.account}_nowhere")
+    during = client.get("/v1/ops/health").json()["ingest"]
+    assert during["failures_open"] == before["ingest"]["failures_open"] + 1
+    assert during["events_per_min"] >= 0 and during["stream_length"] >= 0
+
+    async def fix(db: AsyncSession) -> None:
+        db.add(Account(id=f"{world.account}_nowhere", tenant_id=TENANT_A, customer_id=world.customer, account_no_masked=f"XXXXNW{world.suffix}", type="savings"))
+
+    db_run(fix)
+    assert client.post("/v1/ops/replay-batch", json={"failure_id": failure_id}, headers=world.bearer(TENANT_A, "admin")).status_code == 200
+    assert client.get("/v1/ops/health").json()["ingest"]["failures_open"] == before["ingest"]["failures_open"]

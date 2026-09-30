@@ -264,13 +264,17 @@ def test_cases_stay_inside_their_tenant(client, world):
     assert case["id"] not in [c["id"] for c in client.get("/v1/cases", headers=other).json()["items"]]
 
 
-def test_dashboard_metrics_reflect_cases_and_alerts(client, world, make_alerts):
+def test_t_int_20_dashboard_metrics_reflect_cases_and_alerts(client, world, make_alerts):
+    """T-INT-20: a new critical alert increments critical_24h (and alerts_24h) by exactly one."""
+    before = client.get("/v1/dashboard/metrics", headers=world.bearer(TENANT_A, "viewer")).json()
     make_alerts([world.account], band="critical", score=90)
+    assert client.post("/v1/cases", json={"title": "Dashboard count"}, headers=world.bearer(TENANT_A)).status_code == 201
     m = client.get("/v1/dashboard/metrics", headers=world.bearer(TENANT_A, "viewer"))
     assert m.status_code == 200, m.text
     data = m.json()
     assert set(data) >= {"open_cases", "critical_24h", "high_24h", "alerts_24h", "fp_rate_7d", "top_entities", "ingest"}
-    assert data["open_cases"] >= 1 and data["critical_24h"] >= 1 and data["alerts_24h"] >= data["critical_24h"] + data["high_24h"]
+    assert data["critical_24h"] == before["critical_24h"] + 1 and data["alerts_24h"] == before["alerts_24h"] + 1
+    assert data["open_cases"] == before["open_cases"] + 1 and data["alerts_24h"] >= data["critical_24h"] + data["high_24h"]
     assert data["fp_rate_7d"] is None or 0 <= data["fp_rate_7d"] <= 1
     assert data["top_entities"][0]["entity_id"] == world.account and data["top_entities"][0]["label"] == f"XXXXIT{world.suffix}"
     assert set(data["ingest"]) == {"events_per_min", "lag_ms", "backlog"}

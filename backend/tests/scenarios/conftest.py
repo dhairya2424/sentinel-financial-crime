@@ -9,6 +9,14 @@ from tests.scenarios.metrics_runner import legit_settings, report
 _cache: dict[str, object] = {}
 
 
+def _encodes(text: str, encoding: str) -> bool:
+    try:
+        text.encode(encoding)
+    except (UnicodeEncodeError, LookupError):
+        return False
+    return True
+
+
 @pytest.fixture(scope="session")
 def suspicious() -> dict[str, ScenarioResult]:
     """S1–S5 planted once per session, each in its own throwaway tenant."""
@@ -29,5 +37,8 @@ def pytest_terminal_summary(terminalreporter, config):
     if config.getoption("--metrics") and ("suspicious" in _cache or "legitimate" in _cache):
         text, _ = report(list(_cache.get("suspicious", {}).values()), _cache.get("legitimate"), float(os.environ.get("LEGIT_TOLERANCE", "0.10")))
         terminalreporter.write_line("")
+        encoding = getattr(terminalreporter._tw, "_file", None) and getattr(terminalreporter._tw._file, "encoding", None) or "utf-8"
         for line in text.splitlines():
-            terminalreporter.write_line(line)
+            # A console that cannot show ₹ or → (cp1252) would print escapes; spell them out instead.
+            safe = line if _encodes(line, encoding) else line.replace("₹", "Rs ").replace("×", "x").replace("→", "->")
+            terminalreporter.write_line(safe)
