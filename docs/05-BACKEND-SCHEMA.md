@@ -449,8 +449,13 @@ GET  /rules                 → active versions
 PUT  /rules/{code}          {params, weights, enabled} (admin) → version+1 (new row)
 GET  /ops/health            {db, redis, ws_clients, pipeline:{processed, alerts_created, alerts_updated, errors, stream_lag_ms}}
                             (as built in P3-B; events_per_min and failed_batches arrive with the P5 ops work)
-POST /ops/replay-batch      {batch_id or failure_id} (admin)
+POST /ops/replay-batch      {failure_id} (admin)
 ```
+
+As built (P5-A):
+- `GET /rules` (every role) returns one row per rule code, in docs/09 §4 order: `{code, name, kind: primary|supporting, version, enabled, params, weights, updated_by, updated_at}`. It shows the config detection uses right now: the latest `rules` row per code over the built-in defaults, which report `version: 0`.
+- `PUT /rules/{code}` (admin) takes `{params?, weights?, enabled?}` with no other fields. `params` merge over the current version. Each key must be a known param with the default's type, and numbers may not be negative. `weights` must name every factor of that rule, no other factor, none negative, summing to 1.0 ±0.001. Any breach returns 422 with every reason. An unknown code is 404. A valid change inserts version = max+1 as a new row (older versions are kept) and audits `rule.update` with `{from_version, to_version, changed: {field: {from, to}}}`. A PUT that changes nothing returns the current version and writes nothing.
+- `POST /ops/replay-batch` (admin) takes `{failure_id}`. `ingest_failures` rows carry no batch id, so failures are replayed one at a time. An ingest-stage failure goes back through the ingest path. Its outcome is `applied`, or `already_stored` if the event has since arrived. A failed attempt is not dead-lettered again. A pipeline-stage failure (`payload.stage = "pipeline"`) re-runs detection on the stored row (`reprocessed`, with `alert_changes`). Only a success sets `replayed_at` and audits `ops.replay`. Replaying twice, or a replay that fails again, is 409 with the reason. A failure of another tenant is 404.
 
 ## 7. Validation Rules (server-side, Pydantic)
 

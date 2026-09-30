@@ -15,4 +15,5 @@ python-ulid>=3.0
 httpx2>=2.13
 pytest>=8.3
 pytest-asyncio>=0.24
+coverage>=7.6
 tzdata>=2025.2

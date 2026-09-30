@@ -18,7 +18,8 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import and_, func, or_, select
+from sqlalchemy import Text, and_, any_, bindparam, func, literal, or_, select
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.detection.base import AccountProfile, ActionRecord, ActionWindow, EmployeeProfile, RuleContext, TransferRecord, TransferWindow
@@ -31,6 +32,12 @@ ACTION_WINDOW = timedelta(hours=48)
 BASELINE_SPAN = timedelta(days=30)
 MAX_HOPS = 5
 MAX_ACCOUNTS = 300
+
+def _in(column: Any, values: set[str] | list[str]) -> Any:
+    """`column = ANY(:ids)` with one array parameter: a window can name a thousand ids, and an expanded IN list is
+    re-rendered and re-planned on every event."""
+    return column == any_(literal(sorted(values), ARRAY(Text)))
+
 
 EVENT_MODELS: dict[str, Any] = {
     "transaction": Transaction,
@@ -73,14 +80,14 @@ def event_time(kind: str, row: Any) -> datetime:
 async def _holders(db: AsyncSession, tenant_id: str, accounts: set[str]) -> dict[str, str]:
     if not accounts:
         return {}
-    rows = await db.execute(select(Account.id, Account.customer_id).where(Account.tenant_id == tenant_id, Account.id.in_(accounts)))
+    rows = await db.execute(select(Account.id, Account.customer_id).where(Account.tenant_id == tenant_id, _in(Account.id, accounts)))
     return dict(rows.all())
 
 
 async def _accounts_of(db: AsyncSession, tenant_id: str, customers: set[str]) -> set[str]:
     if not customers:
         return set()
-    return set(await db.scalars(select(Account.id).where(Account.tenant_id == tenant_id, Account.customer_id.in_(customers))))
+    return set(await db.scalars(select(Account.id).where(Account.tenant_id == tenant_id, _in(Account.customer_id, customers))))
 
 
 def _transfer_neighbourhood(tenant_id: str, seeds: set[str]) -> set[str]:
@@ -126,16 +133,18 @@ async def _affected(db: AsyncSession, tenant_id: str, kind: str, row: Any) -> Af
 
 
 async def _action_rows(db: AsyncSession, tenant_id: str, start: datetime, end: datetime, *scopes) -> list[EmployeeAction]:
-    clauses = [c for c in scopes if c is not None]
-    if not clauses:
-        return []
-    stmt = select(EmployeeAction).where(
-        EmployeeAction.tenant_id == tenant_id,
-        EmployeeAction.event_ts >= start,
-        EmployeeAction.event_ts <= end,
-        or_(*clauses),
-    )
-    return list(await db.scalars(stmt))
+    """Actions in [start, end] matching any scope. Each scope runs as its own query so it can use its index; one OR
+    across target types would scan the tenant's actions."""
+    rows: dict[str, EmployeeAction] = {}
+    for scope in (c for c in scopes if c is not None):
+        stmt = select(EmployeeAction).where(
+            EmployeeAction.tenant_id == tenant_id,
+            EmployeeAction.event_ts >= start,
+            EmployeeAction.event_ts <= end,
+            scope,
+        )
+        rows.update((x.id, x) for x in await db.scalars(stmt))
+    return list(rows.values())
 
 
 async def build_context(db: AsyncSession, tenant_id: str, kind: str, event_id: str) -> EventContext | None:
@@ -149,7 +158,7 @@ async def build_context(db: AsyncSession, tenant_id: str, kind: str, event_id: s
 
     # Employees' own recent actions point at the customers whose money flow R-PROFILE_FLOW must see.
     a_start, a_end = t - ACTION_WINDOW, t + ACTION_WINDOW
-    own_actions = await _action_rows(db, tenant_id, a_start, a_end, EmployeeAction.employee_id.in_(affected.employees) if affected.employees else None)
+    own_actions = await _action_rows(db, tenant_id, a_start, a_end, _in(EmployeeAction.employee_id, affected.employees) if affected.employees else None)
     customers = set(affected.customers)
     targeted_accounts = {x.target_id for x in own_actions if x.target_type == "account"}
     customers |= {x.target_id for x in own_actions if x.target_type == "customer"}
@@ -159,15 +168,21 @@ async def build_context(db: AsyncSession, tenant_id: str, kind: str, event_id: s
     accounts = _transfer_neighbourhood(tenant_id, seeds) | await _accounts_of(db, tenant_id, customers)
 
     t_start, t_end = t - TRANSFER_WINDOW, t + TRANSFER_WINDOW
+    # One array parameter used on both sides, and the window's transfer ids stay in the database (see _action_rows
+    # below): large id lists are the slowest part of a context build.
+    window_accts = bindparam("window_accounts", sorted(accounts), type_=ARRAY(Text))
+    in_window = (
+        Transaction.tenant_id == tenant_id,
+        Transaction.status == "completed",
+        Transaction.value_ts >= t_start,
+        Transaction.value_ts <= t_end,
+        or_(Transaction.from_account_id == any_(window_accts), Transaction.to_account_id == any_(window_accts)),
+    )
     tx_rows = (
-        list(
-            await db.scalars(
-                select(Transaction).where(
-                    Transaction.tenant_id == tenant_id,
-                    Transaction.status == "completed",
-                    Transaction.value_ts >= t_start,
-                    Transaction.value_ts <= t_end,
-                    or_(Transaction.from_account_id.in_(accounts), Transaction.to_account_id.in_(accounts)),
+        (
+            await db.execute(
+                select(Transaction.id, Transaction.from_account_id, Transaction.to_account_id, Transaction.amount, Transaction.value_ts, Transaction.channel).where(
+                    *in_window
                 )
             )
         )
@@ -188,9 +203,9 @@ async def build_context(db: AsyncSession, tenant_id: str, kind: str, event_id: s
         tenant_id,
         a_start,
         a_end,
-        and_(EmployeeAction.target_type == "customer", EmployeeAction.target_id.in_(customers)) if customers else None,
-        and_(EmployeeAction.target_type == "account", EmployeeAction.target_id.in_(window_accounts)) if window_accounts else None,
-        and_(EmployeeAction.target_type == "transaction", EmployeeAction.target_id.in_(tx_ids)) if tx_ids else None,
+        and_(EmployeeAction.target_type == "customer", _in(EmployeeAction.target_id, customers)) if customers else None,
+        and_(EmployeeAction.target_type == "account", _in(EmployeeAction.target_id, window_accounts)) if window_accounts else None,
+        and_(EmployeeAction.target_type == "transaction", EmployeeAction.target_id.in_(select(Transaction.id).where(*in_window))) if tx_ids else None,
     )
     action_rows = {x.id: x for x in [*own_actions, *targeted]}.values()
     sender_of = {r.tx_id: holder_of.get(r.from_acct) if r.from_acct else None for r in transfers}
@@ -226,8 +241,8 @@ async def build_context(db: AsyncSession, tenant_id: str, kind: str, event_id: s
 async def _employee_profiles(db: AsyncSession, tenant_id: str, ids: set[str], at: datetime) -> dict[str, EmployeeProfile]:
     if not ids:
         return {}
-    staff = (await db.execute(select(Employee.id, Employee.name, Employee.role).where(Employee.tenant_id == tenant_id, Employee.id.in_(ids)))).all()
-    rights = await db.scalars(select(AccessRight).where(AccessRight.tenant_id == tenant_id, AccessRight.employee_id.in_(ids)))
+    staff = (await db.execute(select(Employee.id, Employee.name, Employee.role).where(Employee.tenant_id == tenant_id, _in(Employee.id, ids)))).all()
+    rights = await db.scalars(select(AccessRight).where(AccessRight.tenant_id == tenant_id, _in(AccessRight.employee_id, ids)))
     active: defaultdict[str, set[str]] = defaultdict(set)
     revoked: defaultdict[str, dict[str, datetime]] = defaultdict(dict)
     for r in rights:
@@ -252,18 +267,20 @@ async def _account_profiles(
     base = select(Transaction.from_account_id, func.count(), func.coalesce(func.sum(Transaction.amount), 0)).where(
         Transaction.tenant_id == tenant_id,
         Transaction.status == "completed",
-        Transaction.from_account_id.in_(accounts),
+        _in(Transaction.from_account_id, accounts),
         Transaction.value_ts >= window_start - BASELINE_SPAN,
         Transaction.value_ts < window_start,
     )
     live = {acct: (n, amt) for acct, n, amt in (await db.execute(base.group_by(Transaction.from_account_id))).all()}
-    last_rows = await db.execute(
-        select(Account.id, func.max(Transaction.value_ts))
-        .join(Transaction, or_(Transaction.from_account_id == Account.id, Transaction.to_account_id == Account.id))
-        .where(Account.tenant_id == tenant_id, Account.id.in_(accounts), Transaction.tenant_id == tenant_id, Transaction.value_ts < window_start)
-        .group_by(Account.id)
-    )
-    last = dict(last_rows.all())
+    last: dict[str, datetime] = {}
+    for side in (Transaction.from_account_id, Transaction.to_account_id):
+        rows = await db.execute(
+            select(side, func.max(Transaction.value_ts))
+            .where(Transaction.tenant_id == tenant_id, _in(side, accounts), Transaction.value_ts < window_start)
+            .group_by(side)
+        )
+        for acct, ts in rows.all():
+            last[acct] = max(last[acct], ts) if acct in last else ts
     profiles = {}
     for acct in accounts:
         n, amt = live.get(acct, (0, Decimal(0)))
@@ -278,6 +295,6 @@ async def _account_labels(db: AsyncSession, tenant_id: str, accounts: set[str]) 
     rows = await db.execute(
         select(Account.id, Account.account_no_masked, Customer.name)
         .join(Customer, Customer.id == Account.customer_id)
-        .where(Account.tenant_id == tenant_id, Account.id.in_(accounts))
+        .where(Account.tenant_id == tenant_id, _in(Account.id, accounts))
     )
     return {acct: f"{masked} ({holder})" for acct, masked, holder in rows.all()}

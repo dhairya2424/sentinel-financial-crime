@@ -301,6 +301,10 @@ class GraphService:
     def loaded(self, tenant_id: str) -> bool:
         return tenant_id in self._graphs
 
+    def forget(self, tenant_id: str) -> None:
+        """Drop a tenant's graph, for a tenant whose rows were deleted (throwaway test and benchmark tenants)."""
+        self._graphs.pop(tenant_id, None)
+
     def graph(self, tenant_id: str) -> nx.MultiDiGraph:
         return self._tenant(tenant_id).g
 

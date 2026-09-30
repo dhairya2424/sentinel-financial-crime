@@ -12,9 +12,11 @@ from app.detection.supporting import SupportSignal, dormant_signals, offhours_si
 TRANSFER_RULES = {"R-CIRC": CircularTransferRule(), "R-STRUCT": StructuringRule()}
 ACTION_RULES = {"R-PROFILE_ROLE": RoleMismatchRule(), "R-PROFILE_FLOW": EditThenFlowRule()}
 
+# Supporting rules read the whole window, not just the triggering row: an off-hours action on an account and that
+# account's dormant reactivation are one story whichever event arrives last (docs/02 §4.4).
 EVENT_RULES = {
-    "transaction": ("R-CIRC", "R-STRUCT", "R-PROFILE_FLOW", "R-VELOCITY", "R-DORMANT"),
-    "employee_action": ("R-PROFILE_ROLE", "R-PROFILE_FLOW", "R-OFFHOURS"),
+    "transaction": ("R-CIRC", "R-STRUCT", "R-PROFILE_FLOW", "R-VELOCITY", "R-OFFHOURS", "R-DORMANT"),
+    "employee_action": ("R-PROFILE_ROLE", "R-PROFILE_FLOW", "R-VELOCITY", "R-OFFHOURS", "R-DORMANT"),
     "access_right": ("R-PROFILE_ROLE",),
     "session": ("R-OFFHOURS",),
 }

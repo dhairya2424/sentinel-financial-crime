@@ -11,6 +11,12 @@ from scratch, and a new R-CIRC alert reaches the Alert Inbox over the WebSocket.
 prints how long detection took.
 
 The pipeline worker runs inside the API process, so the API must be up.
+
+S2–S5 are never planted here: their customers, accounts and staff would be invented records in a tenant that holds
+real data. They run as verification fixtures in throwaway tenants that are deleted afterwards:
+
+    python -m tests.scenarios.metrics_runner --only S2,S3,S4,S5 --skip-legit
+    SCENARIO_API=http://localhost:8000 python -m tests.scenarios.metrics_runner --skip-legit   # through the running API
 """
 
 import argparse
@@ -96,12 +102,20 @@ async def plant(tenant_id: str, scenario: str, dry_run: bool = False) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--only", required=True, choices=sorted(SCENARIOS), help="the scenario to plant")
+    parser.add_argument("--only", required=True, help="the scenario to plant (S1; S2–S5 run in throwaway tenants, see above)")
     parser.add_argument("--tenant", default="tenant_demo")
     parser.add_argument("--dry-run", action="store_true", help="report what would be removed and published, change nothing")
     args = parser.parse_args()
+    wanted = [x.strip().upper() for x in args.only.split(",") if x.strip()]
+    elsewhere = [x for x in wanted if x not in SCENARIOS]
+    if elsewhere:
+        raise SystemExit(
+            f"{', '.join(elsewhere)} would invent customers, accounts and staff in {args.tenant}, so it is not planted here. "
+            f"Run it in a throwaway tenant instead: python -m tests.scenarios.metrics_runner --only {','.join(elsewhere)} --skip-legit"
+        )
     try:
-        asyncio.run(plant(args.tenant, args.only, args.dry_run))
+        for scenario in wanted:
+            asyncio.run(plant(args.tenant, scenario, args.dry_run))
     except ReplantRefused as exc:
         raise SystemExit(f"Refusing to plant: {exc}") from None
 

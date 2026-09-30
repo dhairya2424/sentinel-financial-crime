@@ -116,4 +116,12 @@ Right-to-erasure conflicts with AML record-keeping — customer deletion request
 | JWT tamper/expired/foreign-tenant | `tests/unit/test_auth.py` | P0 |
 | Ingest size/extra-field validation | `tests/integration/test_ingest_abuse.py` | P5-A |
 | Secret scan | CI gitleaks | P5-A |
+| Audit completeness (every §5 action, with actor) | `tests/integration/test_audit_completeness.py` | P5-A |
+| JWT_SECRET required outside dev, `.env` never tracked | `tests/unit/test_config_security.py` | P5-A |
+
+*As built (P5-A):*
+- **Tenant sweep:** covers every read (alert, alert graph, case, case export, graph entity/neighbors/cycles, timeline, raw records) and every cross-tenant mutation (ack, link, note, status, assign). Each returns 404. Lists and search show nothing of the other tenant.
+- **Role matrix:** 28 route groups × 4 roles, plus assignment self-only and 401 without a token.
+- **Ingest abuse:** 501 events and unknown fields (event or batch) → 422. Malformed ids, amounts and timestamps → 422. Exactly 500 → 202. T3: `%`, `_` and SQL in search are literal text.
+- **Supply chain, first run 2026-09-30:** gitleaks found no leaks in 10 commits. pip-audit found no known vulnerabilities. `npm audit --omit=dev` found 0. `.github/workflows/ci.yml` runs all three, then the docs/10 §2 gates.
 | Evidence-panel mandatory (regulatory UX) | frontend Vitest | P3-C |

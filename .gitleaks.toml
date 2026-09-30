@@ -1,0 +1,18 @@
+# Secret scan (docs/08 §9, threat T10). CI runs `gitleaks detect --config .gitleaks.toml` on the full history.
+# The default rule set applies. The allowlist names only the two values that are public by design:
+# the dev-only JWT fallback (refused whenever ENV != dev, app/config.py) and the demo users' password (ADR-012/013).
+title = "Sentinel gitleaks config"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Documented dev/demo-only values; never valid outside ENV=dev"
+regexes = [
+  '''dev-only-insecure-secret-change-me-0123456789''',
+  '''Demo!23456''',
+]
+paths = [
+  '''(^|/)\.env\.example$''',
+  '''(^|/)package-lock\.json$''',
+]

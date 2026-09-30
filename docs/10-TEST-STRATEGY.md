@@ -127,6 +127,26 @@ CI gates: pytest -q | npm test | typecheck | lint | gitleaks | pip-audit | npm a
 - `false_positive_rate` = (# distinct customers with ≥1 alert band≥medium on legitimate corpus) / (# customers seeded).
 - `alert_latency` = wall time from last ingested event of scenario → first matching alert row (`detected_at − ingested_at_of_last_event`); report p50/p95 across scenarios.
 
+**Measured (2026-09-30, P5-A)** with `pytest tests/scenarios -q --metrics` on one Windows 11 dev laptop (PostgreSQL + Redis in Docker). The app and its pipeline worker ran in-process. Every tenant was throwaway and deleted afterwards:
+
+```
+================= SENTINEL SCENARIO REPORT =================
+detection_rate: 5/5 (100%)   [target >=90%] PASS
+false_positive_rate: 0.0% (0/200 customers)   [target <=10%] PASS
+  corpus: 200 customers, 20408 events through the pipeline in 1201.1s; alerts by band {}
+alert_latency_p50_ms: 136 / p95_ms: 210   [target p95<=5000] PASS
+id  scenario                                  rule hit        band      score  latency ms
+S1  Circular ₹6L / 4h / 3 accounts            R-CIRC          high         74         210
+S2  6 × ₹48k structured to one beneficiary    R-STRUCT        high         74         118
+S3  analyst approves ₹2L without tx.approve   R-PROFILE_ROLE  high         72         132
+S4  03:15 beneficiary edit → circular flow    R-PROFILE_FLOW  critical    100         136
+S5  dormant 120d + off-hours ₹90k             R-DORMANT       high         70         160
+============================================================
+overall: PASS
+```
+
+Each scenario raises exactly one alert. S4's alert joins the 03:15 edit and the loop, reaching critical. S5's alert carries both `dormancy_gap` and `employee_off_hours`. The corpus run takes about 20 minutes because every one of its 20,408 events goes through `process_event` (context build ≈ 65 ms). `LEGIT_CUSTOMERS` / `LEGIT_DAYS` shrink it for a quick local check, and the gate itself uses the full size.
+
 **FP triage protocol:** if FP >10%, metrics runner prints top offenders (rule + explanation + entities); tune rule params in `rules` table (not code) and re-run; log each tuning decision in docs/07 Reconciliation Log.
 
 ## 7. Frontend Test Catalog
@@ -178,7 +198,7 @@ Single-run cross-checks: T-INT-05 ingest→alert 124–177 ms, T-INT-06 ≈ 195 
 - All synthetic; **no production data** in repo.
 - Scenario seeds are deterministic given `--seed` flag (documented in seed modules) for reproducible CI.
 - Integration DB reset: `docker compose down -v` in CI job; locally, tests use `tenant_test_*` IDs and clean up in fixtures.
-- Seed scripts double as test fixtures (single source of scenario truth: `app/seed/suspicious.py`).
+- Scenario truth lives in `tests/scenarios/harness.py` (as built, P5-A). Each of S1–S5 is registered and ingested through the public API into its own throwaway tenant `tenant_scn_<id>_<run>`. The real pipeline detects it, and the tenant is deleted afterwards. The legitimate corpus (`app.seed.legitimate`) is bulk-loaded into `tenant_scn_legit_<run>` and every event goes through the pipeline's `process_event`. Nothing invented ever reaches `tenant_demo`, which holds real data plus the planted demo loop that `app/seed/suspicious.py --only S1` re-plants (user direction: real data only).
 
 ## 10. Exit Mapping
 

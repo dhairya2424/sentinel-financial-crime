@@ -8,7 +8,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api import alerts, auth, cases, dashboard, entities, graph, ingest, ops, timeline, users
+from app.api import alerts, auth, cases, dashboard, entities, graph, ingest, ops, rules, timeline, users
 from app.db import SessionLocal, engine
 from app.graph.service import graph_service
 from app.pipeline import worker
@@ -68,7 +68,7 @@ def create_app() -> FastAPI:
         errors = [{k: v for k, v in e.items() if k not in ("input", "ctx")} for e in exc.errors()]
         return JSONResponse({"detail": jsonable_encoder(errors), "code": "validation_error"}, status_code=422)
 
-    for module in (auth, users, entities, ingest, timeline, graph, alerts, cases, dashboard, ops, hub):
+    for module in (auth, users, entities, ingest, timeline, graph, alerts, cases, dashboard, rules, ops, hub):
         app.include_router(module.router, prefix="/v1")
     return app
 

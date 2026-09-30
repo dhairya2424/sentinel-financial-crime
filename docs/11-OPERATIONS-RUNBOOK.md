@@ -37,9 +37,10 @@ docker compose down -v                 # RESET dev DB (destroys data!)
 # Seed (order matters)
 python -m app.seed.users
 python -m app.seed.rules
-python -m app.seed.legitimate --customers 50 --days 90
-python -m app.seed.suspicious --only S1               # re-plant the demo loop live (as built: S1 is the only scenario)
-python -m app.seed --scenario mixed                     # combined convenience
+python -m app.seed.suspicious --only S1               # re-plant the demo loop live (S1 is the only live fixture)
+# tenant_demo holds real data plus the demo loop only. Invented data goes to throwaway tenants:
+python -m tests.scenarios.metrics_runner              # S1–S5 + 200-customer corpus in throwaway tenants; prints the report
+python -m app.seed.legitimate --tenant tenant_fp_trial --customers 200 --days 90   # load the benign corpus to inspect by hand
 
 # Tests / quality
 pytest tests/unit -q

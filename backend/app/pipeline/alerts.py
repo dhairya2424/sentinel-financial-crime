@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -109,21 +109,27 @@ async def _add_evidence(db: AsyncSession, tenant_id: str, alert_id: str, refs: l
     return (await db.execute(stmt)).rowcount or 0
 
 
-async def _find_existing(db: AsyncSession, tenant_id: str, code: str, key: str, entity_ids: list[str], start: datetime, hours: int) -> Alert | None:
+async def _find_existing(
+    db: AsyncSession, tenant_id: str, codes: list[str], key: str, entity_ids: list[str], refs: list[EvidenceRef], start: datetime, hours: int
+) -> Alert | None:
     alert = await db.scalar(select(Alert).where(Alert.tenant_id == tenant_id, Alert.dedup_key == key).with_for_update())
     if alert is not None:
         return alert
-    # The same situation straddling a window-floor boundary is still the same alert while it is active.
+    # The same situation is still the same alert while it is active: across a window-floor boundary, and when another
+    # event sees it from a different angle (the approval's view adds the login, the loop's view adds the teller).
+    # Hits that share an entity within one rule window extend that alert when they carry one of its rules or re-find
+    # evidence it already holds.
+    holds_evidence = select(AlertEvidence.alert_id).where(AlertEvidence.tenant_id == tenant_id, AlertEvidence.ref_id.in_([r for _, r in refs]))
     return await db.scalar(
         select(Alert)
         .where(
             Alert.tenant_id == tenant_id,
-            Alert.rule_code == code,
-            Alert.entity_ids == entity_ids,
+            or_(Alert.rule_code.in_(codes), Alert.id.in_(holds_evidence)),
+            Alert.entity_ids.overlap(entity_ids),
             Alert.status.in_(ACTIVE_STATUSES),
             Alert.window_end >= start - timedelta(hours=hours),
         )
-        .order_by(Alert.detected_at.desc())
+        .order_by((Alert.entity_ids == entity_ids).desc(), Alert.detected_at.desc())
         .limit(1)
         .with_for_update()
     )
@@ -141,7 +147,8 @@ async def persist_group(db: AsyncSession, tenant_id: str, group: list[Hit], conf
     key = f"{code}:{','.join(entity_ids)}:{floor_ts(end, hours).isoformat()}"
     now = datetime.now(UTC)
 
-    existing = await _find_existing(db, tenant_id, code, key, entity_ids, start, hours)
+    codes = sorted({h.pattern_code for h in group})
+    existing = await _find_existing(db, tenant_id, codes, key, entity_ids, refs, start, hours)
     if existing is None:
         score, band, factors = aggregate_factors(group)
         alert_id = new_id("alert")
@@ -170,7 +177,7 @@ async def persist_group(db: AsyncSession, tenant_id: str, group: list[Hit], conf
         if inserted.scalar() is not None:
             await _add_evidence(db, tenant_id, alert_id, refs)
             return AlertChange(await db.get(Alert, alert_id), created=True)
-        existing = await _find_existing(db, tenant_id, code, key, entity_ids, start, hours)
+        existing = await _find_existing(db, tenant_id, codes, key, entity_ids, refs, start, hours)
         if existing is None:
             return None
 
@@ -182,6 +189,7 @@ async def persist_group(db: AsyncSession, tenant_id: str, group: list[Hit], conf
         return None
     score, band, factors = aggregate_factors([_as_hit(_factors_from_json(existing.risk_factors), primary), *group])
     existing.occurrence_count += 1
+    existing.entity_ids = sorted(set(existing.entity_ids) | set(entity_ids))
     existing.window_start = min(existing.window_start, start)
     existing.window_end = max(existing.window_end, end)
     existing.risk_score, existing.risk_band = score, band

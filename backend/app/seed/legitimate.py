@@ -1,6 +1,11 @@
-"""Benign 90-day corpus for tenant_demo (docs/06 §7 L1–L20, docs/10 §6).
+"""Benign 90-day corpus (docs/06 §7 L1–L20, docs/10 §6), for measuring false positives in a throwaway tenant.
 
-    python -m app.seed.legitimate --customers 50 --employees 30 --days 90 [--seed 42] [--verify]
+    python -m app.seed.legitimate --tenant tenant_fp_trial --customers 200 --days 90 [--seed 42] [--verify]
+    python -m app.seed.legitimate --customers 200 --dry-run --verify     # generate and check, touch nothing
+
+The records are invented, so they never go into the default tenant, which holds only real, user-entered data plus the
+planted demo loop: --tenant is required to load and the default tenant is refused. tests/scenarios/test_legitimate.py
+loads the corpus into its own tenant, runs the live pipeline over it and deletes the tenant afterwards.
 
 Output is deterministic for a given --seed and end date: row content and ids (ULIDs built from the
 event timestamp plus seeded random bytes). The data is shaped so that no rule should fire:
@@ -695,7 +700,8 @@ def summarize(corpus: Corpus) -> str:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Seed the benign (legitimate) corpus for the default tenant.")
+    parser = argparse.ArgumentParser(description="Load the benign (legitimate) corpus into a throwaway tenant.")
+    parser.add_argument("--tenant", help="throwaway tenant to load into (required unless --dry-run; never the default tenant)")
     parser.add_argument("--customers", type=int, default=50)
     parser.add_argument("--employees", type=int, default=30)
     parser.add_argument("--days", type=int, default=90)
@@ -709,11 +715,16 @@ def main() -> None:
         raise DemoSeedRefused("demo corpora must never be seeded with ENV=production")
     if args.customers < 2 or args.employees < 5 or args.days < 7:
         parser.error("need at least 2 customers, 5 employees and 7 days")
+    if not args.dry_run and not args.tenant:
+        parser.error("--tenant is required to load; use --dry-run to generate without loading")
+    if args.tenant == settings.TENANT_DEFAULT:
+        raise DemoSeedRefused(f"{settings.TENANT_DEFAULT} holds real data only; load the synthetic corpus into a throwaway tenant")
+    tenant = args.tenant or "dry_run"
 
     end_day = datetime.now(TZ).date()
-    generator = LegitimateGenerator(settings.TENANT_DEFAULT, args.customers, args.employees, args.days, args.seed, end_day)
+    generator = LegitimateGenerator(tenant, args.customers, args.employees, args.days, args.seed, end_day)
     corpus = generator.build()
-    print(f"legitimate corpus for {settings.TENANT_DEFAULT}: {args.days} days to {end_day}, seed {args.seed}")
+    print(f"legitimate corpus for {tenant}: {args.days} days to {end_day}, seed {args.seed}")
     print(summarize(corpus))
 
     if args.verify:
@@ -726,9 +737,9 @@ def main() -> None:
         )
 
     if not args.dry_run:
-        wiped = asyncio.run(load(corpus, settings.TENANT_DEFAULT))
+        wiped = asyncio.run(load(corpus, tenant))
         replaced = ", ".join(f"{t}={n}" for t, n in wiped.items() if n)
-        print(f"loaded into {settings.TENANT_DEFAULT}" + (f" (replaced: {replaced})" if replaced else ""))
+        print(f"loaded into {tenant}" + (f" (replaced: {replaced})" if replaced else ""))
 
 
 if __name__ == "__main__":

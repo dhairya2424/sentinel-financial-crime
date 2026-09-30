@@ -6,7 +6,7 @@ from app.detection.base import AccountProfile, ActionRecord, ActionWindow, Emplo
 from app.detection.config import resolve_rule_configs
 from app.detection.engine import detect, run_rules, select_rules
 from app.risk.explain import aggregate_factors, compose_explanation
-from tests.unit.fixtures_detection import h, loop, profiles
+from tests.unit.fixtures_detection import h, loop, profiles, tx
 
 IST = ZoneInfo("Asia/Kolkata")
 EDIT = datetime(2026, 9, 22, 3, 15, tzinfo=IST).astimezone(UTC)
@@ -30,9 +30,37 @@ def s4_context(configs=None) -> RuleContext:
 
 
 def test_select_rules_by_event_kind():
-    assert select_rules(["acct_A"], ["transaction"]) == ["R-CIRC", "R-STRUCT", "R-PROFILE_FLOW", "R-VELOCITY", "R-DORMANT"]
-    assert select_rules(["emp_1"], ["employee_action"]) == ["R-PROFILE_ROLE", "R-PROFILE_FLOW", "R-OFFHOURS"]
+    assert select_rules(["acct_A"], ["transaction"]) == ["R-CIRC", "R-STRUCT", "R-PROFILE_FLOW", "R-VELOCITY", "R-OFFHOURS", "R-DORMANT"]
+    assert select_rules(["emp_1"], ["employee_action"]) == ["R-PROFILE_ROLE", "R-PROFILE_FLOW", "R-VELOCITY", "R-OFFHOURS", "R-DORMANT"]
     assert select_rules([], ["transaction"]) == []
+
+
+def s5_context() -> RuleContext:
+    """docs/06 S5: an account idle for 120 days sends ₹90k at 02:00; the teller who approves it is working at 02:03."""
+    sent = datetime(2026, 9, 22, 2, 0, tzinfo=IST).astimezone(UTC)
+    return RuleContext(
+        tenant_id="tenant_demo",
+        configs=resolve_rule_configs(),
+        transfers=TransferWindow(
+            [tx("tx_1", "acct_D", "acct_P", 90000, sent)],
+            profiles(AccountProfile("acct_D", "cust_D", last_activity_at=sent - h(120 * 24)), AccountProfile("acct_P", "cust_P")),
+        ),
+        actions=ActionWindow(
+            [ActionRecord("act_9", "emp_4", "tx.approve", "transaction", "tx_1", sent + h(0.05), customer_id="cust_D")],
+            {"emp_4": EmployeeProfile("emp_4", "Asha Rao", "teller", frozenset({"tx.approve"}))},
+        ),
+        timezone="Asia/Kolkata",
+    )
+
+
+def test_s5_supporting_signals_combine_whichever_event_arrives_last():
+    """Dormancy (45) and the off-hours approval (25) share the customer, so they form one standalone alert at 70 —
+    from the transfer's event and from the approval's event alike."""
+    for kind, entity in (("transaction", "acct_D"), ("employee_action", "emp_4")):
+        hits = detect(s5_context(), [entity], [kind])
+        assert [hit.pattern_code for hit in hits] == ["R-DORMANT"], kind
+        assert {f.name for f in hits[0].factors} == {"dormancy_gap", "employee_off_hours"}
+        assert round(sum(f.contribution for f in hits[0].factors) * 100) == 70
 
 
 def test_s4_end_to_end_connected_anomalies_reach_critical():

@@ -94,8 +94,11 @@ async def _persist(db: AsyncSession, tenant_id: str, event: AnyEvent) -> None:
     await db.flush()
 
 
-async def ingest_events(db: AsyncSession, tenant_id: str, events: list[AnyEvent], actor_user: str | None) -> IngestResult:
-    """Persist valid events and dead-letter invalid ones in one transaction, then publish accepted ids."""
+async def ingest_events(
+    db: AsyncSession, tenant_id: str, events: list[AnyEvent], actor_user: str | None, *, dead_letter: bool = True
+) -> IngestResult:
+    """Persist valid events and dead-letter invalid ones in one transaction, then publish accepted ids.
+    An ops replay passes dead_letter=False: the failure row it is replaying already holds the event."""
     started = time.perf_counter()
     result = IngestResult(batch_id=str(uuid.uuid4()))
     existing = await _existing_ids(db, events)
@@ -114,14 +117,15 @@ async def ingest_events(db: AsyncSession, tenant_id: str, events: list[AnyEvent]
             result.failed += 1
             reason = str(exc).splitlines()[0][:500] if isinstance(exc, UnknownReference) else "the event could not be stored"
             result.errors.append((event.id, reason))
-            db.add(
-                IngestFailure(
-                    id=new_id("fail"),
-                    tenant_id=tenant_id,
-                    payload=event.model_dump(mode="json"),
-                    error=f"{type(exc).__name__}: {str(exc).splitlines()[0][:500]}",
+            if dead_letter:
+                db.add(
+                    IngestFailure(
+                        id=new_id("fail"),
+                        tenant_id=tenant_id,
+                        payload=event.model_dump(mode="json"),
+                        error=f"{type(exc).__name__}: {str(exc).splitlines()[0][:500]}",
+                    )
                 )
-            )
     audit.log(
         db,
         tenant_id,
