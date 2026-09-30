@@ -1,20 +1,38 @@
 import asyncio
+import time
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import delete
+from sqlalchemy.dialects.postgresql import insert
 
 from app.auth.jwt import create_access_token
 from app.db import SessionLocal, engine
 from app.main import app
-from app.models import Account, Customer, Employee, EmployeeAction, EmployeeSession, Transaction
+from app.models import Account, Alert, Case, Customer, Employee, EmployeeAction, EmployeeSession, IngestFailure, Transaction, User
 from app.seed.users import ensure_tenant
 
 TENANT_A = "tenant_itest_a"
 TENANT_B = "tenant_itest_b"
+ROLES = ("admin", "manager", "investigator", "viewer")
+
+
+def poll(fetch: Callable[[], Any], timeout: float = 5.0, interval: float = 0.05) -> tuple[Any, float]:
+    """Call fetch until it returns something truthy; return it with the elapsed milliseconds, or fail at timeout."""
+    started = time.perf_counter()
+    while True:
+        value = fetch()
+        elapsed = (time.perf_counter() - started) * 1000
+        if value:
+            return value, elapsed
+        if elapsed > timeout * 1000:
+            raise AssertionError(f"nothing after {elapsed:.0f} ms")
+        time.sleep(interval)
 
 
 @dataclass(frozen=True)
@@ -36,6 +54,12 @@ async def _build(world: World) -> None:
     async with SessionLocal() as db, db.begin():
         for tenant in (TENANT_A, TENANT_B):
             await ensure_tenant(db, tenant)
+        for role in ROLES:
+            await db.execute(
+                insert(User)
+                .values(id=f"usr_itest_{role}", tenant_id=TENANT_A, email=f"{role}@itest.dev", password_hash="unused", full_name=f"Itest {role}", role=role)
+                .on_conflict_do_nothing()
+            )
         db.add(Customer(id=world.customer, tenant_id=TENANT_A, external_ref=f"IT-{world.suffix}", name="Integration Customer"))
         await db.flush()
         payee = f"{world.customer}_payee"
@@ -67,7 +91,7 @@ async def _build(world: World) -> None:
 
 async def _teardown() -> None:
     async with SessionLocal() as db, db.begin():
-        for model in (EmployeeAction, EmployeeSession, Transaction, Account, Customer, Employee):
+        for model in (Alert, Case, IngestFailure, EmployeeAction, EmployeeSession, Transaction, Account, Customer, Employee):
             await db.execute(delete(model).where(model.tenant_id.in_([TENANT_A, TENANT_B])))
     await engine.dispose()
 

@@ -330,6 +330,8 @@ Startup: batched rebuild (read in 5k chunks → NetworkX `MultiDiGraph`). Runtim
 ```
 Auth: token in query or first-message auth; tenant scoping enforced from JWT (never from payload). Heartbeat 25 s; client reconnect with backoff (App Flow §6).
 
+As built in P3-B: a missing or invalid token closes the socket with code `4401`. First-message auth is `{"op":"auth","token":"<jwt>"}` within 5 s. Subscribe/unsubscribe answer `{"type":"subscribed"|"unsubscribed","channels":[...]}` for the channels granted; a channel of another tenant (or any unknown channel) gets `{"type":"error","detail":"channel not allowed","channels":[...]}` and nothing is subscribed. The heartbeat is `{"type":"heartbeat","ts":<epoch s>}`. When new evidence extends an existing alert the hub sends `alert.updated` with the same `data` shape as `alert.created` (the `occurrence_count` rises); `data` also carries `risk_score` and `occurrence_count`.
+
 ## 6. REST API Contracts (canonical)
 
 Base: `/v1` | Auth: `Authorization: Bearer <jwt>` | Errors: `{"detail": "...", "code": "..."}` with proper HTTP codes.
@@ -401,6 +403,8 @@ Graph contract notes (as built in P2-A): search hits add `detail` (external ref,
 | `POST /alerts/{id}/link-case` | `{case_id}` |
 | `GET /alerts/{id}/graph` | mini subgraph for inline snapshot |
 
+Alerts contract notes (as built in P3-B): the list filters are `band`, `rule`, `status` (comma lists), `entity` (alerts whose `entity_ids` contain it), `from`/`to` on `detected_at`, keyset `cursor`, `limit` ≤ 200; `assignee` belongs to cases, not alerts. Rows are `{id, rule_code, title, risk_band, risk_score, status, entity_ids, primary_entity, amount_total, detected_at, occurrence_count}`, where `amount_total` sums the transaction evidence snapshots. The detail adds `rule_version, explanation, risk_factors, window_start, window_end, updated_at, evidence:[{evidence_type, ref_id, snapshot, captured_at}], linked_case_id`. Acknowledge works only from `open` (409 otherwise). Link-case accepts `open`, `acknowledged` or `linked_to_case` alerts and an existing, not-closed case of the same tenant (404 unknown case, 409 closed case); both are audited (`alert.ack`, `alert.link`, with from/to). The graph endpoint returns the alert's entities plus their direct TRANSFER neighbours, capped at 50 nodes, with `truncated`. Explanations name accounts by masked number and holder ("XXXXXXXX0011 (Asha Verma)"); ids stay in `entity_ids` and evidence.
+
 ### Cases
 | Endpoint | Notes |
 |---|---|
@@ -426,7 +430,8 @@ Graph contract notes (as built in P2-A): search hits add `detail` (external ref,
 ```
 GET  /rules                 → active versions
 PUT  /rules/{code}          {params, weights, enabled} (admin) → version+1 (new row)
-GET  /ops/health            {db, redis, ws_clients, events_per_min, lag_seconds, failed_batches}
+GET  /ops/health            {db, redis, ws_clients, pipeline:{processed, alerts_created, alerts_updated, errors, stream_lag_ms}}
+                            (as built in P3-B; events_per_min and failed_batches arrive with the P5 ops work)
 POST /ops/replay-batch      {batch_id or failure_id} (admin)
 ```
 

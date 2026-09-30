@@ -67,7 +67,7 @@ ID prefixes (frozen): `cust_`, `acct_`, `tx_`, `emp_`, `act_` (employee_action),
 | Timeline `category` | `transaction` \| `profile_change` \| `access_login` \| `approval` |
 | Graph node `type` | `customer` \| `account` \| `employee` (plus `transaction` nodes only as EMPLOYEE_ACTION endpoints) |
 | Graph edge `type` | `TRANSFER` \| `ACCOUNT_HOLDER` \| `EMPLOYEE_ACCESS` \| `PROFILE_CHANGE` \| `EMPLOYEE_ACTION` |
-| WS message `type` | `alert.created` \| `case.updated` \| `metrics.update` \| `pong` |
+| WS message `type` | `alert.created` \| `alert.updated` \| `case.updated` \| `metrics.update` \| `pong` \| `heartbeat` \| `subscribed` \| `unsubscribed` \| `error` |
 
 ## 4. Detection Rule Codes
 

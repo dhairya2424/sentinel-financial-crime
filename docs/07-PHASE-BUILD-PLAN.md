@@ -1190,4 +1190,8 @@ Append rows during P5-B (and any doc-touching repair). Columns: Date | Doc | Sec
 | 2026-09-28 | 08-SECURITY | §5 | Audit action `entity.create` added | new registration routes |
 | 2026-09-28 | 04-FRONTEND | §1 routes | `/add` (Add data, admin + investigator) added beside the Timeline | new screen for entering real records |
 | 2026-09-28 | seed data | tenant_demo | Synthetic corpus removed (`python -m app.seed.reset_to_loop`); only the planted `tx_demo_loop_*` loop, its 3 accounts and 3 holders remain | user direction: keep the demo loop, everything else real |
+| 2026-09-30 | 09-DATA-DICT | §3 WS types | Added `alert.updated`, `heartbeat`, `subscribed`, `unsubscribed`, `error` | code addition in P3-B: an extended alert must reach the UI; acks and errors make the protocol observable |
+| 2026-09-30 | 05-BACKEND | §5, §6 Alerts, Ops | WS close code 4401 and acks; alert list/detail shapes, ack only from open (409), link-case rules; ops health `pipeline` block | code addition in P3-B |
+| 2026-09-30 | 02-TRD | §3 | Dedup counts only new evidence; window-boundary fallback; live baselines; delivery/retry rules | P3-B prompt counted every re-detection as an occurrence, which inflates counts on every nearby event |
+| 2026-09-30 | 07-PHASE | P3-B step 1 | Pipeline failures reuse `ingest_failures` (`payload.stage="pipeline"`) instead of a new `pipeline_failures` table | one re-drive path for P5 ops.replay; no DDL change |
 | 2026-09-28 | 03-UIUX | §5 | Graph Explorer realised as canvas + Entity / Who touched what tabs; parallel edges bundled with ×N; risk rings only medium+; cycle highlight dims the rest; tokens `--change`, `--cycle` | doc-fixed to the layout chosen in P2-B; 220 unbundled lines per 2-hop view were unreadable |

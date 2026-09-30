@@ -68,7 +68,9 @@ POST /v1/ingest/events (batch ≤ 500)
 ```
 
 - **Sliding window scope:** rules only evaluate the affected entity's window (e.g., last 24 h transactions of the involved accounts), not the whole dataset — this is what keeps detection O(affected) not O(total).
-- **Dedup:** deterministic alert key = `rule_id + entity_ids(sorted) + floor(event_ts / window)`. Duplicate keys within an open alert increment `occurrence_count` and append evidence instead of creating new alerts.
+- **Dedup:** deterministic alert key = `rule_id + entity_ids(sorted) + floor(event_ts / window)`. Duplicate keys within an open alert increment `occurrence_count` and append evidence instead of creating new alerts. As built (P3-B): only *new* evidence counts as an occurrence, so a replay or an unrelated nearby event that re-finds the same pattern changes nothing; an active alert with the same rule and entities whose window is within one rule window is extended even when the window floor ticks over; hits that share an entity become one alert whose risk is the max-merged factor set.
+- **Window building (P3-B):** the worker loads completed transfers within ±72 h of the event on the affected accounts, the holders' other accounts and accounts within five transfer hops (so R-CIRC sees loops up to six accounts), employee actions within ±48 h, and entitlements as held at the event time. 30-day baselines and last activity are counted live from the store, because ingest does not maintain the stored baseline columns.
+- **Delivery:** at-least-once. A stream message is acknowledged after its outcome is durable; failures retry up to three deliveries, then land in `ingest_failures` (`payload.stage = "pipeline"`). Messages left pending by a dead consumer are reclaimed after 15 s. Each API process joins the `pipeline` group under its own consumer name.
 - **Backpressure:** Redis Stream consumer groups; failed batches written to `ingest_failures` table with re-drive endpoint.
 - **Clock:** all timestamps UTC (`timestamptz`); "off-hours" defined per tenant timezone config.
 

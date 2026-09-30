@@ -5,6 +5,8 @@ from fastapi import APIRouter
 from sqlalchemy import text
 
 from app.db import engine
+from app.pipeline import worker
+from app.realtime import hub
 from app.redis_client import redis
 
 router = APIRouter(prefix="/ops", tags=["ops"])
@@ -31,6 +33,6 @@ async def _check(name: str, probe) -> str:
 
 
 @router.get("/health")
-async def health() -> dict[str, str]:
+async def health() -> dict[str, object]:
     db, rds = await asyncio.gather(_check("db", _ping_db), _check("redis", _ping_redis))
-    return {"db": db, "redis": rds}
+    return {"db": db, "redis": rds, "pipeline": worker.metrics.snapshot(), "ws_clients": hub.client_count()}
