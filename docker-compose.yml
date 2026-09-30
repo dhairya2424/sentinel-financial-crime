@@ -1,3 +1,6 @@
+# One-command stack (docs/11 §2, §7): docker compose up --build
+# web (nginx + built SPA) :80 -> api (FastAPI + in-process pipeline worker) :8000 -> postgres, redis.
+# Host ports are overridable in a root .env: PG_HOST_PORT, REDIS_HOST_PORT, API_HOST_PORT, WEB_HOST_PORT.
 services:
   postgres:
     image: postgres:15-alpine
@@ -24,6 +27,33 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  api:
+    build: ./backend
+    env_file:
+      - path: ./backend/.env
+        required: false
+    environment:
+      # Inside the compose network the services are reached by name; everything else comes from backend/.env.
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-sentinel}:${POSTGRES_PASSWORD:-sentinel}@postgres:5432/sentinel
+      REDIS_URL: redis://redis:6379/0
+    ports:
+      - "${API_HOST_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    ports:
+      - "${WEB_HOST_PORT:-80}:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   pgdata:
