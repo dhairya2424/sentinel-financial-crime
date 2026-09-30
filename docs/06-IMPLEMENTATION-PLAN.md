@@ -103,13 +103,13 @@ sentinel/
 - **Exit:** end-to-end journey A + C demoable (docs/04 §2, §4).
 
 ### Phase 5 — Scenarios, Hardening, Demo (Day 6–8)
-- [ ] Scenario suites: 5 suspicious + legitimate 200-customer dataset (docs/06 §7)
-- [ ] Metrics runner: detection rate, false-positive rate → printed report
-- [ ] Tenant isolation test, role enforcement tests, audit completeness spot-check
-- [ ] Rules admin page (admin role), `PUT /rules` versioning
-- [ ] Ops health page (events/min, lag, failed batch replay)
-- [ ] Perf pass: 2-hop p95, alert latency p95 measured and logged
-- [ ] Demo script + seed `--scenario mixed` one-liner
+- [x] Scenario suites: 5 suspicious + legitimate 200-customer dataset (docs/06 §7) — in throwaway tenants (ADR-016)
+- [x] Metrics runner: detection rate, false-positive rate → printed report (`tests/scenarios/metrics_runner.py`)
+- [x] Tenant isolation test, role enforcement tests, audit completeness
+- [~] Rules admin: `GET/PUT /v1/rules` versioning done; the `/admin/rules` page is a placeholder (PRD F-13, Should)
+- [x] Ops health (events/min, backlog, lag, open failures, latency p95) in `GET /v1/ops/health`; failed batch replay `POST /v1/ops/replay-batch`
+- [x] Perf pass: 2-hop p95, alert latency p95 measured and logged (docs/10 §8)
+- [x] Demo script + one-liners: `docker compose up --build`, `scripts/seed.sh`, `scripts/replay-suspicious.sh`
 - **Exit:** all NFR-05/06 targets met; demo runbook works on clean machine.
 
 ## 3. Milestone Acceptance Criteria
@@ -134,7 +134,15 @@ sentinel/
 | `TENANT_DEFAULT` | `tenant_demo` | seeded |
 | `REPORTING_THRESHOLD` | `50000` | per-tenant override in `tenants.config` |
 | `CYCLE_MIN_AMOUNT` | `500000` | R-CIRC param (rules table overrides) |
-| `PIPELINE_CONCURRENCY` | `2` | stream consumers |
+| `ENV` | `dev` | `dev` \| `demo` \| `staging` \| `production`; anything but `dev` requires `JWT_SECRET` |
+| `JWT_REFRESH_HOURS` | `12` | refresh token lifetime |
+| `VITE_API_URL` (frontend, build time) | `http://localhost:8000` | `""` = same-origin (the docker web image, behind nginx) |
+| `VITE_WS_URL` (frontend, build time) | derived | unset/empty: from `VITE_API_URL` (http→ws), or from the page when same-origin |
+| `PG_HOST_PORT` / `REDIS_HOST_PORT` / `API_HOST_PORT` / `WEB_HOST_PORT` (root `.env`, compose) | `5432` / `6379` / `8000` / `80` | host ports only; containers talk on the compose network |
+| `SEED_API_URL` (seed) | `http://127.0.0.1:8000` | the API `app.seed.demo_loop` asks to rebuild its graph |
+| `SCENARIO_API`, `LEGIT_CUSTOMERS`, `LEGIT_DAYS`, `LEGIT_TOLERANCE` (tests) | unset / `200` / `90` / `0.10` | scenario harness: run through a live API; corpus size; FP limit |
+
+*As built (P5-B):* `REPORTING_THRESHOLD` and `CYCLE_MIN_AMOUNT` are written into a tenant's `config` when the seed first creates it; rule versions in the `rules` table override them afterwards. `PIPELINE_CONCURRENCY` was removed: the worker is one ordered consumer per API process (ADR-006), since concurrent detection on one tenant could race the cross-event dedup (ADR-017).
 
 ## 5. Team Role Split (4-person team)
 

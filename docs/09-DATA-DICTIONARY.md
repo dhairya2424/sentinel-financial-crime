@@ -54,7 +54,7 @@ ID prefixes (frozen): `cust_`, `acct_`, `tx_`, `emp_`, `act_` (employee_action),
 | `transactions.direction` | `debit` \| `credit` |
 | `transactions.channel` | `upi` \| `neft` \| `rtgs` \| `atm` \| `pos` \| `internal` |
 | `transactions.status` | `pending` \| `completed` \| `failed` (detection uses `completed`) |
-| `employees.role` (bank) | `teller` \| `manager` \| `finance_ops` \| `analyst` \| `admin_it` |
+| `employees.role` (bank) | `teller` \| `manager` \| `finance_ops` \| `analyst` \| `admin_it` — the roles the R-PROFILE policy (`allowed_roles`) names. *As built:* registration accepts any title a bank uses (the Add data screen suggests these five), and a title outside the policy holds no policy role, so its sensitive actions flag as mismatches. |
 | `employee_actions.action_type` | `login` \| `logout` \| `profile.edit` \| `beneficiary.add` \| `limit.change` \| `tx.approve` \| `export.data` |
 | `employee_actions.target_type` | `customer` \| `account` \| `transaction` \| `employee` \| `system` |
 | `employee_sessions.outcome` | `success` \| `fail` \| `lockout` |
@@ -67,7 +67,7 @@ ID prefixes (frozen): `cust_`, `acct_`, `tx_`, `emp_`, `act_` (employee_action),
 | Timeline `category` | `transaction` \| `profile_change` \| `access_login` \| `approval` |
 | Graph node `type` | `customer` \| `account` \| `employee` (plus `transaction` nodes only as EMPLOYEE_ACTION endpoints) |
 | Graph edge `type` | `TRANSFER` \| `ACCOUNT_HOLDER` \| `EMPLOYEE_ACCESS` \| `PROFILE_CHANGE` \| `EMPLOYEE_ACTION` |
-| WS message `type` | `alert.created` \| `alert.updated` \| `case.updated` \| `metrics.update` \| `pong` \| `heartbeat` \| `subscribed` \| `unsubscribed` \| `error` |
+| WS message `type` | `alert.created` \| `alert.updated` \| `alert.removed` (P5-B: the S1 re-plant deleted that alert; `data: {id, reason}`) \| `case.updated` \| `metrics.update` \| `pong` \| `heartbeat` \| `subscribed` \| `unsubscribed` \| `error` |
 
 ## 4. Detection Rule Codes
 

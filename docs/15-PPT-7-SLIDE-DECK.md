@@ -55,7 +55,7 @@
 - **Explains:** every alert carries a risk band (**Low <40 · Medium 40–69 · High 70–84 · Critical ≥85**) decomposed into weighted factors **that sum to the score** — no black box.
 - **Proves:** a **mandatory evidence panel** on every alert (raw rows snapshotted at detection, SHA-256 digested export); the panel cannot be dismissed.
 - **Connects:** employee action → account change → money movement, on one graph, in one timeline, in real time (**≤5 s ingest → broadcast**).
-- **Validates:** tested on suspicious **and** legitimate scenarios — **≥90% detection, ≤10% false positives** (target/NFR-05, NFR-06).
+- **Validates:** tested on suspicious **and** legitimate scenarios — **≥90% detection, ≤10% false positives** (target/NFR-05, NFR-06); measured 2026-09-30: **5/5 detected, 0/200 benign customers flagged, p95 210 ms** (docs/10 §6).
 - **Outcome:** assign to a case, annotate, close, export a tamper-evident evidence bundle for reviewers.
 
 **Visual:** one horizontal strip — Ingest → Graph + Timeline → Detection → Explainable Alert → Case + Export (5 boxes, arrows).
@@ -129,7 +129,7 @@ POST /v1/ingest/events → [Validate + Postgres insert 50–150ms]
   - ML dropped → deterministic rules + factor decomposition, unit-testable (ADR-002).
 - **Measurable exit criteria (viability):** detection **≥90%** on 5 planted scenarios · false positives **≤10%** on a 200-customer legitimate corpus · alert latency **≤5 s p95** · 2-hop query **≤500 ms p95** · **100%** of state changes audited.
 - **Test evidence, not claims:** pytest unit (per rule, positive + negative controls) → integration (ingest→alert, tenant isolation) → scenario metrics runner → Vitest guard that the evidence panel is always present.
-- **Operationally viable:** health endpoint, failed-batch replay, incident playbooks, one-command seed (`--scenario mixed`) and demo runbook.
+- **Operationally viable:** health endpoint, failed-batch replay, incident playbooks, one-command stack and seed (`docker compose up --build`, `scripts/seed.sh`) and demo runbook.
 - **Team fit:** 4 roles (backend-ingest, backend-detection, frontend, QA/ops) map 1:1 to the phase plan.
 
 **Visual:** three columns — *Stack feasibility* (logos: Python/Postgres/Redis/React) · *Build plan* (6-phase chevrons) · *Exit targets* (4 big numbers: ≥90% · ≤10% · ≤5 s · 100%).
@@ -206,4 +206,4 @@ POST /v1/ingest/events → [Validate + Postgres insert 50–150ms]
 - [ ] Diagrams rebuilt natively in the deck (no ASCII screenshots).
 - [ ] No secrets, real names of employers, or production data in screenshots.
 - [ ] External references in Slide 7 verified (names + URLs) before submit.
-- [ ] Demo fallback ready: seed `python -m app.seed --scenario mixed` + `docs/12-DEMO-SCRIPT.md`.
+- [ ] Demo fallback ready: `scripts/seed.sh` (recreates the demo loop) + `docs/12-DEMO-SCRIPT.md`.

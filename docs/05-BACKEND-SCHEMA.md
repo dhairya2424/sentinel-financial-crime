@@ -447,8 +447,12 @@ Cases contract notes (as built in P4-A):
 ```
 GET  /rules                 → active versions
 PUT  /rules/{code}          {params, weights, enabled} (admin) → version+1 (new row)
-GET  /ops/health            {db, redis, ws_clients, pipeline:{processed, alerts_created, alerts_updated, errors, stream_lag_ms}}
-                            (as built in P3-B; events_per_min and failed_batches arrive with the P5 ops work)
+GET  /ops/health            {db, redis, ws_clients,
+                             pipeline:{processed, alerts_created, alerts_updated, errors, last_lag_ms, stream_lag_ms,
+                                       alert_latency_p95_ms, alert_latency_samples},
+                             ingest:{failures_open, stream_length, backlog, events_per_min}}
+                            (no auth, for probes; system-wide counts only. `ingest` added in P5-B and null when a store is down;
+                             failures_open = ingest_failures not yet replayed, which covers "failed batches")
 POST /ops/replay-batch      {failure_id} (admin)
 ```
 

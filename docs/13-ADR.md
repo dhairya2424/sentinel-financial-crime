@@ -207,6 +207,36 @@
 
 ---
 
+## ADR-016: Real data only in the demo tenant; scenario fixtures live in throwaway tenants
+
+**Status:** Accepted | **Date:** 2026-09-30 (P5-A/P5-B) | **Supersedes:** docs/10 §9 "seed scripts double as test fixtures"; docs/06 §7 and docs/11 seed recipes that loaded `seed.legitimate`/S2–S5 into the demo tenant
+
+**Context:** The user directed that the system run on real, entered data ("after this all data should be real nothing should be dummy"), keeping one planted loop so judges can watch a cycle detected. The phase prompts assumed synthetic customers, employees and transfers seeded into `tenant_demo` (50–200 customers, S1–S5), and the old recipe for the legitimate corpus wiped the tenant it loaded into.
+
+**Decision:**
+1. `tenant_demo` holds data people enter (the Add data screen, `POST /v1/ingest/events`) plus one fixture: the demo loop (`tx_demo_loop_1..3`, ₹2,40,000 × 3). `app.seed.demo_loop` creates it on a fresh database; `app.seed.suspicious --only S1` re-plants it live. No other seed writes domain rows there.
+2. S1–S5 and the L1–L20 corpus are planted by `tests/scenarios/harness.py` into throwaway tenants (`tenant_scn_*`), through the public API for S1–S5, detected by the real pipeline, measured, and deleted, success or not. `app.seed.legitimate` requires `--tenant` and refuses the default tenant.
+3. Unknown references in ingest reject the event instead of creating "(unresolved)" stand-in rows (P1-A reconciliation).
+
+**Consequences:** + the demo and the metrics come from the same pipeline code without invented records ever reaching the investigation surface; the accuracy numbers are reproducible on any machine. − the insider beat of the demo (docs/12 §4) needs activity recorded beforehand through Add data; the scenario suite needs a writable database and takes about 20 minutes with the corpus. Rejected: a separate "demo" database with synthetic data (two sources of truth; the user asked for none).
+
+---
+
+## ADR-017: One alert per situation across events; supporting rules read the whole window
+
+**Status:** Accepted | **Date:** 2026-09-30 (P5-A) | **Refines:** TRD §3 dedup, §4.4; ADR-005 idempotent dedup
+
+**Context:** The pipeline detects once per event. Each event of one situation sees it from its own angle: the 03:15 edit sees the flow, each loop leg sees the loop with a different set of connected entities, the approval sees the login. Dedup keyed on exact `entity_ids`, so S4 produced three alerts and S5 two. Separately, supporting rules only ran for their own event kind, so a dormant account's transfer and the off-hours approval of it could never combine (S5 undetectable), and a loop alert never carried the off-hours factor of the insider who enabled it — contrary to TRD §4.4.
+
+**Decision:**
+1. When no dedup key matches, an active alert within one rule window that shares an entity with the new group is extended if it carries one of the group's rules or already holds some of the group's evidence. Its `entity_ids` become the union; new evidence increments `occurrence_count` as before; re-finding held evidence changes nothing.
+2. Every event kind evaluates R-VELOCITY, R-OFFHOURS and R-DORMANT over its window (transfers add R-OFFHOURS; employee actions add R-VELOCITY and R-DORMANT). Signals still combine only through shared entities.
+3. Detection stays one ordered consumer per API process (ADR-006): parallel consumers on one tenant could race rule 1 and mint duplicates, so `PIPELINE_CONCURRENCY` was removed.
+
+**Consequences:** + S1–S5 each raise exactly one alert (S4 critical 100, S5 high 70); the inbox shows situations, not events; the legitimate corpus still flags 0/200. − two genuinely separate situations that share an account inside one window merge into one alert (reviewers see both sets of evidence in it); throughput per tenant is bounded by one consumer (≈65 ms per event context build on the dense corpus).
+
+---
+
 ## Template for new ADRs
 
 ```markdown

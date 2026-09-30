@@ -10,13 +10,13 @@
 
 ```
         ┌────────────────────┐
-        │  Scenario E2E (5)  │  seeded suspicious + legitimate corpora → metrics report
+        │  Scenario E2E (9)  │  S1–S5 + legitimate corpus in throwaway tenants → metrics report
         ├────────────────────┤
-        │ Integration (≈20)  │  pytest + live PG/Redis (compose), WS tests
+        │ Integration (208)  │  pytest + live PG/Redis (compose), WS, role matrix, tenant sweep
         ├────────────────────┤
-        │  Unit (≈40+)       │  rules, risk, graph, auth — offline dataclasses
+        │  Unit (90)         │  rules, risk, graph, auth, config — offline dataclasses
         ├────────────────────┤
-        │ Frontend (≈15)     │  Vitest + Testing Library (EvidencePanel guards)
+        │ Frontend (112)     │  Vitest + Testing Library (EvidencePanel guards)
         └────────────────────┘
 CI gates: pytest -q | npm test | typecheck | lint | gitleaks | pip-audit | npm audit
 ```
@@ -24,8 +24,8 @@ CI gates: pytest -q | npm test | typecheck | lint | gitleaks | pip-audit | npm a
 | Layer | Runner | Isolation | Network |
 |---|---|---|---|
 | Unit | pytest | none needed | no |
-| Integration | pytest -m integration | compose PG/Redis, flushed per session | localhost only |
-| Scenario | pytest tests/scenarios --metrics | dedicated schema/tenant per run | localhost only |
+| Integration | pytest tests/integration | compose PG/Redis; `tenant_itest_a/b` built and torn down per module | localhost only |
+| Scenario | pytest tests/scenarios --metrics | throwaway tenant per scenario and for the corpus, deleted after the run (`tests/scenarios/harness.py`) | localhost only; `SCENARIO_API` sends it through a running API |
 | Frontend | Vitest + jsdom | mock fetch/WS | no |
 
 **Conventions:** test IDs = `T-<area>-<nn>` (catalog below); fixtures in `conftest.py` (`planted_cycle_factory`, `structuring_factory`, `two_tenant_env`); every test tenant-scoped; no test depends on another's data.
@@ -189,7 +189,17 @@ Each scenario raises exactly one alert. S4's alert joins the 03:15 edit and the 
 | graph 2-hop (`neighbors`, depth 2) on 10,000 nodes / 90,000 transfers | 200 | 17 | 21 | 24 | p95 ≤ 500 | PASS |
 | alert list API (`GET /v1/alerts`, warm connection) | 30 | 20 | 23 | 24 | p95 ≤ 300 | PASS |
 | graph rebuild from PostgreSQL, 100,000 rows | 1 | 2274 | 2274 | 2274 | ≤ 30000 | PASS |
-| export ≤ 500 evidence | — | — | — | — | ≤ 5000 | not built yet (P4 case export) |
+| export ≤ 500 evidence | — | — | — | — | ≤ 5000 | measured in P5-B (below) |
+
+**Re-measured (2026-09-30, P5-B)** with the same command against the containerised stack (`docker compose up --build`: api + nginx web + PostgreSQL 15 + Redis 7), throwaway tenants deleted afterwards:
+
+| Check | n | p50 ms | p95 ms | max ms | Budget | Result |
+|---|---|---|---|---|---|---|
+| ingest → WS `alert.created` (3-leg loop, live API) | 20 | 94 | 214 | 214 | p95 ≤ 5000 | PASS |
+| graph 2-hop on 10,000 nodes | 200 | 16 | 23 | 29 | p95 ≤ 500 | PASS |
+| alert list API (`GET /v1/alerts`) | 30 | 15 | 19 | 20 | p95 ≤ 300 | PASS |
+| case export JSON, 500 evidence rows (all 500 in the bundle) | 10 | 68 | 85 | 85 | ≤ 5000 | PASS |
+| graph rebuild from PostgreSQL, 100,000 rows | 1 | 2006 | 2006 | 2006 | ≤ 30000 | PASS |
 
 Single-run cross-checks: T-INT-05 ingest→alert 124–177 ms, T-INT-06 ≈ 195 ms, S1 re-plant publish→alert 86 ms (`test_demo_replant.py`). The 2-hop figure is the in-process graph call. The HTTP route adds serialisation, so the ≤500 budget has headroom for it.
 
@@ -210,3 +220,22 @@ Single-run cross-checks: T-INT-05 ingest→alert 124–177 ms, T-INT-06 ≈ 195 
 | P3 | T-DET-*, T-RISK-*, T-INT-05..08, T-FE-01..07 |
 | P4 | T-INT-11..16, T-FE-12/13 |
 | P5 | full matrix + S1–S5/L metrics PASS + perf budgets |
+
+**Final gate (P5-B, 2026-09-30 / 10-01), every row executed:**
+
+| Check | Result |
+|---|---|
+| Clean machine: an isolated compose project (own volume and ports), `docker compose up --build`, then `scripts/seed.sh` | 4 services healthy in 1m40s; seed created logins, 7 rule defaults and the demo loop; its R-CIRC alert was raised at seed time |
+| `scripts/replay-suspicious.sh` against the running containers | S1 live re-plant alert in 63–121 ms; S1–S5 5/5, p95 70 ms |
+| `pytest tests/scenarios -q --metrics` (full gate, with the corpus) | 9 passed; detection 5/5, FP 0/200 (0.0%), p95 166 ms — overall PASS |
+| `pytest tests/unit tests/integration -q` | 298 passed (90 unit + 208 integration) |
+| docs/10 test IDs with a named test | 70/70 (T-INT-20 named and made exact in P5-B) |
+| `coverage report` on `detection/`, `risk/` | 98% (gate 80%) |
+| `npm run typecheck && npm run lint && npm run test` | 0 errors, 0 warnings, 112 passed |
+| T-FE-01..05 (evidence panel mandatory) | all green: loading/loaded/error/empty present, no dismiss/hide, no visibility prop; plus the case-drawer regression |
+| gitleaks (history + working tree) | history: no leaks; working tree: findings only inside git-ignored `backend/.venv` third-party packages |
+| pip-audit / `npm audit --omit=dev` | no known vulnerabilities / 0 |
+| Perf budgets (`tests/perf/bench_nfr.py`, containerised) | all PASS, incl. export of 500 evidence rows p95 85 ms (§8) |
+| INC-2 replay path end to end | dead letter counted in health → refused while the account was unknown → applied after it arrived → `failures_open` 0, `ops.replay` audited |
+| docs/11 §10 checklist | every item run on the clean stack; the order was fixed to snapshot → rehearse → restore (verified) |
+| Demo walkthrough (docs/12) | every beat exercised in a browser through nginx under the CSP, 0 console errors; fallback screenshots in `docs/demo-fallback/`. A human-timed rehearsal (≤ 5:30) and the insider beat's data entry remain for the presenting team |

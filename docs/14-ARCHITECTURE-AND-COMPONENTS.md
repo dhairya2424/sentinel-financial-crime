@@ -168,7 +168,7 @@
 | Dashboard/search API | **≤ 300 ms p95** (NFR-03) | perf harness |
 | Concurrent users | **50** (NFR-04) | load smoke |
 | Audit completeness | **100%** (NFR-07) | spot-check test |
-- **Notes:** If metrics aren't run yet, show the harness command (`pytest tests/scenarios --metrics`) and mark numbers "measured on seed `--scenario mixed`" only when true.
+- **Notes:** If metrics aren't run yet, show the harness command (`pytest tests/scenarios --metrics`) and use the measured run (docs/10 §6, 2026-09-30): detection 5/5 (100%), false positives 0/200 customers (0.0%), alert latency p50 136 ms / p95 210 ms — S1–S5 and the 90-day legitimate corpus in throwaway tenants (ADR-016).
 
 ### Slide 15 — Architecture decisions (why this, not that)
 | Decision | Chosen | Rejected | Why |
@@ -179,7 +179,7 @@
 | Process model | Single-node API + colocated worker | Microservices | Stateful graph colocated; stateless API still restart-safe (ADR-006) |
 | Evidence | Snapshot at detection | Live joins | Tamper-proof, reproducible exports (ADR-004) |
 | Evidence UI | No dismiss API | User-dismissible | Panel cannot be turned off (ADR-009) |
-- **Notes:** Full list ADR-001..012 in `docs/13-ADR.md`.
+- **Notes:** Full list ADR-001..017 in `docs/13-ADR.md`.
 
 ### Slide 16 — What's built & what's next
 - **Built (v1):** ingest, timeline, graph explorer, 3+3 detection rules, explainable alerts with evidence panel, case manager, signed export, scenario metrics, JWT + tenant isolation + audit.

@@ -25,6 +25,8 @@
 └──────────────────────────────┘        └─────────────┘  └────────────────┘
 ```
 
+*As built (P5-B):* the event bus is Redis Streams (consumer group `pipeline`) with one detection worker inside the API process (ADR-005, ADR-006), and the frontend ships as a static build behind nginx, which proxies `/v1` and `/v1/ws` to the API (`docker compose up --build`).
+
 **Key decision — graph storage:** PostgreSQL is the source of truth. The Graph Service also maintains an **in-process adjacency map (NetworkX-backed)** rebuilt on startup and updated incrementally on each event, so 2-hop neighbor queries and cycle detection run at memory speed without a heavyweight graph DB. This is deliberate: a Neo4j dependency is unnecessary at hackathon scale and Redis Streams provides the real-time bus without Kafka ops overhead. The bus abstraction (`EventBus` interface) allows swapping to Kafka for production scale-out.
 
 ## 2. Technology Stack (exact, no assumptions)
@@ -146,7 +148,8 @@ Pure functions over detection output: factor aggregation when multiple rules hit
 | Alerts | `GET /v1/alerts`, `GET /v1/alerts/{id}`, `POST /v1/alerts/{id}/acknowledge`, `POST /v1/alerts/{id}/link-case` |
 | Cases | `POST /v1/cases`, `GET /v1/cases`, `PATCH /v1/cases/{id}`, `POST /v1/cases/{id}/assign`, `POST /v1/cases/{id}/notes`, `GET /v1/cases/{id}/export?format=json|html` |
 | Rules | `GET /v1/rules`, `PUT /v1/rules/{code}` (admin) |
-| Ops | `GET /v1/ops/health`, `POST /v1/ops/replay-batch` |
+| Ops | `GET /v1/ops/health`, `POST /v1/ops/replay-batch` (admin) |
+| As built, also | `POST /v1/entities/{customers\|accounts\|employees}`, `GET /v1/entities/summary`, `GET /v1/entities/lookup` (Add data); `POST /v1/timeline/preview`, `GET /v1/timeline/raw/{kind}/{ref_id}`; `GET /v1/graph/cycles`, `POST /v1/graph/rebuild` (admin); `GET /v1/alerts/{id}/graph`; `GET/POST /v1/users`, `GET /v1/users/{id}` (admin), `GET /v1/users/assignees` — contracts in docs/05 §6 |
 | WS | `/v1/ws` — channels: `alerts:{tenant}`, `cases:{tenant}`, `dashboard:{tenant}` |
 
 ## 8. Case & Evidence Export

@@ -78,7 +78,7 @@ Empty state: "No alerts match filters" + illustration. Loading: 6 skeleton rows.
 - **Edge types:** `TRANSFER` (solid, arrow, tooltip: amount + ts), `ACCOUNT_HOLDER` (dashed thin), `EMPLOYEE_ACCESS` (dotted, brand color), `PROFILE_CHANGE` (warning color, thicker), `EMPLOYEE_ACTION` (evidence color).
 - **Controls:** zoom/fit (ReactFlow defaults), toolbar: `1-hop | 2-hop` expand depth, edge-type toggles, layout (force / hierarchical), "highlight cycles" toggle (cycles from detection → edges amber + `Cycle` badge).
 - **Interaction:** click node → right side panel (EntityCard: type, name, ids, risk badge, mini-stats, links: "View timeline", "Open in alerts"). Double-click → expand neighbors. Drag → pan.
-- **URL state:** `?node=acc_123&depth=2` so investigation context is shareable.
+- **URL state:** `?node=acc_123&depth=2` so investigation context is shareable. *As built (P5-B):* optional `&until=<ISO time with zone>` ends the 72 h cycle window there instead of now ("1 loop in the 72 hours to 28 Sept, 13:07"); the alert graph's "Open in Graph Explorer" passes the alert's `window_end`, so an old loop is still found.
 - **Data:** `GET /v1/graph/neighbors?node_id&depth&edge_types` returns `{nodes, edges}` in ReactFlow shape with `risk` on nodes.
 - **As built (P2-B, chosen by the team from three options):** a full-height canvas beside a 320px panel with two tabs. **Entity** is the EntityCard above, plus "Focus here" and connection counts by edge type. **Who touched what** is a grid of the customers and accounts in view against the employees in view: square size is the number of PROFILE_CHANGE edits, a dotted ring is access only, and hovering a cell lights up those edges. Repeated edges of one type between the same two nodes are drawn as one bundle with a ×N count; the tooltip shows the total amount or actions and the latest time. Risk rings appear only from medium upward, so an all-low graph carries no colour. Highlight cycles checks loops through the focus's accounts, adds any missing loop nodes, and dims everything except the amber legs, each with a "Cycle" badge. Edge-type filter labels are the docs/09 enum names verbatim. New colour tokens: `--change` (PROFILE_CHANGE amber) and `--cycle` (loop legs), both in light and dark.
 
@@ -157,6 +157,7 @@ Empty state: "No alerts match filters" + illustration. Loading: 6 skeleton rows.
 ## 10. Screen: Admin / Rules (F-13, role=admin)
 
 - Table of rules (code, name, enabled, thresholds, weights). Edit drawer → numeric inputs + validation → `PUT /v1/rules/{code}` (versioned). Show weight sliders summing to 1.0 enforced.
+- *As built (P5-B):* the route, nav entry and admin guard exist (T-FE-14) and render a placeholder. The API behind this screen is complete (`GET/PUT /v1/rules`, docs/05 §6), so the screen is the remaining work for F-13 (*Should*).
 
 ## 11. Components & States (global)
 

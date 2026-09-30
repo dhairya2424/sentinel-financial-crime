@@ -22,7 +22,7 @@ Narrator: *"Everything you'll see is live — WebSocket-fed, sub-5-second from t
 
 | Step | Action | Say |
 |---|---|---|
-| 1 | Open second terminal (in `backend/`), run `python -m app.seed.suspicious --only S1` | "I'm planting a classic circular scheme now: ₹7.2 lakh looping through three accounts in four hours." |
+| 1 | Open second terminal at the repo root, run `docker compose exec api python -m app.seed.suspicious --only S1` (without Docker: in `backend/`, `python -m app.seed.suspicious --only S1`) | "I'm planting a classic circular scheme now: ₹7.2 lakh looping through three accounts in four hours." |
 | 2 | Stay on Alert Inbox (`/alerts`); do NOT refresh | "Watch the inbox…" |
 | 3 | New `R-CIRC` row appears with highlight and a toast; the terminal prints the detection time | "…the alert arrived in a fraction of a second with no page reload. Detection window, not batch overnight." |
 
@@ -44,12 +44,14 @@ Click the R-CIRC alert (or pre-opened one). Point at **each block** in order (do
 
 ## 4. Insider → Money Connection (75s) ★ core problem statement
 
-Open the R-PROFILE alert (from S3/S4 seed) or navigate: **employee chip → Timeline**.
+*As built (P5-B):* `tenant_demo` holds no invented employees (ADR-016), so this beat uses the insider activity the team records beforehand through **Add data** (docs/11 §10): the employee, their session, and the profile edit or beneficiary change on one of the loop's holders. Entered before the loop's legs and within 48 h, it also raises R-PROFILE_FLOW, and the loop alert gains the insider's factors. If nothing was recorded, skip beat a and open Graph Explorer on Karan Apte for beats b–d.
+
+Open the R-PROFILE_FLOW alert (if recorded) or navigate: **employee chip → Timeline**.
 
 | Beat | Show | Say |
 |---|---|---|
 | a | Timeline of employee `emp_*`: 03:12 off-hours login, 03:14 `limit.change`, then approvals — each row has the **actor chip** | "This is what AML never sees today: the employee's night-shift profile edit, timestamped." |
-| b | Click target customer chip → **Graph Explorer** (`?node=cust_*`) | "Follow the money from that customer…" |
+| b | On the alert, **Open in Graph Explorer** (it carries `?node=cust_*&until=<alert window end>`, so the loop is found however many days after its transfers you demo) — or the customer chip from the timeline for "last 72 h" | "Follow the money from that customer…" |
 | c | Toggle **Highlight cycles** | "…to the loop the edit enabled. Two teams' data, one investigation surface." |
 | d | Side panel shows employee-access edges + risk ring | "Access rights, actions, and transfers — same graph." |
 
@@ -64,18 +66,15 @@ Open the R-PROFILE alert (from S3/S4 seed) or navigate: **employee chip → Time
 
 ## 6. Accuracy Story (45s, may be slides instead)
 
-Open terminal, run:
-
-```bash
-pytest tests/scenarios -q --metrics
-```
-
-Paste real output — expected shape:
+Open terminal, run `scripts/replay-suspicious.sh` (S1–S5 through the running API, seconds). The full gate adds the 200-customer legitimate corpus and takes about 20 minutes, so show its recorded run (docs/10 §6) rather than running it live:
 
 ```
+================= SENTINEL SCENARIO REPORT =================
 detection_rate: 5/5 (100%)   [target >=90%] PASS
-false_positive_rate: X%      [target <=10%] PASS
-alert_latency_p95_ms: NNNN   [target <=5000] PASS
+false_positive_rate: 0.0% (0/200 customers)   [target <=10%] PASS
+alert_latency_p50_ms: 136 / p95_ms: 210   [target p95<=5000] PASS
+...
+overall: PASS
 ```
 
 > "Five planted typologies caught, legitimate 90-day corpus kept quiet — accuracy and false-positive rate are part of the deliverable, not a claim."
@@ -114,9 +113,9 @@ alert_latency_p95_ms: NNNN   [target <=5000] PASS
 | Question | Answer |
 |---|---|
 | Why not an ML score? | Regulators must challenge decisions; we decompose into weighted factors with raw values (docs/02 §4.5) — v2 can add ML *as additional factors*, still decomposed. |
-| How is this real-time? | Ingest commits to PG then Redis Stream; consumer runs scoped-window rules; WS fan-out — p95 ≤5s budgeted and tested (T-INT-05). |
+| How is this real-time? | Ingest commits to PG then Redis Stream; consumer runs scoped-window rules; WS fan-out — p95 ≤5s budgeted and tested (T-INT-05). Measured: p95 210 ms from ingest to alert across S1–S5 (docs/10 §6), 200 ms ingest→WebSocket (docs/10 §8). |
 | Graph DB? | Postgres source of truth + in-memory NetworkX adjacency — 2-hop <500ms at hackathon scale, no ops burden (ADR-001). |
-| FP control? | Own-baseline normalization + legitimate corpus gate ≤10% in CI (docs/10 §6). |
+| FP control? | Own-baseline normalization + legitimate corpus gate ≤10% in CI (docs/10 §6). Measured: 0 of 200 benign customers flagged across 20,408 events. |
 | Insider vs AML teams? | Same alert can carry employee + customer entities; timeline merges both — that's the product thesis. |
 | Evidence tampering? | Snapshots frozen at detection; export SHA-256 recorded on case (docs/08 §6). |
 
@@ -127,5 +126,7 @@ alert_latency_p95_ms: NNNN   [target <=5000] PASS
 | Wi-Fi down | Everything is localhost — run entirely offline; show screenshots for export step if browser download blocked |
 | WS banner shows reconnecting | Refresh once; narrate backoff design honestly if persists |
 | S1 plant doesn't alert (the command says "no R-CIRC alert after 10s") | Check the API is up (its pipeline worker runs in-process); `docker compose restart api`, then run `--only S1` again. Meanwhile pre-open the loop alert. |
-| Demo laptop slow | Stop `npm run dev` HMR; use prebuilt `docker compose` web container |
+| S1 plant refuses ("no tx_demo_loop_* transfers" or "linked to a case") | Fresh machine: run `scripts/seed.sh` (creates the loop). Case holds the alert: unlink it in rehearsal, or narrate the existing alert. |
+| Graph Explorer shows no holders for the loop | `scripts/seed.sh` again (it rebuilds the API graph), or admin `POST /v1/graph/rebuild` |
+| Demo laptop slow | Stop `npm run dev` HMR; use the prebuilt `docker compose` web container at http://localhost |
 | Judge wants depth | Have docs/ open at TRD §4 algorithms and test report ready |

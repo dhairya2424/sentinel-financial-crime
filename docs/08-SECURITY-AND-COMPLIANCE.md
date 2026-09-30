@@ -79,6 +79,7 @@ Audit table is append-only: no UPDATE/DELETE API; DB role in prod should deny DM
 ## 7. Network & Transport
 
 - Demo: localhost HTTP/WS acceptable; **production checklist:** TLS 1.2+ termination, HSTS, WSS only, CORS allowlist (no `*` with credentials), security headers (CSP, X-Frame-Options DENY, Referrer-Policy), DB on private subnet, Redis not exposed publicly, ingest via private link.
+- *As built (P5-B):* the demo `web` image (nginx) already serves `Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'; frame-ancestors 'none'…`, `X-Content-Type-Options: nosniff` and `Referrer-Policy: same-origin` on every route (`frontend/security-headers.conf`). The pre-paint theme script moved from inline to `/theme-init.js` so `script-src` needs no `unsafe-inline`. The SPA and API are same-origin behind nginx, so the browser needs no CORS. Compose still publishes 5432/6379/8000 for development; a shared deployment removes those port mappings (docs/11 §7).
 
 ## 8. Data Retention & Privacy
 
