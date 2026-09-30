@@ -32,8 +32,8 @@ export const DETAIL: AlertDetailData = {
   risk_factors: [
     { name: 'linkage_depth', raw_value: '3 hops', weight: 0.25, contribution: 0.25 },
     { name: 'temporal_proximity', raw_value: '4h of 72h window', weight: 0.25, contribution: 0.2361 },
-    { name: 'amount', raw_value: 'no baseline', weight: 0.35, contribution: 0.175 },
-    { name: 'account_velocity', raw_value: 'no baseline', weight: 0.15, contribution: 0.075 },
+    { name: 'amount', raw_value: 'no baseline', weight: 0.35, contribution: 0.175, imputed: true },
+    { name: 'account_velocity', raw_value: 'no baseline', weight: 0.15, contribution: 0.075, imputed: true },
   ],
   window_start: '2026-09-28T03:37:19Z',
   window_end: '2026-09-28T07:37:19Z',
@@ -93,17 +93,28 @@ describe('AlertDetail', () => {
     expect(rows[0]).toHaveTextContent('3 hops')
     expect(rows[0]).toHaveTextContent('0.25')
     expect(rows[0]).toHaveTextContent('25.0')
-    expect(screen.getByText('4h of 72h window')).toBeInTheDocument()
+    expect(rows[1]).toHaveTextContent('4h of 72h window')
     expect(screen.getByTestId('composite')).toHaveTextContent('73.6 → 74')
     expect(screen.getByText(/25\.0 \+ 23\.6 \+ 17\.5 \+ 7\.5 = 73\.6, rounded 74/)).toBeInTheDocument()
     expect(screen.getByRole('img', { name: /Score 74 of 100/ })).toBeInTheDocument()
+  })
+
+  it('factors held at a neutral default are marked as such, and the note says how many points they carry', async () => {
+    show({ 'GET /v1/alerts/alert_loop': () => json(DETAIL) })
+    const rows = await screen.findAllByTestId('factor-row')
+    const imputed = rows.filter((r) => r.dataset.imputed === 'true')
+    expect(imputed.map((r) => r.textContent)).toEqual([expect.stringContaining('amount'), expect.stringContaining('account_velocity')])
+    expect(imputed[0]).toHaveTextContent('no baseline · neutral default')
+    expect(rows[0]?.dataset.imputed).toBeUndefined()
+    expect(screen.getByTestId('neutral-note')).toHaveTextContent('25.0 of the 74 points are neutral defaults for amount and account_velocity')
+    expect(screen.getByRole('img', { name: /amount 17\.5 \(neutral default\)/ })).toBeInTheDocument()
   })
 
   it('shows the server explanation and every entity by name, with the evidence panel alongside', async () => {
     show({ 'GET /v1/alerts/alert_loop': () => json(DETAIL) })
     expect(await screen.findByTestId('alert-explanation')).toHaveTextContent('moved in a loop across 3 accounts')
     expect(screen.getByRole('link', { name: /Karan Apte, customer/ })).toBeInTheDocument()
-    expect(screen.getByText('₹7,20,000')).toBeInTheDocument()
+    expect(screen.getByText('₹7,20,000').parentElement).toHaveTextContent('Total ₹7,20,000')
     expect(within(screen.getByTestId('evidence-panel')).getByRole('heading', { name: 'Evidence (1)' })).toBeInTheDocument()
   })
 

@@ -274,6 +274,8 @@ export interface RiskFactor {
   raw_value: string
   weight: number
   contribution: number
+  /** The factor could not be measured (e.g. no baseline yet) and holds a neutral default rather than a finding. */
+  imputed?: boolean
 }
 
 export type EvidenceType = 'transaction' | 'employee_action' | 'access_right' | 'session'

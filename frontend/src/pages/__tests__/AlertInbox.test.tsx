@@ -166,6 +166,28 @@ describe('Alert Inbox', () => {
     expect(screen.getByRole('button', { name: 'Clear entity filter' })).toBeInTheDocument()
   })
 
+  it('the keyboard cursor stays on its alert when a live one arrives above it, and only shows after keyboard use', async () => {
+    const { router } = open('/alerts/alert_loop', { 'GET /v1/alerts/alert_old': () => json(detail(OLDER)) })
+    await screen.findAllByTestId('alert-row')
+    expect(document.querySelector('[data-cursor]')).toBeNull()
+    const user = userEvent.setup()
+    await user.keyboard('{ArrowDown}')
+    expect(document.querySelector('[data-cursor]')).toHaveAttribute('data-id', 'alert_old')
+    act(() => {
+      FakeWebSocket.latest()?.open()
+    })
+    act(() => {
+      FakeWebSocket.latest()?.receive({ channel: 'alerts:tenant_demo', type: 'alert.created', data: LIVE })
+    })
+    await waitFor(() => {
+      expect(screen.getAllByTestId('alert-row')).toHaveLength(3)
+    })
+    expect(document.querySelector('[data-cursor]')).toHaveAttribute('data-id', 'alert_old')
+    await user.keyboard('{Enter}')
+    expect(router.state.location.pathname).toBe('/alerts/alert_old')
+    expect(document.querySelector('[data-cursor]')).toBeNull()
+  })
+
   it('A acknowledges the row under the keyboard cursor', async () => {
     let posted = 0
     open('/alerts', {

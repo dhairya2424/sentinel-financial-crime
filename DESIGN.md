@@ -425,6 +425,8 @@ Three hues that exist only to draw relations on the Graph Explorer. They are str
 
 **The Relations Stay on the Graph Rule.** Evidence Violet, Change Ochre and Cycle Amber appear only as graph strokes and marks, the swatches that name those edges, and the touch grid. Never use them for text, grounds, status or risk.
 
+**The Unmeasured Is Outlined Rule.** A risk factor that could not be measured (`imputed: true`: no baseline, no prior history, no grant on record) holds a neutral default, and it must never look like a finding. Wherever it appears (composition bar segment, legend swatch, contribution bar), it is a dashed `fg-muted` outline on the canvas ground instead of a filled ink step. Its raw value is suffixed " · neutral default" in subtle ink, it sorts after the measured factors, and a note under the table states how many of the score's points are neutral defaults.
+
 **The Role Token Rule.** Components use the semantic roles (`bg-panel`, `text-fg-muted`, `border-line`), never the raw docs/03 palette (`surface-900`, `brand-400`). The raw palette exists only to feed the dark theme.
 
 ## Typography
@@ -640,6 +642,31 @@ Under the summary, aligned to its text, sit 12px/500 sky links, "Open in Graph" 
 ### Import Panel
 The Bulk form card. Under its heading sits the drop zone (see The Dashed Slot Rule): an 8px-radius dashed strong hairline, 24px by 16px padding, around a centred 20px muted file icon, a 13px/500 ink line ("Choose a file, or drop it here") and a 12px subtle limit line (".csv or .json · up to 5,000 records"). The whole zone is the file input's label. It takes a 60% raised hover and shows the 2px sky focus outline when the hidden input has keyboard focus. While a file is dragged over it, its border turns sky and its ground selected. A parsed file shows a count line (mono count, the file name at 500, and a rose "N need fixing in the file"). Under it is a results table in a hairline card up to 288px tall, with a sticky raised header (Row, Record, Result at 12px/500 muted) and hairline rows. Each row has a mono subtle row number, the record summary and its own outcome: subtle "Ready" before import, mono teal "saved", muted "Already saved earlier", or the rose reason. The footer holds the primary "Import N records". Once the import has run, a muted note replaces it: "Import finished. Choose another file above to import more." A collapsible hairline section, "What the file should contain", lists the columns in mono.
 
+### Alert Ledger (signature)
+The Alert Inbox list: hairline rows in a card with RiskBadge, a 13px/500 title over a muted entity name (status as a mono outlined tag once it is not open), and a right-aligned mono amount over "time ago · ×N". The open row is marked by the Selected Mist ground alone, with no side stripe. The keyboard cursor follows an alert id, not a position, so a live arrival above it never moves it. Its 2px sky outline (60%) appears only after arrow-key use and never on the open row. A footer hint lists ↑ ↓ move, Enter open, A acknowledge, C case in kbd chips. A live arrival prepends with the one-shot `alert-fresh` highlight and raises a toast. It never replaces the open alert. Below `lg`, the detail opens as a full overlay with a "Back to alerts" link.
+
+### Alert Detail
+Stacked in one scrolling column:
+1. The header: RiskBadge, mono rule code and title, then entity chips sorted customer → employee → account, then the meta line "Detected … · Total ₹… · occurrence ×N · status" beside Acknowledge and Case.
+2. The explanation card.
+3. The risk factors.
+4. The always-mounted evidence ledger, headed by a muted file icon (Evidence Violet stays on the graph).
+5. The graph snapshot.
+6. The evidence timeline.
+
+### Factor Composition
+A 10px composition bar splits the score into one segment per factor. Measured factors take neutral ink steps, darkest for the largest contribution; the bar never uses a risk colour. The Unmeasured Is Outlined Rule applies. A mono legend follows, then the factor table (factor, raw value, weight, contribution bar over its outlined weight track), a Composite row "sum → score" and a Band row with RiskBadge. Below `sm`, the table becomes a two-line stacked list (name and points, then raw value, weight and bar), so Composite and Band stay visible at 390px without sideways scrolling.
+
+### Graph Snapshot
+A 320px read-only React Flow frame. It draws only the alert's own entities:
+- The accounts sit on one loop circle stretched ×1.6 horizontally, in the order of the evidence legs.
+- A holder sits under an account on the lower half of the loop and beside one on the upper half.
+- The fit zoom runs from 0.5 to 1.2 and refits one frame after any resize, so no entity is ever cut off.
+- The strip under it says "Loop legs in amber", counts the connected entities outside the alert, and links to the Graph Explorer.
+
+### Evidence Timeline
+The alert's evidence as lane rows from the primary entity's Timeline, with a note counting evidence found on other Timelines. When every row sits in one lane, the empty lane is dropped: the header reads Time | lane label, and rows read time, then card, left to right.
+
 ## Do's and Don'ts
 
 ### Do:
@@ -675,6 +702,7 @@ The Bulk form card. Under its heading sits the drop zone (see The Dashed Slot Ru
 - **Don't** mark a selected node with a fill. Selection is the 2px sky ring.
 - **Don't** fade a graph node with opacity. Dim its ink and border.
 - **Don't** use Evidence Violet, Change Ochre or Cycle Amber outside graph strokes, their swatches and the touch grid.
+- **Don't** draw a neutral-default risk factor as a filled measurement. Outline it and say how many points it carries.
 - **Don't** preselect an assessment (KYC status, risk rating). Start on a disabled "Choose…" option.
 - **Don't** draw a mock preview row or offer sample picker options. If the server cannot draw the row, say so.
 - **Don't** leave a finished action as a spent disabled button. Replace it with a note that says what happened and what to do next.

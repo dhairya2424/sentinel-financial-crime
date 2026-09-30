@@ -72,7 +72,7 @@ def evaluate_role_mismatch(action: ActionRecord, employee: EmployeeProfile, cfg:
         )
         access_raw += f", revoked {format_duration(gap)} earlier"
     elif not entitled:
-        temporal = make_factor("temporal_proximity", "no grant on record", w["temporal_proximity"], 0.5)
+        temporal = make_factor("temporal_proximity", "no grant on record", w["temporal_proximity"], 0.5, imputed=True)
     else:
         temporal = make_factor("temporal_proximity", "no recent access change", w["temporal_proximity"], 0.0)
 

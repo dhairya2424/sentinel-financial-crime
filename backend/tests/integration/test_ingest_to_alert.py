@@ -59,6 +59,8 @@ def test_t_int_05_planted_cycle_raises_rcirc_alert_within_budget(client, world, 
     assert sorted(e["ref_id"] for e in snaps) == sorted(planted["legs"])
     assert all(e["snapshot"]["amount"] == "210000.00" and e["snapshot"]["id"] == e["ref_id"] for e in snaps)
     total = sum(f["contribution"] for f in detail["risk_factors"])
+    imputed = {f["name"]: f["imputed"] for f in detail["risk_factors"]}
+    assert imputed == {"linkage_depth": False, "temporal_proximity": False, "amount": True, "account_velocity": True}
     assert abs(total - detail["risk_score"] / 100) <= 0.011
     assert set(planted["accounts"]) <= set(detail["entity_ids"])
 

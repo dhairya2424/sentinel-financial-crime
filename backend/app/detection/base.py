@@ -16,13 +16,16 @@ class Factor:
     raw_value: str
     weight: float
     contribution: float
+    # True when the factor could not be measured (too little history) and holds the neutral default instead.
+    imputed: bool = False
 
-    def as_dict(self) -> dict[str, str | float]:
+    def as_dict(self) -> dict[str, str | float | bool]:
         return {
             "name": self.name,
             "raw_value": self.raw_value,
             "weight": self.weight,
             "contribution": self.contribution,
+            "imputed": self.imputed,
         }
 
 
@@ -139,8 +142,8 @@ def clamp01(value: float) -> float:
     return max(0.0, min(1.0, value))
 
 
-def make_factor(name: str, raw_value: str, weight: float, norm: float) -> Factor:
-    return Factor(name=name, raw_value=raw_value, weight=weight, contribution=round(weight * clamp01(norm), 4))
+def make_factor(name: str, raw_value: str, weight: float, norm: float, imputed: bool = False) -> Factor:
+    return Factor(name=name, raw_value=raw_value, weight=weight, contribution=round(weight * clamp01(norm), 4), imputed=imputed)
 
 
 def format_inr(amount: Decimal | int | float) -> str:

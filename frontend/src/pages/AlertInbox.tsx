@@ -61,10 +61,15 @@ export function AlertInbox() {
   const [result, setResult] = useState<ListResult | null>(null)
   const [loadingMore, setLoadingMore] = useState(false)
   const [attempt, setAttempt] = useState(0)
-  const [cursorIndex, setCursorIndex] = useState(0)
+  // The keyboard cursor follows an alert, not a position, so a live arrival above it never moves it to another row.
+  const [cursorId, setCursorId] = useState<string | null>(null)
+  const [keyboardNav, setKeyboardNav] = useState(false)
   const [caseRequested, setCaseRequested] = useState(0)
   const live = useLive()
   const listRef = useRef<HTMLOListElement>(null)
+
+  const found = items.findIndex((r) => r.id === (cursorId ?? openId))
+  const cursorIndex = found === -1 ? 0 : found
 
   const requestKey = `${JSON.stringify(filters)}|${String(attempt)}`
   const list: ListState = result?.key === requestKey ? result.state : { status: 'loading' }
@@ -107,10 +112,11 @@ export function AlertInbox() {
     const onKey = (event: KeyboardEvent) => {
       if (event.metaKey || event.ctrlKey || event.altKey || typing(event.target) || items.length === 0) return
       const current = items[Math.min(cursorIndex, items.length - 1)]
-      if (['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(event.key)) {
+      if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
         event.preventDefault()
-        const step = event.key === 'ArrowDown' || event.key === 'ArrowRight' ? 1 : -1
-        setCursorIndex((i) => Math.max(0, Math.min(items.length - 1, i + step)))
+        const next = items[Math.max(0, Math.min(items.length - 1, cursorIndex + (event.key === 'ArrowDown' ? 1 : -1)))]
+        setKeyboardNav(true)
+        if (next) setCursorId(next.id)
       } else if (event.key === 'Enter' && current) {
         event.preventDefault()
         openAlert(current.id)
@@ -129,9 +135,10 @@ export function AlertInbox() {
   }, [items, cursorIndex, openAlert, openId])
 
   useEffect(() => {
-    const row = listRef.current?.querySelector<HTMLElement>(`[data-index="${String(cursorIndex)}"]`)
+    if (!keyboardNav || !cursorId) return
+    const row = listRef.current?.querySelector<HTMLElement>(`[data-id="${CSS.escape(cursorId)}"]`)
     row?.scrollIntoView({ block: 'nearest' })
-  }, [cursorIndex])
+  }, [cursorId, keyboardNav])
 
   const loadMore = () => {
     if (!cursor) return
@@ -216,13 +223,13 @@ export function AlertInbox() {
                   <AlertLedgerRow
                     key={row.id}
                     row={row}
-                    index={i}
                     open={row.id === openId}
-                    cursor={i === cursorIndex}
+                    cursor={keyboardNav && i === cursorIndex && row.id !== openId}
                     fresh={fresh.has(row.id)}
                     onSeen={seen}
                     onOpen={() => {
-                      setCursorIndex(i)
+                      setCursorId(row.id)
+                      setKeyboardNav(false)
                       openAlert(row.id)
                     }}
                   />
@@ -244,8 +251,8 @@ export function AlertInbox() {
             </div>
           )}
           <p className="hidden shrink-0 items-center gap-2 border-t border-line px-3 py-1.5 text-xs text-fg-subtle lg:flex">
-            <kbd className="rounded border border-line-strong px-1 font-mono text-[10.5px]">←</kbd>
-            <kbd className="rounded border border-line-strong px-1 font-mono text-[10.5px]">→</kbd>
+            <kbd className="rounded border border-line-strong px-1 font-mono text-[10.5px]">↑</kbd>
+            <kbd className="rounded border border-line-strong px-1 font-mono text-[10.5px]">↓</kbd>
             move
             <kbd className="rounded border border-line-strong px-1 font-mono text-[10.5px]">Enter</kbd>
             open
@@ -288,7 +295,6 @@ export function AlertInbox() {
 
 interface RowProps {
   row: AlertRow
-  index: number
   open: boolean
   cursor: boolean
   fresh: boolean
@@ -296,18 +302,19 @@ interface RowProps {
   onOpen: () => void
 }
 
-function AlertLedgerRow({ row, index, open, cursor, fresh, onSeen, onOpen }: RowProps) {
+function AlertLedgerRow({ row, open, cursor, fresh, onSeen, onOpen }: RowProps) {
   const entity = primaryEntity(row)
   const amount = money(row.amount_total)
   return (
     <li
       data-testid="alert-row"
-      data-index={index}
+      data-id={row.id}
       data-fresh={fresh || undefined}
+      data-cursor={cursor || undefined}
       onAnimationEnd={() => {
         onSeen(row.id)
       }}
-      className={`relative border-b border-line ${open ? 'bg-selected shadow-[inset_3px_0_0_var(--accent)]' : 'hover:bg-raised/60'} ${fresh ? 'alert-fresh' : ''} ${
+      className={`relative border-b border-line ${open ? 'bg-selected' : 'hover:bg-raised/60'} ${fresh ? 'alert-fresh' : ''} ${
         cursor ? 'outline-2 -outline-offset-2 outline-accent/60' : ''
       }`}
     >

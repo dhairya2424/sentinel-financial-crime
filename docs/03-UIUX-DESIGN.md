@@ -70,6 +70,8 @@ Empty state: "No alerts match filters" + illustration. Loading: 6 skeleton rows.
 
 **Row data from `GET /v1/alerts` (paginated, cursor).** WS event `alert.created` prepends optimistically.
 
+*As built (P3-C):* the open row is marked by the selected fill alone (no side stripe). Keyboard: ↑ ↓ move, Enter opens, A acknowledges, C starts a case. The keyboard cursor follows an alert id, not a position, so a live arrival above it never moves it; its outline appears only after arrow-key use and never on the open row.
+
 ## 5. Screen: Graph Explorer (Epic A)
 
 - **Canvas:** ReactFlow. Node types: `customer` (rounded rect), `account` (hexagon), `employee` (pill with avatar initials). Node styling: fill by risk ring (none/low/med/high/critical), selected = brand ring + shadow.
@@ -122,6 +124,8 @@ Empty state: "No alerts match filters" + illustration. Loading: 6 skeleton rows.
 2. Risk factors table shows raw value, weight, contribution bar, and composite sum = band.
 3. Evidence items are clickable → open raw record drawer (transaction JSON, employee action JSON) with source table name.
 4. If `evidence_refs` empty → explicit error state inside panel (still no score-only view).
+5. *As built:* a factor held at a neutral default (`imputed: true`, e.g. "no baseline") is drawn as a dashed outline in the composition bar, legend and contribution bar. Its raw value reads "… · neutral default", and a note states how many of the score's points are neutral defaults. Below 640px the factor table becomes a two-line stacked list, so Composite and Band stay in view.
+6. *As built:* the header line reads Detected · Total ₹… · occurrence · status. The graph snapshot (320px) draws only the alert's own entities, counts connected entities outside it, and refits on resize. The inline timeline drops the empty lane when every row sits in one lane.
 
 ## 8. Screen: Case Manager (Epic D)
 

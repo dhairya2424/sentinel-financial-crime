@@ -25,6 +25,9 @@ class ResizeObserverStub {
 }
 Object.defineProperty(window, 'ResizeObserver', { writable: true, value: ResizeObserverStub })
 
+// jsdom does no layout, so it has no scrollIntoView; the inbox calls it to keep the keyboard cursor in view.
+Element.prototype.scrollIntoView = () => undefined
+
 // Tests never open real sockets; FakeWebSocket lets a test open one and push channel messages.
 Object.defineProperty(globalThis, 'WebSocket', { writable: true, value: FakeWebSocket })
 

@@ -108,14 +108,14 @@ def _build_hit(legs: list[TransferRecord], total: Decimal, window: TransferWindo
     velocity_raw, velocity_norm = _velocity_factor(accounts, span, window)
     factors = [
         make_factor("linkage_depth", f"{k} hops", w["linkage_depth"], 1.0 - 0.1 * (k - 3)),
-        make_factor("amount", amount_raw, w["amount"], amount_norm),
+        make_factor("amount", amount_raw, w["amount"], amount_norm, imputed=ratio is None),
         make_factor(
             "temporal_proximity",
             f"{format_duration(span)} of {horizon_h}h window",
             w["temporal_proximity"],
             1.0 - span / timedelta(hours=horizon_h),
         ),
-        make_factor("account_velocity", velocity_raw, w["account_velocity"], velocity_norm),
+        make_factor("account_velocity", velocity_raw, w["account_velocity"], velocity_norm, imputed=velocity_raw == "no baseline"),
     ]
     route = " → ".join([*accounts, accounts[0]])
     comparison = (

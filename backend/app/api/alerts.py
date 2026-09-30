@@ -108,6 +108,14 @@ async def _labels(db: AsyncSession, tenant_id: str, ids: set[str]) -> dict[str, 
     return out
 
 
+NEUTRAL_RAW = {"no baseline", "no prior history", "no grant on record"}
+
+
+def _factors(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Every factor says whether it was measured; alerts stored before the `imputed` flag get it from the neutral raw values."""
+    return [{**f, "imputed": bool(f.get("imputed", f.get("raw_value") in NEUTRAL_RAW))} for f in items]
+
+
 def _entities(alert: Alert, labels: dict[str, EntityRef]) -> list[EntityRef]:
     return [labels[i] for i in alert.entity_ids if i in labels]
 
@@ -186,7 +194,7 @@ async def _detail(db: AsyncSession, alert: Alert) -> AlertDetail:
         entities=_entities(alert, await _labels(db, alert.tenant_id, set(alert.entity_ids))),
         rule_version=alert.rule_version,
         explanation=alert.explanation,
-        risk_factors=list(alert.risk_factors),
+        risk_factors=_factors(list(alert.risk_factors)),
         window_start=alert.window_start,
         window_end=alert.window_end,
         updated_at=alert.updated_at,

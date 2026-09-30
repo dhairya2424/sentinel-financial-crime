@@ -17,15 +17,17 @@ interface LaneRowProps {
   relation?: Relation
   /** Omit for a static row (the Add data preview): the title renders as text, not a button. */
   onSelect?: (ref: string) => void
+  /** Every row in the list sits in this lane: drop the empty one and read time, then the card, left to right. */
+  single?: boolean
 }
 
-export function LaneRow({ item, type, selected, relation = NO_RELATION, onSelect }: LaneRowProps) {
+export function LaneRow({ item, type, selected, relation = NO_RELATION, onSelect, single = false }: LaneRowProps) {
   const lane = laneOf(item, type)
   const { Icon, label } = CATEGORY_META[item.category]
   const t = tsOf(item)
   const amount = signedAmount(item)
   const target = type === 'employee' && item.event_kind === 'employee_action' ? targetKind(item.target) : null
-  const reverse = lane === 'left'
+  const reverse = lane === 'left' && !single
   const actor = item.category === 'access_login' ? null : item.actor
   const amountTone = relation.dim ? 'text-fg-subtle' : item.direction === 'in' ? 'text-fg' : 'text-fg-muted'
 
@@ -78,15 +80,15 @@ export function LaneRow({ item, type, selected, relation = NO_RELATION, onSelect
       data-ts={item.ts}
       data-category={item.category}
       data-linked={relation.linked || undefined}
-      className={`grid grid-cols-[minmax(0,1fr)_64px_minmax(0,1fr)] border-b border-line transition-colors duration-150 last:border-b-0 ${
+      className={`grid ${single ? 'grid-cols-[64px_minmax(0,1fr)]' : 'grid-cols-[minmax(0,1fr)_64px_minmax(0,1fr)]'} border-b border-line transition-colors duration-150 last:border-b-0 ${
         selected ? 'bg-selected ring-1 ring-accent ring-inset' : onSelect ? 'hover:bg-raised/60' : ''
       }`}
     >
-      <div className="min-w-0">{lane === 'left' && card}</div>
-      <div className={`border-x border-line py-2 text-center font-mono text-xs ${selected ? 'text-accent' : 'text-fg-subtle'}`}>
+      {!single && <div className="min-w-0">{lane === 'left' && card}</div>}
+      <div className={`${single ? 'border-r' : 'border-x'} border-line py-2 text-center font-mono text-xs ${selected ? 'text-accent' : 'text-fg-subtle'}`}>
         <time dateTime={item.ts}>{timeFormat.format(t)}</time>
       </div>
-      <div className="min-w-0">{lane === 'right' && card}</div>
+      <div className="min-w-0">{(single || lane === 'right') && card}</div>
     </li>
   )
 }

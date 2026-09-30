@@ -100,7 +100,7 @@ ID prefixes (frozen): `cust_`, `acct_`, `tx_`, `emp_`, `act_` (employee_action),
 | `employee_off_hours` | Outside business hours | `03:15 outside 09:00-19:00` | R-PROFILE, R-OFFHOURS |
 | `dormancy_gap` | Days since last activity | `93 days idle` | R-DORMANT |
 
-Each factor: `{name, raw_value (string), weight (0–1), contribution (0–1)}` with `Σ contributions ≈ risk_score/100` (docs/05 §7).
+Each factor: `{name, raw_value (string), weight (0–1), contribution (0–1), imputed (bool)}` with `Σ contributions ≈ risk_score/100` (docs/05 §7). `imputed` is true when the factor could not be measured (no baseline, no prior history, no grant on record) and holds a neutral default; the UI must never present it as a finding. Alerts stored before the field existed are read with `imputed` inferred from those raw values.
 
 ## 6. Status Transitions
 

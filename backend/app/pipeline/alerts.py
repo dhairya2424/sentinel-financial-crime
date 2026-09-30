@@ -77,7 +77,7 @@ def _unique_refs(group: list[Hit]) -> list[EvidenceRef]:
 
 
 def _factors_from_json(items: list[dict]) -> list[Factor]:
-    return [Factor(str(f["name"]), str(f["raw_value"]), float(f["weight"]), float(f["contribution"])) for f in items]
+    return [Factor(str(f["name"]), str(f["raw_value"]), float(f["weight"]), float(f["contribution"]), bool(f.get("imputed", False))) for f in items]
 
 
 def _as_hit(factors: list[Factor], template: Hit) -> Hit:

@@ -5,7 +5,7 @@ import { fetchTimeline } from '@/api/timeline'
 import type { EntityRef, TimelineItem } from '@/api/types'
 import { LaneRow } from '@/components/LaneRow'
 import { SkeletonRows } from '@/components/Skeleton'
-import { laneLabels, sortNewestFirst } from '@/lib/timeline'
+import { laneLabels, laneOf, sortNewestFirst } from '@/lib/timeline'
 
 interface EvidenceTimelineProps {
   entities: readonly EntityRef[]
@@ -49,6 +49,10 @@ export function EvidenceTimeline({ entities, evidenceIds }: EvidenceTimelineProp
 
   const state = result?.key === key ? result : null
   const lanes = laneLabels(viewpoint?.type ?? 'customer')
+  const shownItems = state?.status === 'loaded' ? state.items.slice(0, MAX_ROWS) : []
+  const used = new Set(shownItems.map((item) => laneOf(item, viewpoint?.type ?? 'customer')))
+  // One lane in use: the other column would be empty on every row, so it is dropped and its label heads the list.
+  const only = used.size === 1 ? [...used][0] : null
   const elsewhere = state?.status === 'loaded' ? evidenceIds.size - state.items.length : 0
 
   return (
@@ -68,11 +72,18 @@ export function EvidenceTimeline({ entities, evidenceIds }: EvidenceTimelineProp
         )}
       </div>
       <div className="overflow-hidden rounded-card border border-line-strong bg-panel">
-        <div className="grid h-8 grid-cols-[minmax(0,1fr)_64px_minmax(0,1fr)] items-center border-b border-line text-xs font-semibold text-fg-muted">
-          <span className="pr-3 text-right">{lanes.left}</span>
-          <span className="text-center font-medium text-fg-subtle">Time</span>
-          <span className="pl-3">{lanes.right}</span>
-        </div>
+        {only ? (
+          <div className="grid h-8 grid-cols-[64px_minmax(0,1fr)] items-center border-b border-line text-xs font-semibold text-fg-muted">
+            <span className="text-center font-medium text-fg-subtle">Time</span>
+            <span className="pl-3">{only === 'left' ? lanes.left : lanes.right}</span>
+          </div>
+        ) : (
+          <div className="grid h-8 grid-cols-[minmax(0,1fr)_64px_minmax(0,1fr)] items-center border-b border-line text-xs font-semibold text-fg-muted">
+            <span className="pr-3 text-right">{lanes.left}</span>
+            <span className="text-center font-medium text-fg-subtle">Time</span>
+            <span className="pl-3">{lanes.right}</span>
+          </div>
+        )}
         {!viewpoint ? (
           <p className="px-3.5 py-4 text-[13px] text-fg-muted">This alert names no customer, employee or account with a Timeline.</p>
         ) : !state ? (
@@ -85,8 +96,8 @@ export function EvidenceTimeline({ entities, evidenceIds }: EvidenceTimelineProp
           <p className="px-3.5 py-4 text-[13px] text-fg-muted">None of the evidence records are on {viewpoint.label}’s Timeline.</p>
         ) : (
           <ul>
-            {state.items.slice(0, MAX_ROWS).map((item) => (
-              <LaneRow key={item.ref_id} item={item} type={viewpoint.type} selected={false} />
+            {shownItems.map((item) => (
+              <LaneRow key={item.ref_id} item={item} type={viewpoint.type} selected={false} single={only !== null} />
             ))}
           </ul>
         )}

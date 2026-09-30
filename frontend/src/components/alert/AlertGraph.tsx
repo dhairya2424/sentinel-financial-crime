@@ -1,7 +1,7 @@
-import { ReactFlow, ReactFlowProvider, Background, BackgroundVariant } from '@xyflow/react'
+import { ReactFlow, ReactFlowProvider, Background, BackgroundVariant, useReactFlow, type FitViewOptions } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
 import { ArrowUpRight, LoaderCircle } from 'lucide-react'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type RefObject } from 'react'
 import { Link } from 'react-router'
 import { getAlertGraph } from '@/api/alerts'
 import type { AlertGraph as AlertGraphData, GraphNode } from '@/api/types'
@@ -21,16 +21,20 @@ interface AlertGraphProps {
 type GraphState = { status: 'loading' } | { status: 'loaded'; graph: AlertGraphData } | { status: 'error'; message: string }
 
 const ACCOUNT_RADIUS = 100
-const X_SCALE = 2.3
-/** Holders and outside nodes sit beside their account, not above or below it: the panel is wide and short. */
-const SIDE_OFFSET = 175
-const OUTER_OFFSET = 330
-const STACK = 58
+const X_SCALE = 1.6
+/** A holder sits under an account on the lower half of the loop, and beside one on the upper half. */
+const SIDE_OFFSET = 150
+const BELOW = 56
+const STACK = 52
+/**
+ * At 1x the labels are 10px or larger, and a 3-account loop fits at about 1x on desktop. A bigger loop or a phone-width
+ * panel zooms out further rather than cutting an entity off; the Graph Explorer is one click away for detail.
+ */
+const FIT: FitViewOptions = { padding: 0.08, minZoom: 0.5, maxZoom: 1.2 }
 
 /**
- * A compact, readable layout for a 280px snapshot: the alert's accounts evenly on one circle in loop order (following
- * the evidence legs), each holder just outside its account, other people and outside accounts a step further out.
- * Stretched horizontally to suit the wide panel.
+ * A compact, readable layout for a 320px snapshot: the alert's accounts evenly on one circle in loop order (following
+ * the evidence legs) and each holder just outside its account. Stretched horizontally to suit the wide panel.
  */
 function snapshotLayout(nodes: readonly GraphNode[], bundles: readonly Bundle[], anchors: ReadonlySet<string>, evidenceIds: ReadonlySet<string>) {
   const accounts = nodes.filter((n) => n.type === 'account' && anchors.has(n.id)).map((n) => n.id)
@@ -62,19 +66,45 @@ function snapshotLayout(nodes: readonly GraphNode[], bundles: readonly Bundle[],
   rest.forEach((n, i) => {
     const a = neighbourAngle(n.id)
     const home = a === undefined ? at((i / Math.max(1, rest.length)) * Math.PI * 2, ACCOUNT_RADIUS) : at(a, ACCOUNT_RADIUS)
+    const lower = Math.sin(a ?? 0) > 0.2
     const side = Math.cos(a ?? 0) < -0.2 ? -1 : 1
-    const slot = `${String(home.x)}:${String(side)}:${String(anchors.has(n.id))}`
+    const slot = `${String(home.x)}:${lower ? 'below' : String(side)}`
     const k = stacked.get(slot) ?? 0
     stacked.set(slot, k + 1)
-    out.set(n.id, { x: home.x + side * (anchors.has(n.id) ? SIDE_OFFSET : OUTER_OFFSET), y: home.y + k * STACK })
+    out.set(n.id, lower ? { x: home.x, y: home.y + BELOW + k * STACK } : { x: home.x + side * SIDE_OFFSET, y: home.y + k * STACK })
   })
   return out
+}
+
+/** Fits the snapshot again whenever the panel changes size; the first fit is React Flow's own, once nodes are measured. */
+function Refit({ box }: { box: RefObject<HTMLDivElement | null> }) {
+  const { fitView } = useReactFlow()
+  useEffect(() => {
+    const el = box.current
+    if (!el) return
+    let frame = 0
+    // React Flow measures its own pane on resize too; fitting a frame later uses the new size, not the old one.
+    const refit = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        void fitView(FIT)
+      })
+    }
+    const observer = new ResizeObserver(refit)
+    observer.observe(el)
+    return () => {
+      cancelAnimationFrame(frame)
+      observer.disconnect()
+    }
+  }, [fitView, box])
+  return null
 }
 
 /** A read-only snapshot of the alert's entities and their direct transfer neighbours (docs/03 §7). */
 export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps) {
   const [state, setState] = useState<GraphState>({ status: 'loading' })
   const [attempt, setAttempt] = useState(0)
+  const box = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -93,8 +123,10 @@ export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps)
   const flow = useMemo(() => {
     if (state.status !== 'loaded') return null
     const anchors = new Set(entityIds)
-    const nodes = state.graph.nodes
-    const bundles = bundleEdges(state.graph.edges)
+    // Only the alert's own entities are drawn; neighbours outside it are counted and left to the Graph Explorer.
+    const nodes = state.graph.nodes.filter((n) => anchors.has(n.id))
+    const kept = new Set(nodes.map((n) => n.id))
+    const bundles = bundleEdges(state.graph.edges.filter((e) => kept.has(e.source) && kept.has(e.target)))
     const placed = snapshotLayout(nodes, bundles, anchors, evidenceIds)
     const flowNodes: EntityFlowNode[] = nodes.map((n) => {
       const p = placed.get(n.id) ?? { x: 0, y: 0 }
@@ -102,7 +134,7 @@ export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps)
         id: n.id,
         type: n.type,
         position: p,
-        data: { label: n.label, entityType: n.type, risk: n.risk, focus: anchors.has(n.id), dim: !anchors.has(n.id) },
+        data: { label: n.label, entityType: n.type, risk: n.risk, focus: true, dim: false },
         ariaLabel: nodeAriaLabel(n.type, n.label),
         draggable: false,
         selectable: false,
@@ -119,7 +151,7 @@ export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps)
         selectable: false,
         focusable: false,
       }))
-    return { flowNodes, flowEdges, count: nodes.length }
+    return { flowNodes, flowEdges, count: nodes.length, outside: state.graph.nodes.length - nodes.length }
   }, [state, entityIds, evidenceIds])
 
   const primary = entityIds.find((id) => id.startsWith('cust_')) ?? entityIds[0]
@@ -129,8 +161,8 @@ export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps)
       <h3 id="alert-graph-heading" className="text-[13px] font-semibold text-fg">
         Graph snapshot
       </h3>
-      <div className="flex h-[280px] flex-col overflow-hidden rounded-card border border-line-strong bg-canvas">
-        <div className="relative min-h-0 flex-1">
+      <div className="flex h-[320px] flex-col overflow-hidden rounded-card border border-line-strong bg-canvas">
+        <div ref={box} className="relative min-h-0 flex-1">
           {state.status === 'loading' && (
             <div role="status" className="grid h-full place-items-center text-[13px] text-fg-muted">
               <span className="inline-flex items-center gap-2">
@@ -169,7 +201,8 @@ export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps)
                 edgeTypes={EDGE_COMPONENTS}
                 nodeOrigin={[0.5, 0.5]}
                 fitView
-                fitViewOptions={{ padding: 0.12, maxZoom: 1.1 }}
+                fitViewOptions={FIT}
+                minZoom={FIT.minZoom}
                 nodesDraggable={false}
                 nodesConnectable={false}
                 elementsSelectable={false}
@@ -181,12 +214,16 @@ export function AlertGraph({ alertId, entityIds, evidenceIds }: AlertGraphProps)
                 aria-label="Graph of the alert's accounts and people"
               >
                 <Background variant={BackgroundVariant.Dots} gap={22} size={1} color="var(--line-strong)" />
+                <Refit box={box} />
               </ReactFlow>
             </ReactFlowProvider>
           )}
         </div>
         <div className="flex items-center gap-3 border-t border-line bg-panel px-3 py-1.5 text-xs text-fg-muted">
-          <span className="min-w-0 flex-1">Loop legs in amber; the alert's entities at full ink.</span>
+          <span className="min-w-0 flex-1">
+            Loop legs in amber.
+            {flow && flow.outside > 0 && ` +${String(flow.outside)} connected ${flow.outside === 1 ? 'entity' : 'entities'} outside this alert.`}
+          </span>
           {primary && (
             <Link to={`/graph?node=${encodeURIComponent(primary)}`} className="inline-flex items-center gap-1 font-medium text-accent hover:underline">
               Open in Graph Explorer

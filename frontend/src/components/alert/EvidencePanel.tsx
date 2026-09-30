@@ -59,7 +59,7 @@ export function EvidencePanel({ state, labels = {} }: EvidencePanelProps) {
   return (
     <section data-testid="evidence-panel" aria-labelledby="evidence-heading" className="overflow-hidden rounded-card border border-line-strong bg-panel">
       <header className="flex items-center gap-2 border-b border-line px-3.5 py-2.5">
-        <FileSearch aria-hidden="true" className="size-4 text-ev" />
+        <FileSearch aria-hidden="true" className="size-4 text-fg-muted" />
         <h3 id="evidence-heading" className="text-[13px] font-semibold text-fg">
           Evidence
           {count !== null && (

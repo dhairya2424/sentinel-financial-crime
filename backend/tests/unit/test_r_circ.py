@@ -31,6 +31,8 @@ def test_t_det_01_planted_cycle_exact_math():
     assert (f["temporal_proximity"].raw_value, f["temporal_proximity"].contribution) == ("4h of 72h window", round(0.25 * (1 - 4 / 72), 4))
     assert (f["account_velocity"].raw_value, f["account_velocity"].contribution) == ("no baseline", 0.075)
     assert aggregate_factors(hits)[:2] == (74, "high")
+    assert {n: x.imputed for n, x in f.items()} == {"linkage_depth": False, "amount": True, "temporal_proximity": False, "account_velocity": True}
+    assert all(x.imputed is False for x in aggregate_factors(hits)[2] if x.name in ("linkage_depth", "temporal_proximity"))
 
 
 def test_t_det_02_same_edges_over_ten_days_no_hit():

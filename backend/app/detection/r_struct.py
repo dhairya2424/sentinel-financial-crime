@@ -82,7 +82,7 @@ def _build_hit(
         ratio = n / max(expected, 1e-9)
         velocity = make_factor("velocity_vs_baseline", f"{ratio:.1f}x baseline", w["velocity_vs_baseline"], math.log10(ratio))
     else:
-        velocity = make_factor("velocity_vs_baseline", "no prior history", w["velocity_vs_baseline"], 0.5)
+        velocity = make_factor("velocity_vs_baseline", "no prior history", w["velocity_vs_baseline"], 0.5, imputed=True)
 
     total_multiple = float(total / threshold)
     factors = [

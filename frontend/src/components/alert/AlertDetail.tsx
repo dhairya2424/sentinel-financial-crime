@@ -119,12 +119,16 @@ export function AlertDetail({ alertId, caseRequested = 0 }: AlertDetailProps) {
                 .map((e) => (
                   <EntityChip key={e.id} kind={e.type} id={e.id} label={e.label} />
                 ))}
-              {alert.amount_total && <span className="font-mono text-[13px] font-medium text-fg tabular-nums">{money(alert.amount_total)}</span>}
             </div>
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[13px] text-fg-muted">
               <time dateTime={alert.detected_at} title={new Date(alert.detected_at).toLocaleString()}>
                 Detected {timeAgo(alert.detected_at)}
               </time>
+              {alert.amount_total && (
+                <span>
+                  Total <span className="font-mono text-[13px] font-medium text-fg tabular-nums">{money(alert.amount_total)}</span>
+                </span>
+              )}
               <span className="font-mono text-xs">occurrence ×{alert.occurrence_count}</span>
               {status && (
                 <span data-testid="alert-status" className="rounded border border-line-strong px-1.5 font-mono text-[11px] text-fg-muted">
