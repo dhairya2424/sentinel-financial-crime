@@ -157,7 +157,7 @@ Empty state: "No alerts match filters" + illustration. Loading: 6 skeleton rows.
 ## 10. Screen: Admin / Rules (F-13, role=admin)
 
 - Table of rules (code, name, enabled, thresholds, weights). Edit drawer → numeric inputs + validation → `PUT /v1/rules/{code}` (versioned). Show weight sliders summing to 1.0 enforced.
-- *As built (P5-B):* the route, nav entry and admin guard exist (T-FE-14) and render a placeholder. The API behind this screen is complete (`GET/PUT /v1/rules`, docs/05 §6), so the screen is the remaining work for F-13 (*Should*).
+- *As built (post-P5, chosen in the design round as "Weight console" with the spec sheet's history):* each rule is a row whose factor weights are a draggable bar that always totals 1.000 (keyboard: ← →, Shift for 0.05), with an On/Off switch and a "Settings & history" disclosure holding the numeric and time settings, the read-only lists, and every version with who changed what (`GET /v1/rules/{code}/history`). One sticky bar saves all changed rules as new versions. See DESIGN.md "Weight Console".
 
 ## 11. Components & States (global)
 

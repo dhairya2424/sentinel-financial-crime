@@ -136,7 +136,7 @@ A single platform where an investigator opens one screen and sees **who did what
 | F-10 | Case module with assignment, status, notes, audit trail | Must |
 | F-11 | Evidence export: JSON + HTML | Must |
 | F-12 | Scenario seeding for demo/testing (suspicious, legitimate, mixed datasets) | Must |
-| F-13 | Rule configuration (thresholds, weights, windows) editable by admin; changes versioned | Should — *as built:* `GET/PUT /v1/rules` (validated, versioned, audited, loaded by detection); the `/admin/rules` screen is a placeholder |
+| F-13 | Rule configuration (thresholds, weights, windows) editable by admin; changes versioned | Should — *as built:* `/admin/rules` weight console over `GET/PUT /v1/rules` and per-rule version history; validated, versioned, audited, used by detection from the next event |
 | F-14 | Full audit log of platform actions | Must |
 
 ## 7. Non-Functional Requirements

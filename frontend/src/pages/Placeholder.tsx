@@ -2,7 +2,6 @@ import { Compass } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import { EmptyState } from '@/components/EmptyState'
-import { SCREENS, type Screen } from '@/lib/screens'
 
 interface PageProps {
   title: string
@@ -21,26 +20,6 @@ export function Page({ title, meta, children, wide = false }: PageProps) {
       {children}
     </div>
   )
-}
-
-interface ScreenPlaceholderProps {
-  screen: Screen
-  title?: string
-  meta?: ReactNode
-}
-
-export function ScreenPlaceholder({ screen, title, meta }: ScreenPlaceholderProps) {
-  return (
-    <Page title={title ?? screen.title} meta={meta}>
-      <section className="grid min-h-72 place-items-center rounded-card border border-dashed border-line-strong bg-panel">
-        <EmptyState icon={screen.Icon} title={`Arrives in Phase ${screen.phase}`} description={screen.summary} />
-      </section>
-    </Page>
-  )
-}
-
-export function RulesScreen() {
-  return <ScreenPlaceholder screen={SCREENS.rules} />
 }
 
 export function NotFoundScreen() {

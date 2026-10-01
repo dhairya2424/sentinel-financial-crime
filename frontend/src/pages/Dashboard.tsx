@@ -6,6 +6,7 @@ import { alertsSince, getMetrics } from '@/api/dashboard'
 import type { AlertRow, DashboardMetrics, RiskBand } from '@/api/types'
 import type { GuardState } from '@/components/RequireAuth'
 import { ErrorRetry } from '@/components/ErrorRetry'
+import { HowSentinelWorks } from '@/components/HowSentinelWorks'
 import { RiskBadge } from '@/components/RiskBadge'
 import { Skeleton } from '@/components/Skeleton'
 import { PRIORITIES, PRIORITY_META } from '@/lib/cases'
@@ -176,6 +177,7 @@ export function Dashboard() {
       ) : (
         <Kpis metrics={data} />
       )}
+      {user && <HowSentinelWorks metrics={data} userId={user.id} role={user.role} />}
 
       <div className="grid gap-3 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
         <BandsByDay series={series} />
@@ -336,29 +338,32 @@ function BandsByDay({ series }: { series: Series }) {
               )
             })}
           </div>
-          <table className="sr-only">
-            <caption>Alerts per day by band</caption>
-            <thead>
-              <tr>
-                <th scope="col">Band</th>
-                {days.map((d) => (
-                  <th key={d.key} scope="col">
-                    {d.label}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {bands.map((band) => (
-                <tr key={band}>
-                  <th scope="row">{RISK_BANDS[band].label}</th>
+          {/* A table ignores the 1px sr-only box and widens the page on phones, so the wrapper is the hidden box. */}
+          <div className="sr-only">
+            <table>
+              <caption>Alerts per day by band</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Band</th>
                   {days.map((d) => (
-                    <td key={d.key}>{counts.get(`${band}|${d.key}`) ?? 0}</td>
+                    <th key={d.key} scope="col">
+                      {d.label}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {bands.map((band) => (
+                  <tr key={band}>
+                    <th scope="row">{RISK_BANDS[band].label}</th>
+                    {days.map((d) => (
+                      <td key={d.key}>{counts.get(`${band}|${d.key}`) ?? 0}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </ChartCard>

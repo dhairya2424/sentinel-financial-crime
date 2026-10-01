@@ -3,7 +3,8 @@ import { AppShell } from '@/components/AppShell'
 import { RequireAuth, RequireRole } from '@/components/RequireAuth'
 import { Dashboard } from '@/pages/Dashboard'
 import { Login } from '@/pages/Login'
-import { NotFoundScreen, RulesScreen } from '@/pages/Placeholder'
+import { NotFoundScreen } from '@/pages/Placeholder'
+import { RulesPage } from '@/pages/Rules'
 import { CaseDetail } from '@/pages/CaseDetail'
 import { CaseManager } from '@/pages/CaseManager'
 import { AddData } from '@/pages/AddData'
@@ -40,7 +41,7 @@ export const routes: RouteObject[] = [
             path: 'admin/rules',
             element: (
               <RequireRole role="admin" area="Admin / Rules">
-                <RulesScreen />
+                <RulesPage />
               </RequireRole>
             ),
           },

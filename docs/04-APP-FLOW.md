@@ -42,7 +42,7 @@ Routes (React Router):
 | `/graph` | Graph Explorer (URL state `?node=&depth=`) | auth |
 | `/timeline/:type/:id` | Activity Timeline | auth |
 | `/add?type=` | Add data: register customers, accounts, employees; record transactions, actions, sessions, access rights; import a CSV/JSON file | admin, investigator |
-| `/admin/rules` | Rules admin | role=admin — *as built:* the route and its admin guard exist (T-FE-14) and show a placeholder screen; rule versions are read and changed through `GET/PUT /v1/rules` (docs/05 §6). PRD F-13 is a *Should*. |
+| `/admin/rules` | Rules admin | role=admin — the weight console over `GET/PUT /v1/rules` and `GET /v1/rules/{code}/history` (docs/03 §10). |
 
 ## 2. User Journey A — Triage a Circular Transfer Alert (Priya)
 

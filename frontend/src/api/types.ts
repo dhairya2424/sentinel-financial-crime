@@ -419,4 +419,49 @@ export interface DashboardMetrics {
   closed_7d: number
   top_entities: { entity_id: string; alert_count: number; type: EntityRef['type'] | null; label: string | null }[]
   ingest: { events_per_min: number | null; lag_ms: number | null; backlog: number | null }
+  /** Everything the tenant holds, stage by stage (the Dashboard's "How Sentinel works"). */
+  totals: { events: number; entities: number; alerts: number; cases: number; exported_cases: number }
+  /** Event-to-alert latency over the last alert-raising events this API process handled; null before the first. */
+  detection: { latency_p95_ms: number | null; latency_samples: number }
+}
+
+export type RuleKind = 'primary' | 'supporting'
+export type RuleParamValue = number | string | boolean | string[] | Record<string, unknown>
+
+/** One detection rule as detection uses it now (GET /v1/rules): the latest stored version, or the default as version 0. */
+export interface RuleRow {
+  code: string
+  name: string
+  kind: RuleKind
+  version: number
+  enabled: boolean
+  params: Record<string, RuleParamValue>
+  weights: Record<string, number>
+  updated_by: string | null
+  updated_by_name: string | null
+  updated_at: string | null
+}
+
+export interface RuleChange {
+  field: string
+  before: unknown
+  after: unknown
+}
+
+/** One stored version of a rule (GET /v1/rules/{code}/history), with what changed from the version before it. */
+export interface RuleVersion {
+  version: number
+  enabled: boolean
+  params: Record<string, RuleParamValue>
+  weights: Record<string, number>
+  updated_by: string | null
+  updated_by_name: string | null
+  updated_at: string | null
+  changes: RuleChange[]
+}
+
+export interface RuleUpdate {
+  params?: Record<string, RuleParamValue>
+  weights?: Record<string, number>
+  enabled?: boolean
 }

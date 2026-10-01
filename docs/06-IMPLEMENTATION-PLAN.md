@@ -106,7 +106,7 @@ sentinel/
 - [x] Scenario suites: 5 suspicious + legitimate 200-customer dataset (docs/06 §7) — in throwaway tenants (ADR-016)
 - [x] Metrics runner: detection rate, false-positive rate → printed report (`tests/scenarios/metrics_runner.py`)
 - [x] Tenant isolation test, role enforcement tests, audit completeness
-- [~] Rules admin: `GET/PUT /v1/rules` versioning done; the `/admin/rules` page is a placeholder (PRD F-13, Should)
+- [x] Rules admin: `GET/PUT /v1/rules` versioning and the `/admin/rules` weight console with per-rule history (PRD F-13)
 - [x] Ops health (events/min, backlog, lag, open failures, latency p95) in `GET /v1/ops/health`; failed batch replay `POST /v1/ops/replay-batch`
 - [x] Perf pass: 2-hop p95, alert latency p95 measured and logged (docs/10 §8)
 - [x] Demo script + one-liners: `docker compose up --build`, `scripts/seed.sh`, `scripts/replay-suspicious.sh`
