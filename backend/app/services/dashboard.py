@@ -17,7 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.alerts import _labels
 from app.cases.service import CLOSED_STATES, OPEN_STATES, PRIORITIES
 from app.db import SessionLocal
-from app.models import Alert, Case, Tenant
+from app.models import AccessRight, Account, Alert, Case, Customer, Employee, EmployeeAction, EmployeeSession, Tenant, Transaction
 from app.pipeline import worker
 from app.redis_client import redis
 
@@ -41,6 +41,23 @@ async def _ingest(tenant_id: str) -> dict[str, Any]:
         "events_per_min": sum(1 for _, fields in entries if fields.get("tenant_id") == tenant_id),
         "lag_ms": worker.metrics.last_lag_ms,
         "backlog": backlog,
+    }
+
+
+async def _count(db: AsyncSession, model: Any, tenant_id: str, *where: Any) -> int:
+    return int(await db.scalar(select(func.count()).select_from(model).where(model.tenant_id == tenant_id, *where)) or 0)
+
+
+async def _totals(db: AsyncSession, tenant_id: str) -> dict[str, int]:
+    """Everything the tenant holds, stage by stage, for the Dashboard's "How Sentinel works" pipeline."""
+    events = sum([await _count(db, m, tenant_id) for m in (Transaction, EmployeeAction, EmployeeSession, AccessRight)])
+    entities = sum([await _count(db, m, tenant_id) for m in (Customer, Account, Employee)])
+    return {
+        "events": events,
+        "entities": entities,
+        "alerts": await _count(db, Alert, tenant_id),
+        "cases": await _count(db, Case, tenant_id),
+        "exported_cases": await _count(db, Case, tenant_id, Case.export_digest.is_not(None)),
     }
 
 
@@ -94,6 +111,11 @@ async def metrics(db: AsyncSession, tenant_id: str) -> dict[str, Any]:
             for e, n in top
         ],
         "ingest": await _ingest(tenant_id),
+        "totals": await _totals(db, tenant_id),
+        "detection": {
+            "latency_p95_ms": worker.metrics.snapshot()["alert_latency_p95_ms"],
+            "latency_samples": len(worker.metrics.latencies),
+        },
     }
 
 

@@ -206,3 +206,25 @@ def test_ops_health_reports_every_runbook_signal(client, world):
     db_run(fix)
     assert client.post("/v1/ops/replay-batch", json={"failure_id": failure_id}, headers=world.bearer(TENANT_A, "admin")).status_code == 200
     assert client.get("/v1/ops/health").json()["ingest"]["failures_open"] == before["ingest"]["failures_open"]
+
+
+def test_rule_history_lists_every_version_with_what_changed(client, world):
+    """GET /v1/rules/{code}/history: newest first, each version with its from/to changes and who made them; version 0
+    is the built-in default. Readable by every role, like the rules themselves."""
+    admin = world.bearer(TENANT_A, "admin")
+    db_run(lambda db: db.execute(delete(Rule).where(Rule.tenant_id == TENANT_A, Rule.code == "R-DORMANT")))
+    assert client.put("/v1/rules/R-DORMANT", json={"params": {"idle_days": 120}}, headers=admin).status_code == 200
+    assert client.put("/v1/rules/R-DORMANT", json={"enabled": False}, headers=admin).status_code == 200
+    r = client.get("/v1/rules/R-DORMANT/history", headers=world.bearer(TENANT_A, "viewer"))
+    assert r.status_code == 200, r.text
+    versions = r.json()
+    assert [v["version"] for v in versions] == [2, 1, 0]
+    assert versions[0]["changes"] == [{"field": "enabled", "before": True, "after": False}]
+    assert versions[1]["changes"] == [{"field": "params.idle_days", "before": 90, "after": 120}]
+    assert versions[1]["updated_by"] == "usr_itest_admin" and versions[1]["updated_by_name"] == "Itest admin"
+    assert versions[2]["changes"] == [] and versions[2]["updated_by"] is None and versions[2]["params"]["idle_days"] == 90
+    listed = {row["code"]: row for row in client.get("/v1/rules", headers=admin).json()}
+    assert listed["R-DORMANT"]["updated_by_name"] == "Itest admin"
+    assert client.get("/v1/rules/R-NOPE/history", headers=admin).status_code == 404
+    assert client.get("/v1/rules/R-DORMANT/history", headers=world.bearer(TENANT_B, "admin")).json()[0]["version"] == 0, "another tenant sees only defaults"
+    db_run(lambda db: db.execute(delete(Rule).where(Rule.tenant_id == TENANT_A, Rule.code == "R-DORMANT")))

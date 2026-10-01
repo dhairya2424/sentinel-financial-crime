@@ -12,7 +12,7 @@ from app.db import get_db
 from app.detection.base import RuleConfig
 from app.detection.config import DEFAULTS, PRIMARY_CODES, load_rule_configs
 from app.ids import new_id
-from app.models import Rule
+from app.models import Rule, User
 
 router = APIRouter(prefix="/rules", tags=["rules"])
 admin_role = require_role("admin")
@@ -28,7 +28,25 @@ class RuleOut(BaseModel):
     params: dict[str, Any]
     weights: dict[str, float]
     updated_by: str | None = None
+    updated_by_name: str | None = None
     updated_at: datetime | None = None
+
+
+class Change(BaseModel):
+    field: str
+    before: Any = None
+    after: Any = None
+
+
+class RuleVersion(BaseModel):
+    version: int
+    enabled: bool
+    params: dict[str, Any]
+    weights: dict[str, float]
+    updated_by: str | None
+    updated_by_name: str | None
+    updated_at: datetime | None
+    changes: list[Change]
 
 
 class RuleUpdate(BaseModel):
@@ -38,7 +56,7 @@ class RuleUpdate(BaseModel):
     enabled: bool | None = None
 
 
-def _out(config: RuleConfig, row: Rule | None) -> RuleOut:
+def _out(config: RuleConfig, row: Rule | None, names: dict[str, str] | None = None) -> RuleOut:
     return RuleOut(
         code=config.code,
         name=config.name,
@@ -48,8 +66,21 @@ def _out(config: RuleConfig, row: Rule | None) -> RuleOut:
         params=config.params,
         weights=config.weights,
         updated_by=row.updated_by if row else None,
+        updated_by_name=(names or {}).get(row.updated_by) if row and row.updated_by else None,
         updated_at=row.updated_at if row else None,
     )
+
+
+async def _names(db: AsyncSession, tenant_id: str, ids: set[str | None]) -> dict[str, str]:
+    wanted = {i for i in ids if i}
+    if not wanted:
+        return {}
+    rows = await db.execute(select(User.id, User.full_name).where(User.tenant_id == tenant_id, User.id.in_(wanted)))
+    return dict(rows.all())
+
+
+def _diff(before: dict[str, Any], after: dict[str, Any], prefix: str) -> list[Change]:
+    return [Change(field=f"{prefix}.{k}", before=before.get(k), after=after.get(k)) for k in sorted(set(before) | set(after)) if before.get(k) != after.get(k)]
 
 
 async def _latest_rows(db: AsyncSession, tenant_id: str) -> dict[str, Rule]:
@@ -102,7 +133,40 @@ async def list_rules(user: CurrentUser = Depends(get_current_user), db: AsyncSes
     """The version detection uses right now, per code: the latest `rules` row, else the built-in default (version 0)."""
     configs = await load_rule_configs(db, user.tenant_id)
     rows = await _latest_rows(db, user.tenant_id)
-    return [_out(configs[code], rows.get(code)) for code in DEFAULTS]
+    names = await _names(db, user.tenant_id, {r.updated_by for r in rows.values()})
+    return [_out(configs[code], rows.get(code), names) for code in DEFAULTS]
+
+
+@router.get("/{code}/history", response_model=list[RuleVersion])
+async def rule_history(code: str, user: CurrentUser = Depends(get_current_user), db: AsyncSession = Depends(get_db)) -> list[RuleVersion]:
+    """Every stored version of one rule, newest first, each with what changed from the version before it. Version 0 is
+    the built-in default, so the oldest stored version shows what it changed from the defaults."""
+    if code not in DEFAULTS:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="rule not found")
+    rows = (await db.scalars(select(Rule).where(Rule.tenant_id == user.tenant_id, Rule.code == code).order_by(Rule.version))).all()
+    names = await _names(db, user.tenant_id, {r.updated_by for r in rows})
+    spec = DEFAULTS[code]
+    prev = {"enabled": True, "params": dict(spec["params"]), "weights": dict(spec["weights"])}
+    out = [RuleVersion(version=0, enabled=True, params=prev["params"], weights=prev["weights"], updated_by=None, updated_by_name=None, updated_at=None, changes=[])]
+    for row in rows:
+        cur = {"enabled": row.enabled, "params": {**spec["params"], **(row.params or {})}, "weights": {**spec["weights"], **(row.weights or {})}}
+        changes = _diff(prev["params"], cur["params"], "params") + _diff(prev["weights"], cur["weights"], "weights")
+        if prev["enabled"] != cur["enabled"]:
+            changes.append(Change(field="enabled", before=prev["enabled"], after=cur["enabled"]))
+        out.append(
+            RuleVersion(
+                version=row.version,
+                enabled=row.enabled,
+                params=cur["params"],
+                weights=cur["weights"],
+                updated_by=row.updated_by,
+                updated_by_name=names.get(row.updated_by) if row.updated_by else None,
+                updated_at=row.updated_at,
+                changes=changes,
+            )
+        )
+        prev = cur
+    return list(reversed(out))
 
 
 @router.put("/{code}", response_model=RuleOut)
@@ -146,4 +210,4 @@ async def update_rule(code: str, body: RuleUpdate, user: CurrentUser = Depends(a
     await db.commit()
     await db.refresh(row)
     config = RuleConfig(code=code, name=row.name, version=row.version, enabled=row.enabled, params=row.params, weights=row.weights)
-    return _out(config, row)
+    return _out(config, row, await _names(db, user.tenant_id, {user.id}))

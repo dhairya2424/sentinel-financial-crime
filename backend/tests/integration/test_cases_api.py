@@ -278,6 +278,10 @@ def test_t_int_20_dashboard_metrics_reflect_cases_and_alerts(client, world, make
     assert data["fp_rate_7d"] is None or 0 <= data["fp_rate_7d"] <= 1
     assert data["top_entities"][0]["entity_id"] == world.account and data["top_entities"][0]["label"] == f"XXXXIT{world.suffix}"
     assert set(data["ingest"]) == {"events_per_min", "lag_ms", "backlog"}
+    assert set(data["totals"]) == {"events", "entities", "alerts", "cases", "exported_cases"}
+    assert data["totals"]["alerts"] >= data["alerts_24h"] and data["totals"]["cases"] >= data["open_cases"]
+    assert data["totals"]["entities"] >= 3, "the itest customers and accounts"
+    assert set(data["detection"]) == {"latency_p95_ms", "latency_samples"}
 
 
 def test_assignees_lists_people_who_can_work_a_case(client, world):
