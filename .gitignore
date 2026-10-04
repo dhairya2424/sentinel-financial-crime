@@ -9,3 +9,7 @@ node_modules/
 dist/
 .coverage
 .ruff_cache/
+
+# Generated caches: rewritten on every build or design-hook run
+.impeccable/hook.cache.json
+*.tsbuildinfo
